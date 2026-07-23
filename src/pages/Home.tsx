@@ -241,7 +241,24 @@ export default function Home() {
         onPointerCancel={handlePointerEnd}
         onWheel={handleWheel}
       >
-        <img ref={mapRef} className={`map-image ${isReady ? "is-ready" : ""}`} src={`${import.meta.env.BASE_URL}map.jpg`} alt="铜陵市乡村旅游景区导览地图" draggable={false} onLoad={() => setIsReady(true)} />
+        <img
+          ref={mapRef}
+          className={`map-image ${isReady ? "is-ready" : ""}`}
+          src={`${import.meta.env.BASE_URL}map-2048.jpg`}
+          srcSet={`${import.meta.env.BASE_URL}map-2048.jpg 2048w, ${import.meta.env.BASE_URL}map-4096.jpg 4096w`}
+          sizes="100vw"
+          alt="铜陵市乡村旅游景区导览地图"
+          draggable={false}
+          fetchPriority="high"
+          decoding="async"
+          onLoad={() => setIsReady(true)}
+        />
+        {!isReady && (
+          <div className="map-loading" role="status" aria-live="polite">
+            <span />
+            <p>地图加载中</p>
+          </div>
+        )}
         <div className="vignette" aria-hidden="true" />
         <div className="film-grain" aria-hidden="true" />
 

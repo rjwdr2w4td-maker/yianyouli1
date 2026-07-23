@@ -74,6 +74,34 @@ button {
   opacity: 1;
 }
 
+.map-loading {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  color: rgba(25, 61, 39, .72);
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-align: center;
+}
+
+.map-loading span {
+  width: 28px;
+  height: 28px;
+  margin: auto;
+  border: 2px solid rgba(25, 61, 39, .16);
+  border-top-color: rgba(25, 61, 39, .72);
+  border-radius: 50%;
+  animation: loading-spin .8s linear infinite;
+}
+
+.map-loading p {
+  margin: 0;
+}
+
 .vignette,
 .film-grain {
   position: absolute;
@@ -224,6 +252,10 @@ button {
   0%, 20% { transform: rotate(0deg); }
   55%, 82% { transform: rotate(90deg); }
   100% { transform: rotate(0deg); }
+}
+
+@keyframes loading-spin {
+  to { transform: rotate(360deg); }
 }
 
 @keyframes controls-in {
