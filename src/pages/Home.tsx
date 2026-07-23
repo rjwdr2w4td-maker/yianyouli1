@@ -244,7 +244,7 @@ export default function Home() {
         <img
           ref={mapRef}
           className={`map-image ${isReady ? "is-ready" : ""}`}
-          src={`${import.meta.env.BASE_URL}map-2048.jpg`}
+          src={`${import.meta.env.BASE_URL}map-4096.jpg`}
           alt="铜陵市乡村旅游景区导览地图"
           draggable={false}
           fetchPriority="high"
