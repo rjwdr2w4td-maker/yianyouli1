@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Expand, Pause, Play, RotateCcw, Smartphone } from "lucide-react";
+import { Pause, Play, RotateCcw } from "lucide-react";
 
 const TOUR_DURATION = 42000;
 const MAX_ZOOM = 4;
@@ -86,7 +86,7 @@ export default function Home() {
   const buildTour = useCallback(() => {
     const stage = stageRef.current;
     const map = mapRef.current;
-    if (!stage || !map || !isLandscape) return;
+    if (!stage || !map) return;
 
     animationRef.current?.cancel();
     map.style.transform = "";
@@ -116,7 +116,7 @@ export default function Home() {
     animation.onfinish = () => setIsPaused(true);
     animationRef.current = animation;
     setIsPaused(false);
-  }, [getMinimumScale, isLandscape]);
+  }, [getMinimumScale]);
 
   useEffect(() => {
     const updateOrientation = () => setIsLandscape(window.innerWidth > window.innerHeight);
@@ -130,7 +130,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (!isLandscape || !isReady) return;
+    if (!isReady) return;
     const frame = requestAnimationFrame(buildTour);
     return () => cancelAnimationFrame(frame);
   }, [buildTour, isLandscape, isReady]);
@@ -151,7 +151,7 @@ export default function Home() {
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!isLandscape || !isReady) return;
+    if (!isReady) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     if (pointersRef.current.size === 0) takeOverAnimation();
     pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -188,7 +188,7 @@ export default function Home() {
   };
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    if (!isLandscape || !isReady) return;
+    if (!isReady) return;
     event.preventDefault();
     takeOverAnimation();
     const view = viewRef.current;
@@ -211,16 +211,6 @@ export default function Home() {
     }
   };
 
-  const requestLandscape = async () => {
-    try {
-      await document.documentElement.requestFullscreen?.();
-      const orientation = screen.orientation as ScreenOrientation & { lock?: (orientation: "landscape") => Promise<void> };
-      await orientation.lock?.("landscape");
-    } catch {
-      // 部分移动端浏览器不允许网页主动锁定方向，保留手动旋转提示。
-    }
-  };
-
   return (
     <main className="panorama-shell">
       <div
@@ -237,7 +227,7 @@ export default function Home() {
         <div className="vignette" aria-hidden="true" />
         <div className="film-grain" aria-hidden="true" />
 
-        {isLandscape && isReady && (
+        {isReady && (
           <div className="tour-controls" aria-label="镜头控制" onPointerDown={(event) => event.stopPropagation()}>
             <button type="button" onClick={toggleTour} aria-label={isPaused ? "继续漫游" : "暂停漫游"}>
               {isPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
@@ -247,16 +237,6 @@ export default function Home() {
           </div>
         )}
       </div>
-
-      {!isLandscape && (
-        <section className="rotate-prompt" aria-live="polite">
-          <div className="device-illustration"><Smartphone className="phone-icon" size={54} strokeWidth={1.4} /><Expand className="expand-icon" size={20} /></div>
-          <p className="eyebrow">沉浸式地图漫游</p>
-          <h1>请将手机横过来</h1>
-          <p className="prompt-copy">横屏后，镜头将缓缓穿行于山水之间，最终为你展开地图全貌。</p>
-          <button type="button" onClick={requestLandscape}>进入横屏观景</button>
-        </section>
-      )}
     </main>
   );
 }
