@@ -40,8 +40,11 @@ export default function Home() {
     const stage = stageRef.current;
     const map = mapRef.current;
     if (!stage || !map) return 1;
-    return Math.max(stage.clientWidth / map.naturalWidth, stage.clientHeight / map.naturalHeight) * 1.08;
-  }, []);
+
+    const widthScale = stage.clientWidth / map.naturalWidth;
+    const heightScale = stage.clientHeight / map.naturalHeight;
+    return isLandscape ? Math.max(widthScale, heightScale) * 1.08 : widthScale;
+  }, [isLandscape]);
 
   const constrainView = useCallback((view: ViewTransform) => {
     const stage = stageRef.current;
@@ -52,13 +55,15 @@ export default function Home() {
     const scale = Math.min(Math.max(view.scale, minScale), minScale * MAX_ZOOM);
     const renderedWidth = map.naturalWidth * scale;
     const renderedHeight = map.naturalHeight * scale;
-    const minX = stage.clientWidth - renderedWidth;
-    const minY = stage.clientHeight - renderedHeight;
+    const minX = Math.min(0, stage.clientWidth - renderedWidth);
+    const maxX = Math.max(0, (stage.clientWidth - renderedWidth) / 2);
+    const minY = Math.min(0, stage.clientHeight - renderedHeight);
+    const maxY = Math.max(0, (stage.clientHeight - renderedHeight) / 2);
 
     return {
       scale,
-      x: Math.min(0, Math.max(minX, view.x)),
-      y: Math.min(0, Math.max(minY, view.y)),
+      x: Math.min(maxX, Math.max(minX, view.x)),
+      y: Math.min(maxY, Math.max(minY, view.y)),
     };
   }, [getMinimumScale]);
 
@@ -99,11 +104,24 @@ export default function Home() {
     const fittedHeight = mapHeight * coverScale;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const keyframes = tourPoints.map(({ x, y, zoom, offset }) => ({
-      transform: `translate3d(${viewportWidth / 2 - fittedWidth * x * zoom}px, ${viewportHeight / 2 - fittedHeight * y * zoom}px, 0) scale(${coverScale * zoom})`,
-      offset,
-      easing: "cubic-bezier(.42, 0, .22, 1)",
-    }));
+    const finalScale = coverScale;
+    const finalX = (viewportWidth - mapWidth * finalScale) / 2;
+    const finalY = (viewportHeight - mapHeight * finalScale) / 2;
+    const keyframes = tourPoints.map(({ x, y, zoom, offset }, index) => {
+      if (index === tourPoints.length - 1) {
+        return {
+          transform: `translate3d(${finalX}px, ${finalY}px, 0) scale(${finalScale})`,
+          offset,
+          easing: "cubic-bezier(.42, 0, .22, 1)",
+        };
+      }
+
+      return {
+        transform: `translate3d(${viewportWidth / 2 - fittedWidth * x * zoom}px, ${viewportHeight / 2 - fittedHeight * y * zoom}px, 0) scale(${coverScale * zoom})`,
+        offset,
+        easing: "cubic-bezier(.42, 0, .22, 1)",
+      };
+    });
 
     setIsManual(false);
     if (reduceMotion) {
