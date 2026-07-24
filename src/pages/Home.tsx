@@ -25,6 +25,8 @@ type Gesture = {
 };
 
 export default function Home() {
+  const previewMapSrc = `${import.meta.env.BASE_URL}map-preview.jpg`;
+  const highResolutionMapSrc = `${import.meta.env.BASE_URL}map-4096.jpg`;
   const stageRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLImageElement>(null);
   const animationRef = useRef<Animation | null>(null);
@@ -34,6 +36,7 @@ export default function Home() {
   const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
   const [isPaused, setIsPaused] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [isHighResolution, setIsHighResolution] = useState(false);
   const [isManual, setIsManual] = useState(false);
 
   const getMinimumScale = useCallback(() => {
@@ -135,6 +138,22 @@ export default function Home() {
     animationRef.current = animation;
     setIsPaused(false);
   }, [getMinimumScale]);
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    const highResolutionImage = new Image();
+    highResolutionImage.decoding = "async";
+    highResolutionImage.src = highResolutionMapSrc;
+    highResolutionImage.onload = async () => {
+      try {
+        await highResolutionImage.decode();
+      } catch {
+        // 图片已加载时仍可直接替换。
+      }
+      setIsHighResolution(true);
+    };
+  }, [highResolutionMapSrc, isReady]);
 
   useEffect(() => {
     const updateOrientation = () => setIsLandscape(window.innerWidth > window.innerHeight);
@@ -244,7 +263,7 @@ export default function Home() {
         <img
           ref={mapRef}
           className={`map-image ${isReady ? "is-ready" : ""}`}
-          src={`${import.meta.env.BASE_URL}map-4096.jpg`}
+          src={isHighResolution ? highResolutionMapSrc : previewMapSrc}
           alt="铜陵市乡村旅游景区导览地图"
           draggable={false}
           fetchPriority="high"
@@ -265,7 +284,7 @@ export default function Home() {
             <button type="button" onClick={toggleTour} aria-label={isPaused ? "继续漫游" : "暂停漫游"}>
               {isPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
             </button>
-            <span>{isManual ? "拖动 · 双指缩放" : isPaused ? "轻触继续" : "正在漫游"}</span>
+            <span>{isManual ? "拖动 · 双指缩放" : !isHighResolution ? "高清图加载中" : isPaused ? "轻触继续" : "正在漫游"}</span>
             <button type="button" onClick={buildTour} aria-label="重新开始漫游"><RotateCcw size={17} /></button>
           </div>
         )}
