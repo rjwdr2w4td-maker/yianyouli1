@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Pause, Play, RotateCcw } from "lucide-react";
 
 const TOUR_DURATION = 42000;
 const MAX_ZOOM = 4;
@@ -34,7 +33,7 @@ export default function Home() {
   const viewRef = useRef<ViewTransform>({ x: 0, y: 0, scale: 1 });
   const gestureRef = useRef<Gesture>({ x: 0, y: 0, scale: 1 });
   const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
-  const [isPaused, setIsPaused] = useState(false);
+  const [, setIsPaused] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [isHighResolution, setIsHighResolution] = useState(false);
   const [isManual, setIsManual] = useState(false);
@@ -236,18 +235,6 @@ export default function Home() {
     applyView({ x: event.clientX - imageX * nextScale, y: event.clientY - imageY * nextScale, scale: nextScale });
   };
 
-  const toggleTour = () => {
-    const animation = animationRef.current;
-    if (!animation || animation.playState === "finished" || isManual) return buildTour();
-    if (animation.playState === "paused") {
-      animation.play();
-      setIsPaused(false);
-    } else {
-      animation.pause();
-      setIsPaused(true);
-    }
-  };
-
   return (
     <main className="panorama-shell">
       <div
@@ -280,13 +267,16 @@ export default function Home() {
         <div className="film-grain" aria-hidden="true" />
 
         {isReady && (
-          <div className="tour-controls" aria-label="镜头控制" onPointerDown={(event) => event.stopPropagation()}>
-            <button type="button" onClick={toggleTour} aria-label={isPaused ? "继续漫游" : "暂停漫游"}>
-              {isPaused ? <Play size={18} fill="currentColor" /> : <Pause size={18} fill="currentColor" />}
-            </button>
-            <span>{isManual ? "拖动 · 双指缩放" : !isHighResolution ? "高清图加载中" : isPaused ? "轻触继续" : "正在漫游"}</span>
-            <button type="button" onClick={buildTour} aria-label="重新开始漫游"><RotateCcw size={17} /></button>
-          </div>
+          <nav className="map-menu" aria-label="义安旅游服务" onPointerDown={(event) => event.stopPropagation()}>
+            {[
+              ["智慧导览", "#guide"],
+              ["魅力义安", "#yian"],
+              ["商旅食宿", "#travel"],
+              ["投资建设", "#invest"],
+            ].map(([label, href], index) => (
+              <a key={label} className={index === 0 ? "is-active" : ""} href={href}>{label}</a>
+            ))}
+          </nav>
         )}
       </div>
     </main>

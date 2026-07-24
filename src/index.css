@@ -122,48 +122,47 @@ button {
   mix-blend-mode: soft-light;
 }
 
-.tour-controls {
+.map-menu {
   position: absolute;
   z-index: 5;
   left: 50%;
-  bottom: max(16px, env(safe-area-inset-bottom));
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 6px 8px;
-  color: rgba(255, 255, 255, .88);
-  background: rgba(19, 45, 31, .54);
+  bottom: max(12px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(92vw, 560px);
+  padding: 5px;
+  background: rgba(19, 45, 31, .76);
   border: 1px solid rgba(255, 255, 255, .2);
-  border-radius: 999px;
-  box-shadow: 0 12px 36px rgba(10, 30, 20, .2);
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(10, 30, 20, .24);
   backdrop-filter: blur(14px) saturate(1.1);
   transform: translateX(-50%);
-  animation: controls-in 900ms 1.3s both;
+  animation: controls-in 700ms .5s both;
 }
 
-.tour-controls span {
-  min-width: 64px;
+.map-menu a {
+  position: relative;
+  min-width: 0;
+  padding: 11px 4px 10px;
+  color: rgba(255, 255, 255, .76);
   font-family: "PingFang SC", "Noto Sans SC", sans-serif;
-  font-size: 11px;
-  letter-spacing: .16em;
+  font-size: clamp(11px, 2.8vw, 14px);
+  letter-spacing: .04em;
   text-align: center;
+  text-decoration: none;
+  border-radius: 10px;
+  white-space: nowrap;
 }
 
-.tour-controls button {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  place-items: center;
-  color: inherit;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .12);
+.map-menu a.is-active {
+  color: #203c2a;
+  font-weight: 600;
+  background: linear-gradient(135deg, #f4e7a5, #cbdc90);
+  box-shadow: 0 5px 16px rgba(5, 24, 14, .18);
 }
 
-.tour-controls button:active {
-  transform: scale(.92);
+.map-menu a:active {
+  transform: scale(.96);
 }
 
 .rotate-prompt {
@@ -265,7 +264,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .phone-icon,
-  .tour-controls {
+  .map-menu {
     animation: none;
   }
 }
