@@ -43,8 +43,8 @@ export default function Home() {
 
     const widthScale = stage.clientWidth / map.naturalWidth;
     const heightScale = stage.clientHeight / map.naturalHeight;
-    return isLandscape ? Math.max(widthScale, heightScale) * 1.08 : widthScale;
-  }, [isLandscape]);
+    return Math.max(widthScale, heightScale) * 1.01;
+  }, []);
 
   const constrainView = useCallback((view: ViewTransform) => {
     const stage = stageRef.current;
