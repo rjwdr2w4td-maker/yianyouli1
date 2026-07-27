@@ -99,13 +99,13 @@ button {
   content: "";
   position: absolute;
   top: 50%;
-  left: -8px;
-  width: 10px;
-  height: 10px;
-  border: 2px solid rgba(255, 251, 202, .95);
+  left: -14px;
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 253, 218, 1);
   border-radius: 50%;
-  background: #e73922;
-  box-shadow: 0 0 0 0 rgba(231, 57, 34, .65), 0 0 9px rgba(255, 235, 128, .9);
+  background: #f02f1d;
+  box-shadow: 0 0 0 0 rgba(240, 47, 29, .78), 0 0 16px 4px rgba(255, 230, 91, .95);
   transform: translate(-50%, -50%);
   animation: hotspot-dot 1.6s ease-out infinite;
 }
@@ -423,15 +423,15 @@ button {
 @keyframes hotspot-dot {
   0% {
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(231, 57, 34, .72), 0 0 9px rgba(255, 235, 128, .9);
+    box-shadow: 0 0 0 0 rgba(240, 47, 29, .85), 0 0 16px 4px rgba(255, 230, 91, 1);
   }
   70% {
     opacity: .85;
-    box-shadow: 0 0 0 11px rgba(231, 57, 34, 0), 0 0 15px rgba(255, 235, 128, .95);
+    box-shadow: 0 0 0 18px rgba(240, 47, 29, 0), 0 0 24px 7px rgba(255, 230, 91, 1);
   }
   100% {
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(231, 57, 34, 0), 0 0 9px rgba(255, 235, 128, .9);
+    box-shadow: 0 0 0 0 rgba(240, 47, 29, 0), 0 0 16px 4px rgba(255, 230, 91, 1);
   }
 }
 
