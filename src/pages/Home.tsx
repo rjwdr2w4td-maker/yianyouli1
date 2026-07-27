@@ -216,7 +216,62 @@ const guideScene = (town: CharmTown, category: CharmGuideCategory, item: string)
   return `${categoryScenes[category]}, inspired by ${town.name} and ${item}, natural daylight, realistic, no text, no watermark`;
 };
 
-type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "投资建设";
+type TravelCategory = "景点" | "美食" | "住宿" | "购物";
+const travelCategories: TravelCategory[] = ["景点", "美食", "住宿", "购物"];
+const travelCatalog = {
+  "景点": [
+    { name: "永泉旅游度假区", area: "钟鸣镇", detail: "忆江南十二景、九宝温泉、铜钱市集与山林度假体验。" },
+    { name: "犁桥水镇", area: "西联镇", detail: "徽派古建、水巷夜游、非遗展演与水乡民俗体验。" },
+    { name: "凤凰山景区", area: "顺安镇", detail: "凤丹牡丹花海、相思树、滴水崖及山野休闲空间。" },
+    { name: "金牛洞古采矿遗址", area: "顺安镇", detail: "探访古代铜矿遗址，了解义安三千年采冶文明。" },
+    { name: "梧桐花谷", area: "钟鸣镇", detail: "四季花海、生态漂流、彩虹滑道与亲子户外体验。" },
+    { name: "龙潭肖古村落", area: "钟鸣镇", detail: "古宅、石桥、溪流与山村生活交织的传统村落。" },
+    { name: "江南铜谷旅游风景道", area: "顺安—钟鸣", detail: "串联铜文化遗址、古村和山林景观的自驾风景廊道。" },
+    { name: "金山淘金小镇", area: "钟鸣镇", detail: "淘金互动、露营草坪与山野休闲相结合的新场景。" },
+    { name: "印象河边", area: "天门镇", detail: "森林露营、户外烧烤、咖啡与农事体验的森野空间。" },
+    { name: "东湖湿地公园", area: "顺安镇", detail: "环湖步道、荷塘、观鸟平台和开阔草坪组成的城市湿地。" },
+  ],
+  "美食": [
+    { name: "永泉江南味道小吃街", area: "钟鸣镇", detail: "铜钱消费场景中集中品尝柴火饼、鱼丸和地方小吃。" },
+    { name: "犁桥水镇圆楼", area: "西联镇", detail: "太白雕胡饭、水乡土菜与非遗风味的集中体验地。" },
+    { name: "月明土菜馆", area: "义安区", detail: "主打地方家常菜、时令食材和义安乡土风味。" },
+    { name: "山里任家", area: "义安区", detail: "适合品尝柴火土鸡、河鲜和山野农家菜。" },
+    { name: "听泉居", area: "义安区", detail: "山水环境中的本地土菜和休闲用餐体验。" },
+    { name: "汀州小院", area: "义安区", detail: "乡村小院氛围，提供家常土菜和多人聚餐。" },
+    { name: "顺安老街早点", area: "顺安镇", detail: "大肠小刀面、鸡汤米面、太平烧饼和豆腐脑。" },
+    { name: "钟鸣杀猪汤", area: "钟鸣镇", detail: "鲜香浓郁的地方民俗菜，适合搭配乡土小炒。" },
+  ],
+  "住宿": [
+    { name: "永泉松云山居", area: "钟鸣镇", detail: "融入山林园景的度假住宿，适合康养与慢旅行。" },
+    { name: "永泉竹塰人家", area: "钟鸣镇", detail: "竹林环境中的主题住宿，可联动温泉与园林游览。" },
+    { name: "犁桥耕心堂", area: "西联镇", detail: "水镇古建氛围中的特色民宿，适合体验水乡夜色。" },
+    { name: "铜雀台金陵大酒店", area: "五松镇周边", detail: "综合服务设施较完整，适合商务和家庭出行。" },
+    { name: "临津悦豪国际大酒店", area: "顺安镇", detail: "靠近东部城区和主要交通节点的综合型住宿。" },
+    { name: "顺安镇区商务住宿", area: "顺安镇", detail: "餐饮交通便利，适合作为凤凰山及周边游览中转。" },
+    { name: "凤凰山乡村民宿", area: "顺安镇", detail: "靠近山野和村落，适合赏花季及自驾游客。" },
+  ],
+  "购物": [
+    { name: "犁桥水镇文创区", area: "西联镇", detail: "水镇冰箱贴、布包挂件、非遗手作和主题纪念品。" },
+    { name: "永泉小镇特产店", area: "钟鸣镇", detail: "白姜、凤丹、铜钱文创及义安地方风味产品。" },
+    { name: "义安特色农产品展销点", area: "义安区", detail: "集中选购白姜、凤丹、山芋粉丝和生态农产品。" },
+    { name: "顺安老街特产铺", area: "顺安镇", detail: "顺安酥糖、太平烧饼和传统糕点等地方手信。" },
+    { name: "凤凰山农特优市集", area: "顺安镇", detail: "花期及活动期间展售凤丹、白姜、非遗文创等好物。" },
+  ],
+} as const;
+
+const yianGoods = [
+  { name: "铜陵白姜", type: "全球农遗", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
+  { name: "顺安酥糖", type: "传统风味", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
+  { name: "凤丹系列", type: "农遗好物", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
+  { name: "铜拓本画", type: "非遗文创", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
+  { name: "铜艺文创", type: "铜都手作", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
+  { name: "太平烧饼", type: "地方糕点", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
+  { name: "顺安山芋粉丝", type: "乡村物产", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
+  { name: "西联故事礼盒", type: "水乡礼物", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
+] as const;
+
+const catalogScene = (category: TravelCategory, item: string) => `realistic premium travel photography for ${item} in Yian District Tongling Anhui China, ${category}, natural light, no text, no watermark`;
+type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "义安好物";
 const imageUrl = (prompt: string) => `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
 
 const tourPoints = [
@@ -259,6 +314,7 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState<MainSection>("智慧导览");
   const [selectedCharmTown, setSelectedCharmTown] = useState<CharmTown | null>(null);
   const [activeCharmCategory, setActiveCharmCategory] = useState<CharmGuideCategory>("美食");
+  const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("景点");
   const [isTownOpen, setIsTownOpen] = useState(false);
   const [activeTownCategory, setActiveTownCategory] = useState<TownCategory>("美食");
   const [activeTab, setActiveTab] = useState<DetailTab>("介绍");
@@ -632,9 +688,46 @@ export default function Home() {
           </section>
         )}
 
+        {activeSection === "商旅食宿" && (
+          <section className="catalog-view" onPointerDown={(event) => event.stopPropagation()}>
+            <header className="catalog-hero">
+              <span>TRAVEL & STAY</span>
+              <h1>商旅食宿，一站尽览</h1>
+              <p>汇集义安代表性景区、地方餐饮、品质住宿与购物点位，点击导航即可前往。</p>
+            </header>
+            <nav className="catalog-tabs" aria-label="商旅食宿分类">
+              {travelCategories.map((category) => <button type="button" key={category} className={activeTravelCategory === category ? "is-active" : ""} onClick={() => setActiveTravelCategory(category)}><strong>{category}</strong><small>{travelCatalog[category].length}处</small></button>)}
+            </nav>
+            <div className="catalog-grid">
+              {travelCatalog[activeTravelCategory].map((item, index) => (
+                <article className="catalog-card" key={item.name}>
+                  <img src={imageUrl(catalogScene(activeTravelCategory, item.name))} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" />
+                  <div><span>{item.area} · {activeTravelCategory}</span><h2>{item.name}</h2><p>{item.detail}</p><a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`铜陵义安区${item.name}`)}&callnative=1`} target="_blank" rel="noreferrer">地图导航</a></div>
+                </article>
+              ))}
+            </div>
+            <small className="catalog-note">营业时间、开放信息和服务内容可能调整，出行前请通过官方渠道或地图平台确认。</small>
+          </section>
+        )}
+
+        {activeSection === "义安好物" && (
+          <section className="goods-view" onPointerDown={(event) => event.stopPropagation()}>
+            <header className="goods-hero"><span>GIFTS FROM YI'AN</span><h1>义安好物</h1><p>把白姜的清脆、酥糖的香甜、凤丹的芬芳与千年铜韵带回家。</p></header>
+            <div className="goods-grid">
+              {yianGoods.map((item, index) => (
+                <article className="goods-card" key={item.name}>
+                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /><span>{String(index + 1).padStart(2, "0")}</span></div>
+                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><p>{item.detail}</p><a href={MEITUAN_MINI_PROGRAM}>查找购买</a></div>
+                </article>
+              ))}
+            </div>
+            <small className="catalog-note">产品图片为主题视觉展示，实际包装、规格和售价以正规销售渠道为准。</small>
+          </section>
+        )}
+
         {isReady && (
           <nav className="map-menu" aria-label="义安旅游服务" onPointerDown={(event) => event.stopPropagation()}>
-            {(["智慧导览", "魅力义安", "商旅食宿", "投资建设"] as MainSection[]).map((label) => (
+            {(["智慧导览", "魅力义安", "商旅食宿", "义安好物"] as MainSection[]).map((label) => (
               <button key={label} type="button" className={activeSection === label ? "is-active" : ""} onClick={() => setActiveSection(label)}>{label}</button>
             ))}
           </nav>
