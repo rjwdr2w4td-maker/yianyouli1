@@ -115,7 +115,8 @@ button {
 }
 
 .scenic-hotspot--shunan::before {
-  left: -8px;
+  top: 2px;
+  left: 50%;
   background: #e7a624;
   box-shadow: 0 0 0 0 rgba(231, 166, 36, .82), 0 0 18px 5px rgba(255, 239, 117, .98);
 }
