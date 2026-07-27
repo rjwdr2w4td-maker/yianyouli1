@@ -10,6 +10,7 @@ const scenicSpots = [
   {
     id: "liqiao",
     name: "犁桥水镇",
+    scene: "Liqiao Water Town in Tongling Anhui, elegant Jiangnan canal town, white walls and dark tiled roofs, stone bridge, warm lantern reflections at dusk, realistic premium travel photography, no text, no watermark",
     x: 0.381,
     y: 0.176,
     width: 132,
@@ -38,6 +39,7 @@ const scenicSpots = [
   {
     id: "yongquan",
     name: "永泉小镇",
+    scene: "Yongquan Town resort in Tongling Anhui, lush Jiangnan garden, traditional pavilions, stone paths, flowing stream and mountain valley, refined realistic travel photography, natural light, no text, no watermark",
     x: 0.654,
     y: 0.409,
     width: 132,
@@ -66,6 +68,7 @@ const scenicSpots = [
   {
     id: "fenghuangshan",
     name: "凤凰山景区",
+    scene: "Phoenix Mountain scenic area in Tongling Anhui, green forested mountains, rocky valley and blooming peony garden in spring, clear daylight, realistic Chinese landscape travel photography, no text, no watermark",
     x: 0.576,
     y: 0.778,
     width: 150,
@@ -96,6 +99,7 @@ const scenicSpots = [
 const shunanTown = {
   id: "shunan",
   name: "顺安镇",
+  scene: "Shunan ancient town in Tongling Anhui at sunrise, traditional Chinese old street, local breakfast shops and pastry stalls, distant green Phoenix Mountain with peony flowers, realistic premium travel photography, no text, no watermark",
   x: 0.493,
   y: 0.443,
   width: 120,
@@ -622,7 +626,6 @@ export default function Home() {
           src={isHighResolution ? highResolutionMapSrc : previewMapSrc}
           alt="铜陵市乡村旅游景区导览地图"
           draggable={false}
-          fetchPriority="high"
           decoding="async"
           onLoad={() => setIsReady(true)}
         />
@@ -820,6 +823,9 @@ export default function Home() {
                 </div>
                 <button type="button" onClick={() => setIsTownOpen(false)} aria-label="关闭顺安镇详情">×</button>
               </header>
+              <div className="spot-modal__image town-modal__image">
+                <img src={imageUrl(shunanTown.scene)} alt="顺安镇古镇风光" decoding="async" />
+              </div>
               <nav className="detail-tabs town-tabs" aria-label="顺安镇生活栏目">
                 {(Object.keys(shunanTown.categories) as TownCategory[]).map((category) => (
                   <button key={category} type="button" className={activeTownCategory === category ? "is-active" : ""} onClick={() => setActiveTownCategory(category)}>{category}</button>
@@ -862,6 +868,9 @@ export default function Home() {
                 </div>
                 <button type="button" onClick={() => setSelectedSpot(null)} aria-label="关闭景区详情">×</button>
               </header>
+              <div className="spot-modal__image">
+                <img src={imageUrl(selectedSpot.scene)} alt={`${selectedSpot.name}景区风光`} decoding="async" />
+              </div>
               <nav className="detail-tabs" aria-label="景区详情栏目">
                 {detailTabs.map((tab) => (
                   <button key={tab} type="button" className={activeTab === tab ? "is-active" : ""} onClick={() => setActiveTab(tab)}>{tab}</button>
