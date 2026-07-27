@@ -360,10 +360,7 @@ export default function Home() {
                 onPointerDown={(event) => event.stopPropagation()}
                 onClick={() => openSpot(spot)}
                 aria-label={`查看${spot.name}`}
-              >
-                <span className="hotspot-pulse" />
-                <strong>{spot.name}</strong>
-              </button>
+              />
             ))}
           </div>
         )}

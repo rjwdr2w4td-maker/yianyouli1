@@ -86,50 +86,47 @@ button {
 
 .scenic-hotspot {
   position: absolute;
-  display: grid;
-  width: 1px;
-  height: 1px;
+  width: 108px;
+  height: 42px;
   padding: 0;
-  place-items: center;
-  color: #fffce9;
-  border: 0;
-  background: none;
+  border: 2px solid rgba(255, 249, 187, .86);
+  border-radius: 12px;
+  background: rgba(255, 248, 180, .05);
+  box-shadow:
+    0 0 0 2px rgba(155, 31, 19, .22),
+    0 0 18px rgba(255, 234, 128, .38),
+    inset 0 0 10px rgba(255, 244, 170, .14);
   pointer-events: auto;
   transform: translate(-50%, -50%);
+  animation: hotspot-outline 2.2s ease-in-out infinite;
+}
+
+.scenic-hotspot::before,
+.scenic-hotspot::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-color: #fff5ad;
 }
 
 .scenic-hotspot::before {
-  content: "";
-  position: absolute;
-  width: 84px;
-  height: 62px;
+  top: -4px;
+  left: -4px;
+  border-top: 2px solid;
+  border-left: 2px solid;
 }
 
-.scenic-hotspot strong {
-  position: absolute;
-  bottom: 13px;
-  padding: 5px 9px;
-  color: #fffde9;
-  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
-  border: 1px solid rgba(255, 240, 175, .72);
-  border-radius: 999px;
-  background: rgba(137, 27, 17, .9);
-  box-shadow: 0 4px 14px rgba(72, 15, 8, .26);
+.scenic-hotspot::after {
+  right: -4px;
+  bottom: -4px;
+  border-right: 2px solid;
+  border-bottom: 2px solid;
 }
 
-.hotspot-pulse {
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  border: 3px solid #fff8c9;
-  border-radius: 50%;
-  background: #c72f1d;
-  box-shadow: 0 0 0 0 rgba(199, 47, 29, .55);
-  animation: hotspot-pulse 1.8s ease-out infinite;
+.scenic-hotspot:active {
+  background: rgba(255, 244, 150, .2);
+  transform: translate(-50%, -50%) scale(.94);
 }
 
 .map-loading {
@@ -438,9 +435,15 @@ button {
   to { transform: rotate(360deg); }
 }
 
-@keyframes hotspot-pulse {
-  70% { box-shadow: 0 0 0 13px rgba(199, 47, 29, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(199, 47, 29, 0); }
+@keyframes hotspot-outline {
+  0%, 100% {
+    border-color: rgba(255, 249, 187, .55);
+    box-shadow: 0 0 0 2px rgba(155, 31, 19, .18), 0 0 10px rgba(255, 234, 128, .18), inset 0 0 8px rgba(255, 244, 170, .08);
+  }
+  50% {
+    border-color: rgba(255, 252, 207, 1);
+    box-shadow: 0 0 0 3px rgba(155, 31, 19, .28), 0 0 24px rgba(255, 234, 128, .58), inset 0 0 12px rgba(255, 244, 170, .2);
+  }
 }
 
 @keyframes modal-in {
@@ -456,7 +459,7 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .phone-icon,
   .map-menu,
-  .hotspot-pulse,
+  .scenic-hotspot,
   .spot-modal {
     animation: none;
   }
