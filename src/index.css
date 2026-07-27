@@ -114,6 +114,29 @@ button {
   left: -4px;
 }
 
+.scenic-hotspot--shunan::before {
+  left: -8px;
+  background: #e7a624;
+  box-shadow: 0 0 0 0 rgba(231, 166, 36, .82), 0 0 18px 5px rgba(255, 239, 117, .98);
+}
+
+.town-hotspot::after {
+  content: "吃住游购";
+  position: absolute;
+  top: calc(50% + 20px);
+  left: 50%;
+  padding: 2px 7px;
+  color: #fff9d8;
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 9px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: rgba(109, 58, 21, .78);
+  box-shadow: 0 3px 8px rgba(67, 36, 16, .2);
+  transform: translateX(-50%);
+}
+
 .scenic-hotspot:active {
   transform: translate(-50%, -50%) scale(.96);
 }
@@ -291,6 +314,126 @@ button {
 
 .title-actions a:last-child {
   background: linear-gradient(135deg, #d4472d, #9c2b1c);
+}
+
+.town-modal {
+  background:
+    radial-gradient(circle at 88% 2%, rgba(220, 174, 66, .19), transparent 28%),
+    rgba(253, 251, 232, .98);
+}
+
+.town-modal header {
+  background:
+    linear-gradient(120deg, rgba(34, 80, 48, .96), rgba(67, 106, 63, .9)),
+    #315b3e;
+}
+
+.town-modal header > .spot-heading > span,
+.town-modal h2 {
+  color: #fff6ca;
+}
+
+.town-modal header > button {
+  color: #fff8d6;
+  background: rgba(255, 255, 255, .14);
+}
+
+.town-tabs {
+  padding-top: 13px;
+}
+
+.town-tabs button {
+  min-width: 68px;
+}
+
+.town-detail {
+  max-height: 46dvh;
+}
+
+.town-intro {
+  display: grid;
+  gap: 3px;
+  margin: 1px 0 15px;
+  padding: 13px 15px;
+  border-left: 3px solid #c59738;
+  border-radius: 0 12px 12px 0;
+  background: rgba(215, 192, 112, .13);
+}
+
+.town-intro strong {
+  color: #315b3e;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.town-intro span {
+  color: #8a7a59;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.town-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.town-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 31px minmax(0, 1fr);
+  gap: 9px;
+  min-height: 142px;
+  padding: 14px 12px;
+  overflow: hidden;
+  border: 1px solid rgba(49, 91, 62, .1);
+  border-radius: 16px;
+  background: rgba(255, 255, 247, .76);
+  box-shadow: 0 6px 18px rgba(34, 69, 44, .055);
+}
+
+.town-card::after {
+  content: "";
+  position: absolute;
+  right: -20px;
+  bottom: -25px;
+  width: 70px;
+  height: 70px;
+  border: 14px solid rgba(180, 145, 65, .06);
+  border-radius: 50%;
+}
+
+.town-card-number {
+  color: rgba(174, 130, 43, .62);
+  font-family: Georgia, serif;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.town-card small {
+  display: block;
+  color: #a1782c;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.town-card h3 {
+  margin: 3px 0 5px;
+  color: #254a32;
+  font-family: "Songti SC", "Noto Serif SC", serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.town-card p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #5c6c61;
+  font-size: 11px;
+  line-height: 1.7;
 }
 
 .spot-modal header > button {
@@ -703,6 +846,29 @@ button {
 @keyframes controls-in {
   from { opacity: 0; transform: translate(-50%, 10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (max-width: 520px) {
+  .town-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .town-card {
+    min-height: 0;
+  }
+
+  .town-modal h2 {
+    font-size: 21px;
+    letter-spacing: .03em;
+  }
+
+  .town-detail {
+    max-height: 50dvh;
+  }
+
+  .town-hotspot::after {
+    font-size: 10px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

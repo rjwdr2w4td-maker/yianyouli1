@@ -92,7 +92,43 @@ const scenicSpots = [
   },
 ] as const;
 
+const shunanTown = {
+  id: "shunan",
+  name: "顺安镇",
+  x: 0.508,
+  y: 0.285,
+  width: 120,
+  height: 48,
+  mapKeyword: "安徽铜陵义安区顺安镇",
+  categories: {
+    "美食": [
+      { name: "顺安酥糖", meta: "百年风味 · 芝麻桂花香", detail: "顺安代表性传统糕点，口感松柔酥润，适合作为老街随手小食，也便于购买礼盒带走。" },
+      { name: "大肠小刀面", meta: "老街早餐 · 卤香浓郁", detail: "手工面配卤制大肠，是顺安街头常见的热乎早餐，建议早晨到老街一带寻找本地面馆。" },
+      { name: "钟鸣杀猪汤", meta: "乡土土菜 · 鲜香暖胃", detail: "以猪杂、时蔬等烹制的地方风味，适合多人在周边农家菜馆搭配柴火土鸡、葛根圆子品尝。" },
+      { name: "白姜风味菜", meta: "铜陵名味 · 脆嫩微辛", detail: "糖醋白姜可作佐餐小菜，鲜姜也常用于炒肉等地方菜，是体验铜陵饮食风味的一道特色。" },
+    ],
+    "游玩": [
+      { name: "顺安老街", meta: "古镇烟火 · 早市慢游", detail: "适合从早餐开始感受老镇生活，沿街寻找传统糕点、小吃和日常商铺，建议安排约 1 小时。" },
+      { name: "凤凰山景区", meta: "牡丹花海 · 山林徒步", detail: "顺安镇域代表性景区，春季可赏牡丹，平日适合登山观景，并可联游附近凤凰村。" },
+      { name: "金牛洞古采矿遗址", meta: "千年铜矿 · 文化研学", detail: "了解铜陵古代采冶文明的重要点位，可观看古矿坑、采矿巷道及相关采冶遗存。" },
+      { name: "东湖湿地公园", meta: "亲水栈道 · 城市休闲", detail: "开放式滨水休闲空间，适合散步、亲子活动和傍晚观景，可与顺安镇区行程组合。" },
+    ],
+    "住宿": [
+      { name: "永泉小镇度假住宿", meta: "园林度假 · 温泉体验", detail: "适合希望安排两日游的游客，可将江南园林、温泉、餐饮和住宿组合体验。" },
+      { name: "顺安镇区商务住宿", meta: "交通便利 · 性价实用", detail: "镇区及义安城区住宿适合公交出行或短途停留，餐饮、购物等日常配套相对方便。" },
+      { name: "凤凰山周边乡村民宿", meta: "山野清静 · 亲近自然", detail: "适合赏花季、亲子或自驾游客，预订前建议确认停车、餐饮、入住时间及距景点距离。" },
+    ],
+    "特产": [
+      { name: "顺安酥糖", meta: "传统糕点 · 经典手信", detail: "以芝麻、糖、面粉等制成，酥而不散、甜香柔润，是顺安最具识别度的伴手礼之一。" },
+      { name: "铜陵白姜", meta: "地理标志 · 糖醋皆宜", detail: "肉质脆嫩、姜香鲜明，可选择糖醋姜、嫩姜礼盒等便携产品，购买时注意生产日期与储存方式。" },
+      { name: "凤丹产品", meta: "药用牡丹 · 地方物产", detail: "顺安凤凰山一带以凤丹闻名，可关注凤丹花茶及相关文创农产品，功效类宣传请理性辨别。" },
+      { name: "铜工艺文创", meta: "古铜都记忆 · 文化礼物", detail: "铜摆件、书签及城市主题文创体现铜陵地域文化，适合作为旅行纪念。" },
+    ],
+  },
+} as const;
+
 type ScenicSpot = (typeof scenicSpots)[number];
+type TownCategory = keyof typeof shunanTown.categories;
 type DetailTab = "介绍" | "服务" | "交通" | "演出节目单";
 const detailTabs: DetailTab[] = ["介绍", "服务", "交通", "演出节目单"];
 const MEITUAN_MINI_PROGRAM = "weixin://dl/business/?t=IYgDT21eme4SAJA";
@@ -134,6 +170,8 @@ export default function Home() {
   const [isHighResolution, setIsHighResolution] = useState(false);
   const [, setIsManual] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState<ScenicSpot | null>(null);
+  const [isTownOpen, setIsTownOpen] = useState(false);
+  const [activeTownCategory, setActiveTownCategory] = useState<TownCategory>("美食");
   const [activeTab, setActiveTab] = useState<DetailTab>("介绍");
 
   const getMinimumScale = useCallback(() => {
@@ -347,7 +385,15 @@ export default function Home() {
   const openSpot = (spot: ScenicSpot) => {
     takeOverAnimation();
     setSelectedSpot(spot);
+    setIsTownOpen(false);
     setActiveTab("介绍");
+  };
+
+  const openTown = () => {
+    takeOverAnimation();
+    setSelectedSpot(null);
+    setIsTownOpen(true);
+    setActiveTownCategory("美食");
   };
 
   const renderDetail = () => {
@@ -452,6 +498,19 @@ export default function Home() {
                 aria-label={`查看${spot.name}`}
               />
             ))}
+            <button
+              type="button"
+              className="scenic-hotspot scenic-hotspot--shunan town-hotspot"
+              style={{
+                left: `${shunanTown.x * 100}%`,
+                top: `${shunanTown.y * 100}%`,
+                width: shunanTown.width,
+                height: shunanTown.height,
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={openTown}
+              aria-label="查看顺安镇吃住游购"
+            />
           </div>
         )}
         {!isReady && (
@@ -474,6 +533,48 @@ export default function Home() {
               <a key={label} className={index === 0 ? "is-active" : ""} href={href}>{label}</a>
             ))}
           </nav>
+        )}
+
+        {isTownOpen && (
+          <div className="spot-modal-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setIsTownOpen(false)}>
+            <section className="spot-modal town-modal" role="dialog" aria-modal="true" aria-labelledby="town-title" onClick={(event) => event.stopPropagation()}>
+              <header>
+                <div className="spot-heading">
+                  <span>顺安镇 · 在地生活指南</span>
+                  <div className="title-row">
+                    <h2 id="town-title">吃住游购，一镇慢享</h2>
+                    <div className="title-actions">
+                      <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(shunanTown.mapKeyword)}&callnative=1`} target="_blank" rel="noreferrer" aria-label="导航到顺安镇">导航</a>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" onClick={() => setIsTownOpen(false)} aria-label="关闭顺安镇详情">×</button>
+              </header>
+              <nav className="detail-tabs town-tabs" aria-label="顺安镇生活栏目">
+                {(Object.keys(shunanTown.categories) as TownCategory[]).map((category) => (
+                  <button key={category} type="button" className={activeTownCategory === category ? "is-active" : ""} onClick={() => setActiveTownCategory(category)}>{category}</button>
+                ))}
+              </nav>
+              <div className="spot-detail town-detail">
+                <div className="town-intro">
+                  <strong>{activeTownCategory === "美食" ? "从老街早餐开始，尝一口顺安烟火" : activeTownCategory === "游玩" ? "古镇、铜矿与山水，一天串联顺安故事" : activeTownCategory === "住宿" ? "按行程选择镇区便利或山野度假" : "把酥糖、白姜和铜都记忆带回家"}</strong>
+                  <span>内容为旅行推荐，具体营业、开放和价格信息以商户及景区实时公示为准。</span>
+                </div>
+                <div className="town-card-grid">
+                  {shunanTown.categories[activeTownCategory].map((item, index) => (
+                    <article className="town-card" key={item.name}>
+                      <div className="town-card-number">{String(index + 1).padStart(2, "0")}</div>
+                      <div>
+                        <small>{item.meta}</small>
+                        <h3>{item.name}</h3>
+                        <p>{item.detail}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
         )}
 
         {selectedSpot && (
