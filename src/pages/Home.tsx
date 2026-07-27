@@ -133,6 +133,21 @@ type DetailTab = "介绍" | "服务" | "交通" | "演出节目单";
 const detailTabs: DetailTab[] = ["介绍", "服务", "交通", "演出节目单"];
 const MEITUAN_MINI_PROGRAM = "weixin://dl/business/?t=IYgDT21eme4SAJA";
 
+const charmTowns = [
+  { id: "wusong", name: "五松镇", subtitle: "滨江城韵 · 宜居五松", intro: "五松镇承载着义安城区的生活记忆，城市服务、滨水空间与老城烟火在这里交融。适合沿滨河公园散步，在街巷中感受义安城区从容而便利的日常。", highlights: ["滨河休闲", "城区烟火", "便捷生活"], scene: "aerial view of a refined riverside Chinese town, green waterfront park, modern low rise neighborhoods, morning mist, Anhui travel photography, realistic, no text" },
+  { id: "shunan-charm", name: "顺安镇", subtitle: "千年古镇 · 凤丹之乡", intro: "顺安是铜陵历史悠久的古镇之一，也是义安东部城区的重要节点。这里既有老街酥糖的烟火气，也有凤凰山牡丹、金牛洞古采矿遗址所串联的自然与青铜文化。", highlights: ["顺安老街", "凤凰山", "青铜文化"], scene: "historic Anhui market town street at sunrise, traditional Chinese shops, local pastry stalls, distant green mountains and peony flowers, realistic travel photography, no text" },
+  { id: "zhongming", name: "钟鸣镇", subtitle: "山谷秘境 · 度假钟鸣", intro: "钟鸣镇山林资源丰厚，是义安东部颇具吸引力的生态旅游目的地。永泉小镇的江南园林、温泉度假和特色餐饮，让这里适合安排一场慢节奏的周末旅行。", highlights: ["永泉小镇", "山林温泉", "江南园林"], scene: "lush Anhui mountain valley resort with traditional Jiangnan gardens, stone bridges, streams, hot spring atmosphere, cinematic realistic travel photography, no text" },
+  { id: "tianmen", name: "天门镇", subtitle: "山水田园 · 白姜故里", intro: "天门镇以生态山水、乡村田园和铜陵白姜等特色物产见长。山林、水库与村落共同构成清新的乡野图景，适合自驾、亲子和近郊休闲。", highlights: ["天门山水", "铜陵白姜", "乡村自驾"], scene: "Anhui countryside landscape, terraced vegetable fields with white ginger crops, reservoir and forested hills, bright natural daylight, realistic tourism photography, no text" },
+  { id: "donglian", name: "东联镇", subtitle: "江畔沃野 · 活力东联", intro: "东联镇位于沿江区域，产业活力与广阔圩田相互映衬。这里能看到平坦田野、乡村道路与江畔生产生活共同组成的现代乡镇风貌。", highlights: ["沿江风光", "现代农业", "产业活力"], scene: "vast riverside farmland in Anhui China, geometric green fields, country roads, distant modern industrial skyline, golden hour, realistic aerial photography, no text" },
+  { id: "xilian", name: "西联镇", subtitle: "艺术水乡 · 梦里西联", intro: "西联镇拥有丰沛水系与典型圩区田园风光，犁桥水镇让徽派建筑、民俗体验和水乡夜游成为当地鲜明名片。适合傍晚抵达，慢赏水岸灯影。", highlights: ["犁桥水镇", "圩区田园", "水乡夜游"], scene: "dreamy Anhui water town at blue hour, Huizhou architecture, canals, stone bridges, warm lantern reflections, realistic premium travel photography, no text" },
+  { id: "xuba", name: "胥坝乡", subtitle: "江心绿洲 · 洲岛人家", intro: "胥坝乡隔江相望，洲岛、堤岸、田园和村庄形成独特的江心乡野景观。这里节奏舒缓，适合感受长江生态、骑行堤岸与原生乡村生活。", highlights: ["江心洲岛", "堤岸骑行", "生态田园"], scene: "Yangtze river island countryside in Anhui, green embankments, village houses, bicycles on riverside path, expansive river, realistic travel photography, no text" },
+  { id: "laozhou", name: "老洲乡", subtitle: "长江湿地 · 生态老洲", intro: "老洲乡依长江而生，洲滩湿地、农田水网与候鸟生态构成开阔自然画卷。这里适合观江、亲近湿地，并体验安静质朴的沿江乡村。", highlights: ["太阳岛", "湿地观鸟", "沿江乡村"], scene: "peaceful Yangtze wetland island in Anhui, reeds, migratory birds, river sunset, rural fields and small village, realistic nature travel photography, no text" },
+] as const;
+
+type CharmTown = (typeof charmTowns)[number];
+type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "投资建设";
+const imageUrl = (prompt: string) => `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
+
 const tourPoints = [
   { x: 0.27, y: 0.24, zoom: 1.9, offset: 0 },
   { x: 0.55, y: 0.28, zoom: 2.05, offset: 0.2 },
@@ -170,6 +185,8 @@ export default function Home() {
   const [isHighResolution, setIsHighResolution] = useState(false);
   const [, setIsManual] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState<ScenicSpot | null>(null);
+  const [activeSection, setActiveSection] = useState<MainSection>("智慧导览");
+  const [selectedCharmTown, setSelectedCharmTown] = useState<CharmTown | null>(null);
   const [isTownOpen, setIsTownOpen] = useState(false);
   const [activeTownCategory, setActiveTownCategory] = useState<TownCategory>("美食");
   const [activeTab, setActiveTab] = useState<DetailTab>("介绍");
@@ -522,17 +539,53 @@ export default function Home() {
         <div className="vignette" aria-hidden="true" />
         <div className="film-grain" aria-hidden="true" />
 
+        {activeSection === "魅力义安" && (
+          <section className="charm-view" onPointerDown={(event) => event.stopPropagation()}>
+            <div className="charm-view__wash" aria-hidden="true" />
+            <header className="charm-hero">
+              <span>CHARMING YI'AN</span>
+              <h1>一镇一韵，遇见义安</h1>
+              <p>从长江洲岛到山谷园林，从千年古镇到水乡田园，选择一座乡镇，开启属于它的地方故事。</p>
+            </header>
+            <div className="charm-grid">
+              {charmTowns.map((town, index) => (
+                <button type="button" className="charm-card" key={town.id} onClick={() => setSelectedCharmTown(town)} style={{ animationDelay: `${index * 55}ms` }}>
+                  <img src={imageUrl(town.scene)} alt={`${town.name}风光`} loading={index > 2 ? "lazy" : "eager"} decoding="async" />
+                  <span className="charm-card__shade" />
+                  <span className="charm-card__index">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="charm-card__copy"><small>{town.subtitle}</small><strong>{town.name}</strong><em>走进乡镇</em></span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         {isReady && (
           <nav className="map-menu" aria-label="义安旅游服务" onPointerDown={(event) => event.stopPropagation()}>
-            {[
-              ["智慧导览", "#guide"],
-              ["魅力义安", "#yian"],
-              ["商旅食宿", "#travel"],
-              ["投资建设", "#invest"],
-            ].map(([label, href], index) => (
-              <a key={label} className={index === 0 ? "is-active" : ""} href={href}>{label}</a>
+            {(["智慧导览", "魅力义安", "商旅食宿", "投资建设"] as MainSection[]).map((label) => (
+              <button key={label} type="button" className={activeSection === label ? "is-active" : ""} onClick={() => setActiveSection(label)}>{label}</button>
             ))}
           </nav>
+        )}
+
+        {selectedCharmTown && (
+          <div className="spot-modal-backdrop charm-modal-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setSelectedCharmTown(null)}>
+            <section className="spot-modal charm-modal" role="dialog" aria-modal="true" aria-labelledby="charm-town-title" onClick={(event) => event.stopPropagation()}>
+              <div className="charm-modal__image">
+                <img src={imageUrl(selectedCharmTown.scene)} alt={`${selectedCharmTown.name}风光`} />
+                <span />
+                <button type="button" onClick={() => setSelectedCharmTown(null)} aria-label="关闭乡镇介绍">×</button>
+                <div><small>{selectedCharmTown.subtitle}</small><h2 id="charm-town-title">{selectedCharmTown.name}</h2></div>
+              </div>
+              <div className="charm-modal__body">
+                <span className="charm-modal__eyebrow">魅力义安 · 乡镇印象</span>
+                <p>{selectedCharmTown.intro}</p>
+                <div className="charm-highlights">{selectedCharmTown.highlights.map((item) => <span key={item}>{item}</span>)}</div>
+                <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`安徽铜陵义安区${selectedCharmTown.name}`)}&callnative=1`} target="_blank" rel="noreferrer">在地图中查看 {selectedCharmTown.name}</a>
+                <small className="detail-disclaimer">图像为乡镇主题视觉展示，具体景观和开放信息以当地实际情况为准。</small>
+              </div>
+            </section>
+          </div>
         )}
 
         {isTownOpen && (
