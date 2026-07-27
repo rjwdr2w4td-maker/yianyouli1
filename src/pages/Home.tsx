@@ -11,6 +11,8 @@ const scenicSpots = [
     name: "犁桥水镇",
     x: 0.381,
     y: 0.176,
+    width: 132,
+    height: 48,
     intro: "犁桥水镇以江南水乡风貌、古建街巷和夜游体验为特色，适合亲子休闲、民俗体验与夜景游览。",
     services: ["游客咨询", "餐饮休憩", "亲子游览", "夜游服务"],
     traffic: "位于铜陵市义安区西联镇犁桥村，建议自驾或乘坐网约车前往，节假日请关注临时交通管制。",
@@ -23,6 +25,8 @@ const scenicSpots = [
     name: "永泉小镇",
     x: 0.654,
     y: 0.409,
+    width: 132,
+    height: 48,
     intro: "永泉小镇融合江南园林、山水度假、美食体验与温泉休闲，是义安区具有代表性的综合度假目的地。",
     services: ["游客中心", "餐饮住宿", "温泉度假", "停车服务"],
     traffic: "位于铜陵市义安区钟鸣镇，靠近高速及城市主干道，自驾导航至永泉小镇游客中心更便捷。",
@@ -35,6 +39,8 @@ const scenicSpots = [
     name: "凤凰山景区",
     x: 0.576,
     y: 0.778,
+    width: 150,
+    height: 50,
     intro: "凤凰山景区以自然山水、牡丹文化和乡野景观著称，适合登山观景、春季赏花与生态休闲。",
     services: ["旅游咨询", "登山游览", "停车服务", "休息补给"],
     traffic: "位于铜陵市义安区顺安镇凤凰山一带，山地道路较多，建议提前查看天气并按导航路线前往。",
@@ -356,7 +362,12 @@ export default function Home() {
                 key={spot.id}
                 type="button"
                 className="scenic-hotspot"
-                style={{ left: `${spot.x * 100}%`, top: `${spot.y * 100}%` }}
+                style={{
+                  left: `${spot.x * 100}%`,
+                  top: `${spot.y * 100}%`,
+                  width: spot.width,
+                  height: spot.height,
+                }}
                 onPointerDown={(event) => event.stopPropagation()}
                 onClick={() => openSpot(spot)}
                 aria-label={`查看${spot.name}`}
