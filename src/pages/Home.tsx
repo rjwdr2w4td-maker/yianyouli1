@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Compass, Heart, Home as HomeIcon, Map as MapIcon, ShoppingBag, Store, UserRound } from "lucide-react";
 
 const TOUR_DURATION = 42000;
 const MAX_ZOOM = 4;
@@ -260,15 +261,17 @@ const travelCatalog = {
 } as const;
 
 const yianGoods = [
-  { name: "铜陵白姜", type: "全球农遗", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
-  { name: "顺安酥糖", type: "传统风味", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
-  { name: "凤丹系列", type: "农遗好物", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
-  { name: "铜拓本画", type: "非遗文创", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
-  { name: "铜艺文创", type: "铜都手作", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
-  { name: "太平烧饼", type: "地方糕点", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
-  { name: "顺安山芋粉丝", type: "乡村物产", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
-  { name: "西联故事礼盒", type: "水乡礼物", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
+  { name: "铜陵白姜", type: "全球农遗", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", specification: "嫩姜礼盒 / 糖醋姜 / 姜膏", service: "支持产地直发，具体规格与配送范围以购买页为准。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
+  { name: "顺安酥糖", type: "传统风味", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", specification: "经典袋装 / 节庆礼盒", service: "建议密封避光保存，过敏原等信息请查看商品包装。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
+  { name: "凤丹系列", type: "农遗好物", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", specification: "牡丹籽油 / 凤丹花茶 / 护肤礼盒", service: "不同品类适用方式不同，下单前请核对产品说明。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
+  { name: "铜拓本画", type: "非遗文创", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", specification: "装裱画 / 手作体验套装", service: "手工产品纹理略有差异，装裱尺寸以商品详情为准。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
+  { name: "铜艺文创", type: "铜都手作", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", specification: "铜书签 / 桌面摆件 / 茶器", service: "铜器会随使用形成自然氧化色泽，请按说明进行养护。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
+  { name: "太平烧饼", type: "地方糕点", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", specification: "现烤散装 / 便携礼袋", service: "糕点建议尽快食用，保质期和储存方式以包装为准。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
+  { name: "顺安山芋粉丝", type: "乡村物产", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", specification: "家庭装 / 农产礼盒", service: "干燥阴凉处保存，烹饪前可根据口感需求浸泡。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
+  { name: "西联故事礼盒", type: "水乡礼物", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", specification: "文创组合 / 节庆定制礼盒", service: "礼盒内容会随季节调整，实际组合以购买页面为准。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
 ] as const;
+
+type YianGood = (typeof yianGoods)[number];
 
 const catalogScene = (category: TravelCategory, item: string) => `realistic premium travel photography for ${item} in Yian District Tongling Anhui China, ${category}, natural light, no text, no watermark`;
 type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "义安好物";
@@ -315,6 +318,8 @@ export default function Home() {
   const [selectedCharmTown, setSelectedCharmTown] = useState<CharmTown | null>(null);
   const [activeCharmCategory, setActiveCharmCategory] = useState<CharmGuideCategory>("美食");
   const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("景点");
+  const [selectedGood, setSelectedGood] = useState<YianGood | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isTownOpen, setIsTownOpen] = useState(false);
   const [activeTownCategory, setActiveTownCategory] = useState<TownCategory>("美食");
   const [activeTab, setActiveTab] = useState<DetailTab>("介绍");
@@ -714,9 +719,9 @@ export default function Home() {
             <header className="goods-hero"><span>GIFTS FROM YI'AN</span><h1>义安好物</h1><p>把白姜的清脆、酥糖的香甜、凤丹的芬芳与千年铜韵带回家。</p></header>
             <div className="goods-grid">
               {yianGoods.map((item, index) => (
-                <article className="goods-card" key={item.name}>
+                <article className="goods-card" key={item.name} onClick={() => setSelectedGood(item)}>
                   <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /></div>
-                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><p>{item.detail}</p><a href={MEITUAN_MINI_PROGRAM}>查找购买</a></div>
+                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><p>{item.detail}</p><button type="button" onClick={(event) => { event.stopPropagation(); setSelectedGood(item); }}>去购买</button></div>
                 </article>
               ))}
             </div>
@@ -726,10 +731,41 @@ export default function Home() {
 
         {isReady && (
           <nav className="map-menu" aria-label="义安旅游服务" onPointerDown={(event) => event.stopPropagation()}>
-            {(["智慧导览", "魅力义安", "商旅食宿", "义安好物"] as MainSection[]).map((label) => (
-              <button key={label} type="button" className={activeSection === label ? "is-active" : ""} onClick={() => setActiveSection(label)}>{label}</button>
-            ))}
+            <button type="button" className={activeSection === "智慧导览" ? "is-active" : ""} onClick={() => setActiveSection("智慧导览")}><MapIcon aria-hidden="true" /><span>导览</span></button>
+            <button type="button" className={activeSection === "魅力义安" ? "is-active" : ""} onClick={() => setActiveSection("魅力义安")}><Compass aria-hidden="true" /><span>魅力义安</span></button>
+            <button type="button" className={activeSection === "商旅食宿" ? "is-active" : ""} onClick={() => setActiveSection("商旅食宿")}><Store aria-hidden="true" /><span>商旅食宿</span></button>
+            <button type="button" className={activeSection === "义安好物" ? "is-active" : ""} onClick={() => setActiveSection("义安好物")}><ShoppingBag aria-hidden="true" /><span>义安好物</span></button>
+            <button type="button" className={isProfileOpen ? "is-active" : ""} onClick={() => setIsProfileOpen(true)}><UserRound aria-hidden="true" /><span>我的</span></button>
           </nav>
+        )}
+
+        {selectedGood && (
+          <div className="spot-modal-backdrop goods-modal-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setSelectedGood(null)}>
+            <section className="goods-detail-modal" role="dialog" aria-modal="true" aria-labelledby="goods-detail-title" onClick={(event) => event.stopPropagation()}>
+              <button className="goods-detail-modal__close" type="button" onClick={() => setSelectedGood(null)} aria-label="关闭好物详情">×</button>
+              <img src={imageUrl(`${selectedGood.scene}, realistic, natural light, no text, no watermark`)} alt={selectedGood.name} />
+              <div className="goods-detail-modal__body">
+                <small>{selectedGood.type} · 义安甄选</small>
+                <h2 id="goods-detail-title">{selectedGood.name}</h2>
+                <p>{selectedGood.detail}</p>
+                <dl><div><dt>可选规格</dt><dd>{selectedGood.specification}</dd></div><div><dt>购买说明</dt><dd>{selectedGood.service}</dd></div></dl>
+                <div className="goods-detail-modal__actions"><button type="button"><Heart aria-hidden="true" />收藏好物</button><a href={MEITUAN_MINI_PROGRAM}><ShoppingBag aria-hidden="true" />立即购买</a></div>
+                <small className="detail-disclaimer">点击“立即购买”将跳转第三方平台，实际商品、价格及售后服务以购买页面为准。</small>
+              </div>
+            </section>
+          </div>
+        )}
+
+        {isProfileOpen && (
+          <div className="spot-modal-backdrop profile-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setIsProfileOpen(false)}>
+            <section className="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title" onClick={(event) => event.stopPropagation()}>
+              <button className="profile-modal__close" type="button" onClick={() => setIsProfileOpen(false)} aria-label="关闭个人中心">×</button>
+              <header><span><UserRound aria-hidden="true" /></span><div><small>个人中心</small><h2 id="profile-title">游客，欢迎来到义安</h2><p>登录后可同步收藏、订单与游览足迹</p></div></header>
+              <div className="profile-stats"><button type="button"><Heart /><strong>我的收藏</strong><small>保存心仪地点</small></button><button type="button"><ShoppingBag /><strong>购买订单</strong><small>查看好物订单</small></button><button type="button"><HomeIcon /><strong>游览足迹</strong><small>记录义安旅程</small></button></div>
+              <a className="profile-login" href={MEITUAN_MINI_PROGRAM}>微信授权登录</a>
+              <small className="detail-disclaimer">当前为导览展示入口，账户及订单数据将在接入正式用户服务后同步。</small>
+            </section>
+          </div>
         )}
 
         {selectedCharmTown && (

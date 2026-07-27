@@ -194,48 +194,66 @@ button {
   position: absolute;
   z-index: 5;
   left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
+  bottom: max(10px, env(safe-area-inset-bottom));
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  width: min(92vw, 560px);
-  padding: 5px;
-  background: rgba(19, 45, 31, .76);
-  border: 1px solid rgba(255, 255, 255, .2);
-  border-radius: 14px;
-  box-shadow: 0 12px 36px rgba(10, 30, 20, .24);
-  backdrop-filter: blur(14px) saturate(1.1);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  width: min(94vw, 600px);
+  padding: 7px 8px;
+  background: rgba(255, 253, 241, .91);
+  border: 1px solid rgba(83, 98, 67, .15);
+  border-radius: 22px;
+  box-shadow: 0 16px 42px rgba(15, 39, 25, .22), inset 0 1px rgba(255,255,255,.8);
+  backdrop-filter: blur(18px) saturate(1.18);
   transform: translateX(-50%);
   animation: controls-in 700ms .5s both;
 }
 
-.map-menu a,
 .map-menu button {
   position: relative;
+  display: flex;
   min-width: 0;
-  padding: 11px 4px 10px;
-  color: rgba(255, 255, 255, .76);
+  height: 52px;
+  padding: 6px 2px 4px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 3px;
+  color: #718075;
   font-family: "PingFang SC", "Noto Sans SC", sans-serif;
-  font-size: clamp(11px, 2.8vw, 14px);
-  letter-spacing: .04em;
+  font-size: clamp(9px, 2.5vw, 11px);
+  letter-spacing: .02em;
   text-align: center;
-  text-decoration: none;
   border: 0;
-  border-radius: 10px;
+  border-radius: 16px;
   background: transparent;
   white-space: nowrap;
 }
 
-.map-menu a.is-active,
-.map-menu button.is-active {
-  color: #203c2a;
-  font-weight: 600;
-  background: linear-gradient(135deg, #f4e7a5, #cbdc90);
-  box-shadow: 0 5px 16px rgba(5, 24, 14, .18);
+.map-menu button svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
 }
 
-.map-menu a:active,
+.map-menu button.is-active {
+  color: #f7edc8;
+  font-weight: 600;
+  background: linear-gradient(145deg, #315e42, #214631);
+  box-shadow: 0 7px 18px rgba(34, 74, 49, .25);
+}
+
+.map-menu button.is-active::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 18px;
+  height: 3px;
+  border-radius: 99px;
+  background: #d8b55a;
+}
+
 .map-menu button:active {
-  transform: scale(.96);
+  transform: scale(.94);
 }
 
 .charm-view {
@@ -576,14 +594,60 @@ button {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 11px;
 }
-.goods-card { overflow: hidden; border: 1px solid rgba(106,74,42,.12); border-radius: 22px 5px 5px; background: rgba(255,250,237,.87); box-shadow: 0 15px 35px rgba(98,63,29,.09); }
+.goods-card { overflow: hidden; cursor: pointer; border: 1px solid rgba(106,74,42,.12); border-radius: 22px 5px 5px; background: rgba(255,250,237,.87); box-shadow: 0 15px 35px rgba(98,63,29,.09); transition: transform .2s ease, box-shadow .2s ease; }
+.goods-card:active { transform: scale(.98); }
 .goods-card__image { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
 .goods-card__image img { width: 100%; height: 100%; object-fit: cover; }
 .goods-card__body { padding: 14px 14px 16px; }
 .goods-card__body small { color: #ad7138; font-size: 9px; letter-spacing: .12em; }
 .goods-card__body h2 { margin: 5px 0 6px; color: #573c27; font-size: 20px; font-weight: 600; }
 .goods-card__body p { min-height: 56px; margin: 0 0 12px; color: #796858; font-family: "PingFang SC", sans-serif; font-size: 10px; line-height: 1.7; }
-.goods-card__body a { display: inline-flex; padding: 7px 12px; color: #fff7e4; font-family: "PingFang SC", sans-serif; font-size: 10px; text-decoration: none; border-radius: 999px; background: #9b5c32; }
+.goods-card__body button { display: inline-flex; padding: 7px 15px; color: #fff7e4; font-family: "PingFang SC", sans-serif; font-size: 10px; border: 0; border-radius: 999px; background: #9b5c32; }
+
+.goods-detail-modal,
+.profile-modal {
+  position: relative;
+  width: min(470px, 100%);
+  max-height: min(86dvh, 720px);
+  overflow-y: auto;
+  color: #563b28;
+  border: 1px solid rgba(115, 77, 40, .14);
+  border-radius: 28px 8px 8px;
+  background: #fffaf0;
+  box-shadow: 0 28px 70px rgba(36, 24, 12, .3);
+}
+
+.goods-detail-modal > img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.goods-detail-modal__close,
+.profile-modal__close { position: absolute; z-index: 2; top: 13px; right: 13px; display: grid; width: 38px; height: 38px; place-items: center; color: #4e4c3d; font-size: 25px; border: 0; border-radius: 50%; background: rgba(255,252,240,.9); box-shadow: 0 4px 14px rgba(0,0,0,.1); }
+.goods-detail-modal__body { padding: 21px; }
+.goods-detail-modal__body > small { color: #a56832; font-size: 10px; letter-spacing: .13em; }
+.goods-detail-modal__body h2 { margin: 5px 0 8px; font-size: 29px; font-weight: 600; }
+.goods-detail-modal__body > p { color: #756455; font-family: "PingFang SC", sans-serif; font-size: 13px; line-height: 1.8; }
+.goods-detail-modal dl { margin: 17px 0; border-top: 1px solid #eadfca; }
+.goods-detail-modal dl div { display: grid; grid-template-columns: 76px 1fr; padding: 12px 0; border-bottom: 1px solid #eadfca; }
+.goods-detail-modal dt { color: #9c6a37; font-size: 11px; }
+.goods-detail-modal dd { margin: 0; color: #665a4d; font-family: "PingFang SC", sans-serif; font-size: 11px; line-height: 1.65; }
+.goods-detail-modal__actions { display: grid; grid-template-columns: .8fr 1.2fr; gap: 9px; margin-bottom: 14px; }
+.goods-detail-modal__actions button,
+.goods-detail-modal__actions a { display: flex; height: 46px; align-items: center; justify-content: center; gap: 6px; font-family: "PingFang SC", sans-serif; font-size: 12px; text-decoration: none; border-radius: 99px; }
+.goods-detail-modal__actions button { color: #81552e; border: 1px solid #d8b681; background: #fff8e9; }
+.goods-detail-modal__actions a { color: #fff8e5; background: linear-gradient(135deg, #a86634, #82431e); box-shadow: 0 8px 20px rgba(130,67,30,.22); }
+.goods-detail-modal__actions svg { width: 16px; }
+
+.profile-modal { padding: 27px 20px 20px; background: linear-gradient(145deg, #fbf4df, #eef2dc); }
+.profile-modal header { display: flex; align-items: center; gap: 13px; padding: 9px 2px 22px; }
+.profile-modal header > span { display: grid; width: 58px; height: 58px; place-items: center; color: #f4e5b2; border-radius: 20px 7px 7px; background: #315c40; }
+.profile-modal header svg { width: 28px; height: 28px; }
+.profile-modal header small { color: #a27532; font-size: 10px; letter-spacing: .12em; }
+.profile-modal header h2 { margin: 3px 0; color: #294a35; font-size: 20px; font-weight: 600; }
+.profile-modal header p { margin: 0; color: #758076; font-family: "PingFang SC", sans-serif; font-size: 10px; }
+.profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.profile-stats button { display: flex; min-width: 0; padding: 14px 5px; align-items: center; flex-direction: column; gap: 5px; color: #3d5d47; border: 1px solid rgba(62,92,69,.1); border-radius: 15px; background: rgba(255,255,245,.72); }
+.profile-stats svg { width: 20px; height: 20px; color: #a67836; }
+.profile-stats strong { font-size: 11px; }
+.profile-stats small { color: #8a958c; font-size: 8px; }
+.profile-login { display: flex; height: 46px; margin: 17px 0 12px; align-items: center; justify-content: center; color: #fff6cf; font-family: "PingFang SC", sans-serif; font-size: 12px; text-decoration: none; border-radius: 99px; background: #315c40; }
 
 .spot-modal-backdrop {
   position: absolute;
