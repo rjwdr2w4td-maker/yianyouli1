@@ -95,8 +95,8 @@ const scenicSpots = [
 const shunanTown = {
   id: "shunan",
   name: "顺安镇",
-  x: 0.508,
-  y: 0.285,
+  x: 0.493,
+  y: 0.443,
   width: 120,
   height: 48,
   mapKeyword: "安徽铜陵义安区顺安镇",
