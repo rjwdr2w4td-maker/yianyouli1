@@ -23,6 +23,16 @@ const scenicSpots = [
     shows: ["16:00—16:30｜水乡迎宾互动（参考时段）", "18:30—19:00｜民俗巡游与街区互动（参考时段）", "19:30—20:10｜水岸光影夜游（参考时段）", "提示：演出受天气、季节及活动安排影响，以景区当天节目单为准"],
     mapKeyword: "安徽铜陵犁桥水镇游客中心",
     ticket: "水镇公共游览区域的开放政策，以及游船、体验项目、节庆活动等收费标准可能不同。儿童、老人等优惠政策需以现场公示为准，建议出发前通过景区官方账号核验当日开放时间、预约要求与票务信息。",
+    facilities: [
+      { type: "parking", label: "游客停车场", note: "主入口外侧", x: 16, y: 74 },
+      { type: "service", label: "游客服务台", note: "主入口内侧", x: 32, y: 55 },
+      { type: "toilet", label: "公共卫生间", note: "水镇中街附近", x: 67, y: 39 },
+      { type: "toilet", label: "公共卫生间", note: "夜游街区附近", x: 80, y: 67 },
+    ],
+    transitRoutes: [
+      { from: "铜陵站", steps: ["20路", "山水人家站换乘", "35路", "明塘村站", "步行约 300 米"] },
+      { from: "铜陵北站", steps: ["39路", "陵江大道口站换乘", "34路", "斗门村站换乘 35 路", "明塘村站"] },
+    ],
   },
   {
     id: "yongquan",
@@ -41,6 +51,16 @@ const scenicSpots = [
     shows: ["10:30—11:00｜江南街景互动（参考时段）", "15:30—16:00｜民俗技艺展示（参考时段）", "19:00—19:40｜夜间沉浸式游园（参考时段）", "提示：工作日、周末及节假日节目安排可能不同，以景区电子屏和当日公告为准"],
     mapKeyword: "安徽铜陵永泉小镇游客中心",
     ticket: "园林游览、温泉、住宿及餐饮通常为不同产品，价格随日期、房型和套餐内容变化。部分产品可能需要提前预约，儿童及长者优惠以购票页面规则为准。请优先通过景区官方渠道查询并购买，避免购买来源不明的票券。",
+    facilities: [
+      { type: "parking", label: "西门停车场", note: "自驾推荐", x: 13, y: 68 },
+      { type: "service", label: "游客服务中心", note: "小镇入口", x: 30, y: 53 },
+      { type: "toilet", label: "公共卫生间", note: "江南味道街区", x: 57, y: 66 },
+      { type: "toilet", label: "公共卫生间", note: "忆江南入口", x: 75, y: 31 },
+    ],
+    transitRoutes: [
+      { from: "铜陵站", steps: ["前往市区公交站", "22路或28路方向", "顺安镇站换乘", "24路", "永泉小镇附近下车"] },
+      { from: "铜陵北站", steps: ["28路", "顺安镇站换乘", "24路", "永泉小镇附近下车", "步行抵达游客中心"] },
+    ],
   },
   {
     id: "fenghuangshan",
@@ -59,12 +79,23 @@ const scenicSpots = [
     shows: ["09:30—10:00｜牡丹文化讲解（花期参考）", "14:00—14:30｜地方文化互动活动（节庆参考）", "全天｜生态科普与登山打卡活动（视活动安排开放）", "提示：凤凰山以自然游览为主，节目多在花期和节庆期间安排，以景区当天公告为准"],
     mapKeyword: "安徽铜陵凤凰山景区",
     ticket: "常规开放、花期活动及特色体验项目可能执行不同票务政策。花期和节假日可能实行预约、客流管控或临时交通安排。出发前请通过当地文旅或景区官方信息渠道确认开放状态、门票政策和天气情况。",
+    facilities: [
+      { type: "parking", label: "景区停车场", note: "山门入口", x: 14, y: 76 },
+      { type: "service", label: "游客服务台", note: "入口广场", x: 29, y: 61 },
+      { type: "toilet", label: "公共卫生间", note: "入口游览区", x: 42, y: 70 },
+      { type: "toilet", label: "公共卫生间", note: "牡丹园附近", x: 70, y: 39 },
+    ],
+    transitRoutes: [
+      { from: "铜陵站", steps: ["2路", "绿云山庄站换乘", "8路", "凤凰山景区终点站"] },
+      { from: "铜陵北站", steps: ["68路快线", "绿云山庄站换乘", "8路", "凤凰山景区终点站"] },
+    ],
   },
 ] as const;
 
 type ScenicSpot = (typeof scenicSpots)[number];
-type DetailTab = "介绍" | "服务" | "交通" | "演出节目单" | "导航" | "购票";
-const detailTabs: DetailTab[] = ["介绍", "服务", "交通", "演出节目单", "导航", "购票"];
+type DetailTab = "介绍" | "服务" | "交通" | "演出节目单";
+const detailTabs: DetailTab[] = ["介绍", "服务", "交通", "演出节目单"];
+const MEITUAN_MINI_PROGRAM = "weixin://dl/business/?t=IYgDT21eme4SAJA";
 
 const tourPoints = [
   { x: 0.27, y: 0.24, zoom: 1.9, offset: 0 },
@@ -335,23 +366,46 @@ export default function Home() {
         </div>
       );
     }
-    if (activeTab === "服务") return <ul className="detail-list">{selectedSpot.services.map((item: string) => <li key={item}>{item}</li>)}</ul>;
-    if (activeTab === "交通") return <div className="text-detail"><p>{selectedSpot.traffic}</p><small className="detail-disclaimer">建议出发前使用地图应用查看实时路况与公共交通信息。</small></div>;
-    if (activeTab === "演出节目单") return <ul className="show-list">{selectedSpot.shows.map((item: string) => <li key={item}>{item}</li>)}</ul>;
-    if (activeTab === "导航") {
+    if (activeTab === "服务") {
       return (
-        <div className="action-panel">
-          <p>点击下方按钮，在地图应用中打开“{selectedSpot.name}”点位。</p>
-          <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(selectedSpot.mapKeyword)}&callnative=1`} target="_blank" rel="noreferrer">打开地图导航</a>
+        <div className="service-detail">
+          <div className="facility-map" aria-label={`${selectedSpot.name}服务设施示意图`}>
+            <span className="facility-road road-a" />
+            <span className="facility-road road-b" />
+            <strong>{selectedSpot.name} · 设施示意</strong>
+            {selectedSpot.facilities.map((facility, index) => (
+              <button
+                key={`${facility.label}-${index}`}
+                type="button"
+                className={`facility-pin is-${facility.type}`}
+                style={{ left: `${facility.x}%`, top: `${facility.y}%` }}
+                title={`${facility.label}：${facility.note}`}
+              >
+                <span>{facility.type === "parking" ? "P" : facility.type === "toilet" ? "卫" : "服"}</span>
+                <small>{facility.label}</small>
+              </button>
+            ))}
+          </div>
+          <ul className="detail-list">{selectedSpot.services.map((item: string) => <li key={item}>{item}</li>)}</ul>
+          <small className="detail-disclaimer">设施点位为导览示意，具体位置请以景区现场标识为准。</small>
         </div>
       );
     }
-    return (
-      <div className="action-panel">
-        <p>{selectedSpot.ticket}</p>
-        <a href={`https://www.baidu.com/s?wd=${encodeURIComponent(`${selectedSpot.name} 官方购票`)}`} target="_blank" rel="noreferrer">查询官方购票</a>
-      </div>
-    );
+    if (activeTab === "交通") {
+      return (
+        <div className="transit-detail">
+          {selectedSpot.transitRoutes.map((route) => (
+            <article className="transit-route" key={route.from}>
+              <header><span>起点</span><strong>{route.from}</strong></header>
+              <div className="route-steps">{route.steps.map((step, index) => <span key={`${step}-${index}`}>{step}</span>)}</div>
+            </article>
+          ))}
+          <p>{selectedSpot.traffic}</p>
+          <small className="detail-disclaimer">公交线路与班次可能临时调整，出发前请通过实时公交或地图应用复核。</small>
+        </div>
+      );
+    }
+    return <ul className="show-list">{selectedSpot.shows.map((item: string) => <li key={item}>{item}</li>)}</ul>;
   };
 
   return (
@@ -426,9 +480,15 @@ export default function Home() {
           <div className="spot-modal-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setSelectedSpot(null)}>
             <section className="spot-modal" role="dialog" aria-modal="true" aria-labelledby="spot-title" onClick={(event) => event.stopPropagation()}>
               <header>
-                <div>
+                <div className="spot-heading">
                   <span>义安智慧导览</span>
-                  <h2 id="spot-title">{selectedSpot.name}</h2>
+                  <div className="title-row">
+                    <h2 id="spot-title">{selectedSpot.name}</h2>
+                    <div className="title-actions">
+                      <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(selectedSpot.mapKeyword)}&callnative=1`} target="_blank" rel="noreferrer" aria-label={`导航到${selectedSpot.name}`}>导航</a>
+                      <a href={MEITUAN_MINI_PROGRAM} aria-label={`购买${selectedSpot.name}门票`}>购票</a>
+                    </div>
+                  </div>
                 </div>
                 <button type="button" onClick={() => setSelectedSpot(null)} aria-label="关闭景区详情">×</button>
               </header>

@@ -255,6 +255,44 @@ button {
   letter-spacing: .06em;
 }
 
+.spot-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.title-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 7px;
+}
+
+.title-actions a {
+  display: inline-flex;
+  min-height: 34px;
+  padding: 0 12px;
+  align-items: center;
+  justify-content: center;
+  color: #fffbea;
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  background: #315b3e;
+  box-shadow: 0 6px 14px rgba(25, 63, 40, .17);
+}
+
+.title-actions a:last-child {
+  background: linear-gradient(135deg, #d4472d, #9c2b1c);
+}
+
 .spot-modal header > button {
   width: 36px;
   height: 36px;
@@ -405,6 +443,135 @@ button {
   color: #897a5b;
   font-size: 11px;
   line-height: 1.7;
+}
+
+.facility-map {
+  position: relative;
+  height: 205px;
+  margin: 4px 0 16px;
+  overflow: hidden;
+  border: 1px solid rgba(48, 89, 60, .15);
+  border-radius: 17px;
+  background:
+    radial-gradient(circle at 72% 24%, rgba(108, 159, 96, .22), transparent 25%),
+    linear-gradient(145deg, #e7edcc, #d5e4c4 55%, #c7dcb4);
+}
+
+.facility-map > strong {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  z-index: 2;
+  color: #315b3e;
+  font-size: 12px;
+  letter-spacing: .05em;
+}
+
+.facility-road {
+  position: absolute;
+  height: 18px;
+  border: 5px solid rgba(255, 253, 229, .9);
+  border-right: 0;
+  border-left: 0;
+  background: rgba(194, 181, 138, .42);
+  transform: rotate(-10deg);
+}
+
+.road-a { width: 120%; top: 49%; left: -10%; }
+.road-b { width: 72%; top: 58%; left: 35%; transform: rotate(56deg); }
+
+.facility-pin {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  background: none;
+  transform: translate(-50%, -50%);
+}
+
+.facility-pin > span {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  border: 2px solid rgba(255,255,255,.9);
+  border-radius: 50%;
+  background: #315b3e;
+  box-shadow: 0 5px 12px rgba(28, 70, 44, .25);
+  line-height: 1;
+  font-family: "PingFang SC", sans-serif;
+}
+
+.facility-pin.is-parking > span { background: #35689a; }
+.facility-pin.is-toilet > span { background: #8d6b32; }
+.facility-pin small {
+  margin-top: 5px;
+  padding: 2px 5px;
+  color: #294534;
+  font-size: 9px;
+  white-space: nowrap;
+  border-radius: 5px;
+  background: rgba(255, 254, 239, .88);
+  box-shadow: 0 2px 6px rgba(34, 61, 42, .12);
+}
+
+.transit-detail {
+  display: grid;
+  gap: 11px;
+}
+
+.transit-route {
+  padding: 12px;
+  border: 1px solid rgba(49, 91, 62, .1);
+  border-radius: 14px;
+  background: rgba(255, 254, 241, .74);
+}
+
+.transit-route header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 0 9px;
+  background: none;
+}
+
+.transit-route header span {
+  padding: 2px 6px;
+  color: #fffbea;
+  font-size: 9px;
+  letter-spacing: 0;
+  border-radius: 4px;
+  background: #315b3e;
+}
+
+.transit-route header strong {
+  color: #284c35;
+  font-size: 14px;
+}
+
+.route-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+
+.route-steps span {
+  display: inline-flex;
+  align-items: center;
+  color: #596a5f;
+  font-size: 11px;
+}
+
+.route-steps span:not(:last-child)::after {
+  content: "→";
+  margin-left: 7px;
+  color: #b18a3c;
 }
 
 .action-panel a {
