@@ -361,7 +361,7 @@ export default function Home() {
               <button
                 key={spot.id}
                 type="button"
-                className="scenic-hotspot"
+                className={`scenic-hotspot scenic-hotspot--${spot.id}`}
                 style={{
                   left: `${spot.x * 100}%`,
                   top: `${spot.y * 100}%`,

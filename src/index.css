@@ -110,6 +110,10 @@ button {
   animation: hotspot-dot 1.6s ease-out infinite;
 }
 
+.scenic-hotspot--fenghuangshan::before {
+  left: -4px;
+}
+
 .scenic-hotspot:active {
   transform: translate(-50%, -50%) scale(.96);
 }
