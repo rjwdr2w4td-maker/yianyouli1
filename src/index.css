@@ -57,8 +57,8 @@ button {
   position: absolute;
   top: 0;
   left: 0;
-  width: auto;
-  height: auto;
+  width: 2048px;
+  height: 1388px;
   max-width: none;
   opacity: 0;
   transform-origin: 0 0;
@@ -72,6 +72,64 @@ button {
 
 .map-image.is-ready {
   opacity: 1;
+}
+
+.hotspot-layer {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.scenic-hotspot {
+  position: absolute;
+  display: grid;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  place-items: center;
+  color: #fffce9;
+  border: 0;
+  background: none;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+
+.scenic-hotspot::before {
+  content: "";
+  position: absolute;
+  width: 84px;
+  height: 62px;
+}
+
+.scenic-hotspot strong {
+  position: absolute;
+  bottom: 13px;
+  padding: 5px 9px;
+  color: #fffde9;
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 240, 175, .72);
+  border-radius: 999px;
+  background: rgba(137, 27, 17, .9);
+  box-shadow: 0 4px 14px rgba(72, 15, 8, .26);
+}
+
+.hotspot-pulse {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border: 3px solid #fff8c9;
+  border-radius: 50%;
+  background: #c72f1d;
+  box-shadow: 0 0 0 0 rgba(199, 47, 29, .55);
+  animation: hotspot-pulse 1.8s ease-out infinite;
 }
 
 .map-loading {
@@ -163,6 +221,129 @@ button {
 
 .map-menu a:active {
   transform: scale(.96);
+}
+
+.spot-modal-backdrop {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: end center;
+  padding: 20px 16px max(18px, env(safe-area-inset-bottom));
+  background: rgba(8, 25, 16, .38);
+  backdrop-filter: blur(5px);
+}
+
+.spot-modal {
+  width: min(620px, 100%);
+  max-height: min(78dvh, 650px);
+  overflow: hidden;
+  color: #243a2b;
+  border: 1px solid rgba(255, 255, 255, .68);
+  border-radius: 24px;
+  background: rgba(253, 251, 232, .96);
+  box-shadow: 0 24px 70px rgba(5, 24, 14, .36);
+  animation: modal-in 380ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.spot-modal header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px 22px 14px;
+  background: linear-gradient(135deg, rgba(224, 234, 176, .72), rgba(255, 249, 215, .24));
+}
+
+.spot-modal header span {
+  color: #8f6e27;
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 10px;
+  letter-spacing: .22em;
+}
+
+.spot-modal h2 {
+  margin: 5px 0 0;
+  color: #183a29;
+  font-size: clamp(24px, 7vw, 34px);
+  font-weight: 600;
+  letter-spacing: .06em;
+}
+
+.spot-modal header > button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: #355541;
+  font-size: 28px;
+  line-height: 1;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .58);
+}
+
+.detail-tabs {
+  display: flex;
+  gap: 7px;
+  padding: 4px 18px 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.detail-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.detail-tabs button {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  color: #55705f;
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 12px;
+  border: 1px solid rgba(43, 91, 61, .13);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .5);
+}
+
+.detail-tabs button.is-active {
+  color: #fffbea;
+  border-color: #315b3e;
+  background: #315b3e;
+}
+
+.spot-detail {
+  min-height: 146px;
+  max-height: 38dvh;
+  padding: 4px 22px 26px;
+  overflow-y: auto;
+  color: #445b4c;
+  font-family: "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.spot-detail p {
+  margin: 8px 0;
+}
+
+.spot-detail ul {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.action-panel a {
+  display: inline-flex;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 0 20px;
+  align-items: center;
+  color: #fffbea;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #be3d26, #8e2518);
+  box-shadow: 0 10px 24px rgba(117, 34, 22, .2);
 }
 
 .rotate-prompt {
@@ -257,6 +438,16 @@ button {
   to { transform: rotate(360deg); }
 }
 
+@keyframes hotspot-pulse {
+  70% { box-shadow: 0 0 0 13px rgba(199, 47, 29, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(199, 47, 29, 0); }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(24px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 @keyframes controls-in {
   from { opacity: 0; transform: translate(-50%, 10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
@@ -264,7 +455,9 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   .phone-icon,
-  .map-menu {
+  .map-menu,
+  .hotspot-pulse,
+  .spot-modal {
     animation: none;
   }
 }
