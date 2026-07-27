@@ -144,6 +144,60 @@ const charmTowns = [
   { id: "laozhou", name: "老洲乡", subtitle: "长江湿地 · 生态老洲", intro: "老洲乡依长江而生，洲滩湿地、农田水网与候鸟生态构成开阔自然画卷。这里适合观江、亲近湿地，并体验安静质朴的沿江乡村。", highlights: ["太阳岛", "湿地观鸟", "沿江乡村"], scene: "peaceful Yangtze wetland island in Anhui, reeds, migratory birds, river sunset, rural fields and small village, realistic nature travel photography, no text" },
 ] as const;
 
+const charmTownGuides = {
+  wusong: {
+    "美食": ["城区徽菜与铜陵土菜", "白姜炒肉、椒盐猪手等地方味"],
+    "游玩": ["义安滨河公园慢行", "城区街巷与笠帽山周边休闲"],
+    "住宿": ["城区商务酒店", "滨河及商业配套周边住宿"],
+    "特产": ["铜陵白姜礼盒", "铜工艺文创与顺安酥糖"],
+  },
+  "shunan-charm": {
+    "美食": ["大肠小刀面与老街早点", "顺安酥糖、钟鸣杀猪汤"],
+    "游玩": ["顺安老街", "凤凰山景区与金牛洞遗址"],
+    "住宿": ["顺安镇区便捷住宿", "凤凰山周边乡村民宿"],
+    "特产": ["顺安酥糖", "凤丹产品与铜陵白姜"],
+  },
+  zhongming: {
+    "美食": ["江南味道街区", "柴火土鸡、葛根圆子等乡土菜"],
+    "游玩": ["永泉小镇忆江南园林", "山谷温泉与夜间游园"],
+    "住宿": ["永泉度假酒店", "山林主题民宿与温泉住宿"],
+    "特产": ["白姜制品", "凤丹花茶及地方农产品"],
+  },
+  tianmen: {
+    "美食": ["白姜风味菜", "农家土鸡、时令山野菜"],
+    "游玩": ["天门山水与乡村公路", "水库、田园及亲子采摘"],
+    "住宿": ["镇区便捷住宿", "生态农庄与乡村民宿"],
+    "特产": ["铜陵白姜", "时令果蔬及农副产品"],
+  },
+  donglian: {
+    "美食": ["沿江河鲜与家常土菜", "圩区时令蔬菜"],
+    "游玩": ["沿江堤岸观景", "现代农业与田园风光体验"],
+    "住宿": ["镇区商务住宿", "义安城区酒店联动选择"],
+    "特产": ["优质稻米", "沿江农副产品"],
+  },
+  xilian: {
+    "美食": ["犁桥水镇特色小吃", "水乡土菜与河鲜"],
+    "游玩": ["犁桥水镇日夜游", "圩区田园与水岸摄影"],
+    "住宿": ["犁桥水镇度假住宿", "西联乡村民宿"],
+    "特产": ["水镇文创", "稻米、茶干等地方手信"],
+  },
+  xuba: {
+    "美食": ["江鲜与乡村家宴", "时令洲岛蔬果"],
+    "游玩": ["江心洲岛漫游", "堤岸骑行与长江观景"],
+    "住宿": ["乡村民宿与农家体验", "建议联动城区住宿"],
+    "特产": ["洲岛农产品", "时令蔬果与生态稻米"],
+  },
+  laozhou: {
+    "美食": ["沿江鱼鲜", "农家土菜与时令菜蔬"],
+    "游玩": ["老洲太阳岛", "湿地观鸟与江岸日落"],
+    "住宿": ["乡村休闲住宿", "城区或周边镇区酒店"],
+    "特产": ["生态稻米", "沿江水产与农副产品"],
+  },
+} as const;
+
+type CharmGuideCategory = keyof (typeof charmTownGuides)["wusong"];
+const charmGuideCategories: CharmGuideCategory[] = ["美食", "游玩", "住宿", "特产"];
+
 type CharmTown = (typeof charmTowns)[number];
 type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "投资建设";
 const imageUrl = (prompt: string) => `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
@@ -187,6 +241,7 @@ export default function Home() {
   const [selectedSpot, setSelectedSpot] = useState<ScenicSpot | null>(null);
   const [activeSection, setActiveSection] = useState<MainSection>("智慧导览");
   const [selectedCharmTown, setSelectedCharmTown] = useState<CharmTown | null>(null);
+  const [activeCharmCategory, setActiveCharmCategory] = useState<CharmGuideCategory>("美食");
   const [isTownOpen, setIsTownOpen] = useState(false);
   const [activeTownCategory, setActiveTownCategory] = useState<TownCategory>("美食");
   const [activeTab, setActiveTab] = useState<DetailTab>("介绍");
@@ -549,7 +604,7 @@ export default function Home() {
             </header>
             <div className="charm-grid">
               {charmTowns.map((town, index) => (
-                <button type="button" className="charm-card" key={town.id} onClick={() => setSelectedCharmTown(town)} style={{ animationDelay: `${index * 55}ms` }}>
+                <button type="button" className="charm-card" key={town.id} onClick={() => { setSelectedCharmTown(town); setActiveCharmCategory("美食"); }} style={{ animationDelay: `${index * 55}ms` }}>
                   <img src={imageUrl(town.scene)} alt={`${town.name}风光`} loading={index > 2 ? "lazy" : "eager"} decoding="async" />
                   <span className="charm-card__shade" />
                   <span className="charm-card__index">{String(index + 1).padStart(2, "0")}</span>
@@ -581,6 +636,16 @@ export default function Home() {
                 <span className="charm-modal__eyebrow">魅力义安 · 乡镇印象</span>
                 <p>{selectedCharmTown.intro}</p>
                 <div className="charm-highlights">{selectedCharmTown.highlights.map((item) => <span key={item}>{item}</span>)}</div>
+                <nav className="charm-guide-tabs" aria-label={`${selectedCharmTown.name}吃住游购`}>
+                  {charmGuideCategories.map((category) => (
+                    <button type="button" key={category} className={activeCharmCategory === category ? "is-active" : ""} onClick={() => setActiveCharmCategory(category)}>{category}</button>
+                  ))}
+                </nav>
+                <div className="charm-guide-list">
+                  {charmTownGuides[selectedCharmTown.id][activeCharmCategory].map((item, index) => (
+                    <div key={item}><span>{String(index + 1).padStart(2, "0")}</span><strong>{item}</strong></div>
+                  ))}
+                </div>
                 <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`安徽铜陵义安区${selectedCharmTown.name}`)}&callnative=1`} target="_blank" rel="noreferrer">在地图中查看 {selectedCharmTown.name}</a>
                 <small className="detail-disclaimer">图像为乡镇主题视觉展示，具体景观和开放信息以当地实际情况为准。</small>
               </div>

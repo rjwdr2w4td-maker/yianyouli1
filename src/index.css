@@ -313,7 +313,8 @@ button {
 
 .charm-card {
   position: relative;
-  min-height: 225px;
+  aspect-ratio: 4 / 3;
+  min-height: 0;
   padding: 0;
   overflow: hidden;
   color: #fff;
@@ -327,9 +328,11 @@ button {
 
 .charm-card img {
   position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #203f2f;
   transition: transform 700ms cubic-bezier(.2,.8,.2,1);
 }
 
@@ -382,6 +385,67 @@ button {
 .charm-modal__body p { margin: 9px 0 14px; font-size: 14px; line-height: 1.9; }
 .charm-highlights { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
 .charm-highlights span { padding: 5px 10px; color: #315b3e; font-size: 11px; border-radius: 999px; background: rgba(70, 111, 70, .1); }
+
+.charm-guide-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 2px 0 11px;
+  padding: 4px;
+  border-radius: 13px;
+  background: rgba(49, 91, 62, .08);
+}
+
+.charm-guide-tabs button {
+  min-height: 34px;
+  padding: 0 5px;
+  color: #627567;
+  font-family: "PingFang SC", sans-serif;
+  font-size: 11px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+}
+
+.charm-guide-tabs button.is-active {
+  color: #fff9dc;
+  font-weight: 600;
+  background: #315b3e;
+  box-shadow: 0 4px 11px rgba(30, 74, 45, .15);
+}
+
+.charm-guide-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 17px;
+}
+
+.charm-guide-list div {
+  display: grid;
+  grid-template-columns: 25px 1fr;
+  gap: 7px;
+  min-height: 56px;
+  padding: 9px;
+  align-items: start;
+  border: 1px solid rgba(49, 91, 62, .09);
+  border-radius: 11px;
+  background: rgba(255, 255, 247, .76);
+}
+
+.charm-guide-list span {
+  color: #bc913d;
+  font-family: Georgia, serif;
+  font-size: 11px;
+}
+
+.charm-guide-list strong {
+  color: #3c5947;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
 .charm-modal__body > a { display: inline-flex; min-height: 42px; padding: 0 17px; align-items: center; color: #fff9dc; font-size: 12px; font-weight: 600; text-decoration: none; border-radius: 999px; background: #315b3e; }
 
 @keyframes charm-card-in {
@@ -1015,10 +1079,6 @@ button {
   .charm-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .charm-card {
-    min-height: 205px;
-  }
 }
 
 @media (max-width: 520px) {
@@ -1039,7 +1099,6 @@ button {
   }
 
   .charm-card {
-    min-height: 190px;
     border-radius: 4px 17px 4px 4px;
   }
 
@@ -1052,7 +1111,15 @@ button {
   }
 
   .charm-modal__image {
-    flex-basis: 40%;
+    flex-basis: 34%;
+  }
+
+  .charm-modal__body {
+    padding: 16px 17px 22px;
+  }
+
+  .charm-guide-list {
+    grid-template-columns: 1fr;
   }
 
   .town-card-grid {
