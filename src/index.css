@@ -245,8 +245,11 @@ button {
 }
 
 .spot-modal {
+  display: flex;
+  flex-direction: column;
   width: min(620px, 100%);
-  max-height: min(78dvh, 650px);
+  height: min(88dvh, 760px);
+  max-height: calc(100dvh - 38px - env(safe-area-inset-bottom));
   overflow: hidden;
   color: #243a2b;
   border: 1px solid rgba(255, 255, 255, .68);
@@ -258,6 +261,7 @@ button {
 
 .spot-modal header {
   display: flex;
+  flex: 0 0 auto;
   align-items: flex-start;
   justify-content: space-between;
   padding: 22px 22px 14px;
@@ -348,7 +352,7 @@ button {
 }
 
 .town-detail {
-  max-height: 46dvh;
+  max-height: none;
 }
 
 .town-intro {
@@ -451,6 +455,7 @@ button {
 
 .detail-tabs {
   display: flex;
+  flex: 0 0 auto;
   gap: 7px;
   padding: 4px 18px 12px;
   overflow-x: auto;
@@ -479,8 +484,9 @@ button {
 }
 
 .spot-detail {
-  min-height: 146px;
-  max-height: 38dvh;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
   padding: 4px 22px 26px;
   overflow-y: auto;
   color: #445b4c;
@@ -864,7 +870,11 @@ button {
   }
 
   .town-detail {
-    max-height: 50dvh;
+    max-height: none;
+  }
+
+  .spot-modal {
+    height: calc(100dvh - 58px - env(safe-area-inset-bottom));
   }
 
   .town-hotspot::after {
