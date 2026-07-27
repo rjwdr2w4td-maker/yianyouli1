@@ -680,7 +680,6 @@ export default function Home() {
                 <button type="button" className="charm-card" key={town.id} onClick={() => { setSelectedCharmTown(town); setActiveCharmCategory("美食"); }} style={{ animationDelay: `${index * 55}ms` }}>
                   <img src={imageUrl(town.scene)} alt={`${town.name}风光`} loading={index > 2 ? "lazy" : "eager"} decoding="async" />
                   <span className="charm-card__shade" />
-                  <span className="charm-card__index">{String(index + 1).padStart(2, "0")}</span>
                   <span className="charm-card__copy"><small>{town.subtitle}</small><strong>{town.name}</strong><em>走进乡镇</em></span>
                 </button>
               ))}
@@ -716,7 +715,7 @@ export default function Home() {
             <div className="goods-grid">
               {yianGoods.map((item, index) => (
                 <article className="goods-card" key={item.name}>
-                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /><span>{String(index + 1).padStart(2, "0")}</span></div>
+                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /></div>
                   <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><p>{item.detail}</p><a href={MEITUAN_MINI_PROGRAM}>查找购买</a></div>
                 </article>
               ))}
@@ -756,7 +755,7 @@ export default function Home() {
                     <article key={item} className="charm-guide-card">
                       <img src={imageUrl(guideScene(selectedCharmTown, activeCharmCategory, item))} alt={`${selectedCharmTown.name}${item}`} loading="lazy" decoding="async" />
                       <div>
-                        <span>{activeCharmCategory} · {String(index + 1).padStart(2, "0")}</span>
+                        <span>{activeCharmCategory}</span>
                         <strong>{item}</strong>
                         <p>{charmGuideDetails[activeCharmCategory][index]}</p>
                       </div>
@@ -796,9 +795,8 @@ export default function Home() {
                   <span>内容为旅行推荐，具体营业、开放和价格信息以商户及景区实时公示为准。</span>
                 </div>
                 <div className="town-card-grid">
-                  {shunanTown.categories[activeTownCategory].map((item, index) => (
+                  {shunanTown.categories[activeTownCategory].map((item) => (
                     <article className="town-card" key={item.name}>
-                      <div className="town-card-number">{String(index + 1).padStart(2, "0")}</div>
                       <div>
                         <small>{item.meta}</small>
                         <h3>{item.name}</h3>
