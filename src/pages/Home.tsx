@@ -196,9 +196,26 @@ const charmTownGuides = {
 } as const;
 
 type CharmGuideCategory = keyof (typeof charmTownGuides)["wusong"];
+type CharmTown = (typeof charmTowns)[number];
 const charmGuideCategories: CharmGuideCategory[] = ["美食", "游玩", "住宿", "特产"];
 
-type CharmTown = (typeof charmTowns)[number];
+const charmGuideDetails: Record<CharmGuideCategory, string[]> = {
+  "美食": ["寻找当地最具代表性的餐桌风味，在老街小店或乡村餐馆感受义安烟火。", "结合时令食材与地方做法，适合作为行程中的特色正餐或小吃体验。"],
+  "游玩": ["串联自然、人文与乡村场景，适合拍照、散步和了解当地故事。", "可结合半日或一日行程游览，出发前建议确认开放及活动安排。"],
+  "住宿": ["兼顾出行便利与休息体验，可按商务、亲子或度假需求进行选择。", "节假日建议提前预约，并向商家确认早餐、停车和接驳等服务。"],
+  "特产": ["汇集当地物产和风味手信，适合现场品尝或作为伴手礼带回。", "购买时可留意产地、保质期和包装方式，并优先选择正规经营渠道。"],
+};
+
+const guideScene = (town: CharmTown, category: CharmGuideCategory, item: string) => {
+  const categoryScenes: Record<CharmGuideCategory, string> = {
+    "美食": "authentic local Anhui Chinese cuisine served in a refined rustic restaurant, appetizing food photography",
+    "游玩": "beautiful rural attraction and cultural landscape in Anhui China, premium realistic travel photography",
+    "住宿": "welcoming boutique hotel or countryside homestay in Anhui China, warm natural interior and exterior travel photography",
+    "特产": "local Anhui specialty products and elegant souvenir packaging on a natural wooden table, commercial lifestyle photography",
+  };
+  return `${categoryScenes[category]}, inspired by ${town.name} and ${item}, natural daylight, realistic, no text, no watermark`;
+};
+
 type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "投资建设";
 const imageUrl = (prompt: string) => `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
 
@@ -643,7 +660,14 @@ export default function Home() {
                 </nav>
                 <div className="charm-guide-list">
                   {charmTownGuides[selectedCharmTown.id][activeCharmCategory].map((item, index) => (
-                    <div key={item}><span>{String(index + 1).padStart(2, "0")}</span><strong>{item}</strong></div>
+                    <article key={item} className="charm-guide-card">
+                      <img src={imageUrl(guideScene(selectedCharmTown, activeCharmCategory, item))} alt={`${selectedCharmTown.name}${item}`} loading="lazy" decoding="async" />
+                      <div>
+                        <span>{activeCharmCategory} · {String(index + 1).padStart(2, "0")}</span>
+                        <strong>{item}</strong>
+                        <p>{charmGuideDetails[activeCharmCategory][index]}</p>
+                      </div>
+                    </article>
                   ))}
                 </div>
                 <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`安徽铜陵义安区${selectedCharmTown.name}`)}&callnative=1`} target="_blank" rel="noreferrer">在地图中查看 {selectedCharmTown.name}</a>
