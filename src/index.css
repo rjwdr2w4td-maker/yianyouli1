@@ -244,8 +244,8 @@ button {
   inset: 0;
   padding: max(26px, env(safe-area-inset-top)) 18px 92px;
   overflow-y: auto;
-  color: #f8f2d6;
-  background: #173225;
+  color: #244936;
+  background: #eef1d5;
   touch-action: pan-y;
   scrollbar-width: none;
 }
@@ -257,16 +257,16 @@ button {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 85% 6%, rgba(202, 163, 65, .25), transparent 25%),
-    radial-gradient(circle at 8% 34%, rgba(98, 142, 91, .2), transparent 28%),
-    linear-gradient(160deg, #18382a, #10271d 64%, #0b1d15);
+    radial-gradient(circle at 85% 6%, rgba(231, 195, 105, .34), transparent 28%),
+    radial-gradient(circle at 8% 34%, rgba(155, 190, 129, .3), transparent 31%),
+    linear-gradient(155deg, #faf5dd 0%, #edf2d7 48%, #dce9cf 100%);
 }
 
 .charm-view__wash::after {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: .1;
+  opacity: .045;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -283,7 +283,7 @@ button {
 }
 
 .charm-hero span {
-  color: #d9ba69;
+  color: #a07828;
   font-family: Georgia, serif;
   font-size: 10px;
   letter-spacing: .3em;
@@ -299,7 +299,7 @@ button {
 .charm-hero p {
   max-width: 620px;
   margin: 0;
-  color: rgba(239, 239, 211, .68);
+  color: #526d58;
   font-family: "PingFang SC", "Noto Sans SC", sans-serif;
   font-size: 12px;
   line-height: 1.8;
