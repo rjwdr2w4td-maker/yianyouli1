@@ -318,6 +318,95 @@ button {
   padding-left: 20px;
 }
 
+.spot-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 5px 0 13px;
+}
+
+.spot-tags span {
+  padding: 4px 9px;
+  color: #87641f;
+  font-size: 11px;
+  line-height: 1.4;
+  border: 1px solid rgba(157, 116, 35, .2);
+  border-radius: 999px;
+  background: rgba(229, 213, 142, .22);
+}
+
+.visit-facts {
+  display: grid;
+  gap: 1px;
+  margin: 16px 0 13px;
+  overflow: hidden;
+  border: 1px solid rgba(49, 91, 62, .1);
+  border-radius: 14px;
+  background: rgba(49, 91, 62, .08);
+}
+
+.visit-facts div {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 254, 241, .88);
+}
+
+.visit-facts dt {
+  color: #315b3e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.visit-facts dd {
+  margin: 0;
+  color: #506357;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.detail-list,
+.show-list {
+  padding-left: 0 !important;
+  list-style: none;
+}
+
+.detail-list li,
+.show-list li {
+  position: relative;
+  padding: 10px 12px 10px 32px;
+  border-radius: 12px;
+  background: rgba(49, 91, 62, .055);
+}
+
+.detail-list li::before,
+.show-list li::before {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: 14px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b38b34;
+  box-shadow: 0 0 0 4px rgba(179, 139, 52, .12);
+}
+
+.show-list li:last-child {
+  color: #7a6440;
+  font-size: 12px;
+  background: rgba(179, 139, 52, .09);
+}
+
+.detail-disclaimer {
+  display: block;
+  margin-top: 12px;
+  color: #897a5b;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
 .action-panel a {
   display: inline-flex;
   min-height: 44px;
