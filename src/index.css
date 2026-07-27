@@ -89,44 +89,29 @@ button {
   min-width: 108px;
   min-height: 42px;
   padding: 0;
-  border: 2px solid rgba(255, 249, 187, .86);
-  border-radius: 12px;
-  background: rgba(255, 248, 180, .05);
-  box-shadow:
-    0 0 0 2px rgba(155, 31, 19, .22),
-    0 0 18px rgba(255, 234, 128, .38),
-    inset 0 0 10px rgba(255, 244, 170, .14);
+  border: 0;
+  background: transparent;
   pointer-events: auto;
   transform: translate(-50%, -50%);
-  animation: hotspot-outline 2.2s ease-in-out infinite;
-}
-
-.scenic-hotspot::before,
-.scenic-hotspot::after {
-  content: "";
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-color: #fff5ad;
 }
 
 .scenic-hotspot::before {
-  top: -4px;
-  left: -4px;
-  border-top: 2px solid;
-  border-left: 2px solid;
-}
-
-.scenic-hotspot::after {
-  right: -4px;
-  bottom: -4px;
-  border-right: 2px solid;
-  border-bottom: 2px solid;
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -8px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255, 251, 202, .95);
+  border-radius: 50%;
+  background: #e73922;
+  box-shadow: 0 0 0 0 rgba(231, 57, 34, .65), 0 0 9px rgba(255, 235, 128, .9);
+  transform: translate(-50%, -50%);
+  animation: hotspot-dot 1.6s ease-out infinite;
 }
 
 .scenic-hotspot:active {
-  background: rgba(255, 244, 150, .2);
-  transform: translate(-50%, -50%) scale(.94);
+  transform: translate(-50%, -50%) scale(.96);
 }
 
 .map-loading {
@@ -435,14 +420,18 @@ button {
   to { transform: rotate(360deg); }
 }
 
-@keyframes hotspot-outline {
-  0%, 100% {
-    border-color: rgba(255, 249, 187, .55);
-    box-shadow: 0 0 0 2px rgba(155, 31, 19, .18), 0 0 10px rgba(255, 234, 128, .18), inset 0 0 8px rgba(255, 244, 170, .08);
+@keyframes hotspot-dot {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(231, 57, 34, .72), 0 0 9px rgba(255, 235, 128, .9);
   }
-  50% {
-    border-color: rgba(255, 252, 207, 1);
-    box-shadow: 0 0 0 3px rgba(155, 31, 19, .28), 0 0 24px rgba(255, 234, 128, .58), inset 0 0 12px rgba(255, 244, 170, .2);
+  70% {
+    opacity: .85;
+    box-shadow: 0 0 0 11px rgba(231, 57, 34, 0), 0 0 15px rgba(255, 235, 128, .95);
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(231, 57, 34, 0), 0 0 9px rgba(255, 235, 128, .9);
   }
 }
 
@@ -459,7 +448,7 @@ button {
 @media (prefers-reduced-motion: reduce) {
   .phone-icon,
   .map-menu,
-  .scenic-hotspot,
+  .scenic-hotspot::before,
   .spot-modal {
     animation: none;
   }
