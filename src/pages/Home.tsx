@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Compass, Heart, Home as HomeIcon, Map as MapIcon, ShoppingBag, Store, UserRound } from "lucide-react";
+import {
+  Activity, AlertTriangle, Bell, Briefcase, Camera, Car, CheckCircle2, ClipboardCheck,
+  Compass, Database, Download, FileText, GraduationCap, Heart, Home as HomeIcon,
+  Map as MapIcon, Megaphone, Radio, Send, ShieldAlert, ShoppingBag, Siren, Store,
+  UserRound, Users, Vote,
+} from "lucide-react";
 
 const TOUR_DURATION = 42000;
 const MAX_ZOOM = 4;
@@ -278,8 +283,111 @@ const yianGoods = [
 type YianGood = (typeof yianGoods)[number];
 
 const catalogScene = (category: TravelCategory, item: string) => `realistic premium travel photography for ${item} in Yian District Tongling Anhui China, ${category}, natural light, no text, no watermark`;
-type MainSection = "智慧导览" | "魅力义安" | "商旅食宿" | "义安好物";
+type TouristSection = "智慧导览" | "魅力义安" | "商旅食宿" | "义安好物" | "我的";
+type VillagerSection = "村民首页" | "村务服务" | "积分服务" | "我要发布" | "我的";
+type MainSection = TouristSection | VillagerSection;
+type UserRole = "游客" | "村民" | "政务";
+type GovernmentSection = "政务首页" | "监控中心" | "镇村数据" | "业务办理" | "我的";
+type GovernmentBusiness = "全部" | "农产品审核" | "农房需求" | "民情诉求" | "惠农补贴" | "就业岗位" | "村务内容" | "议事投票" | "课程培训" | "游客内容";
+type GovernmentReviewStatus = "待审核" | "已通过" | "已驳回" | "办理中";
+
+const governmentScenics = [
+  { id: "liqiao", name: "犁桥水镇", visitors: 3862, trend: "+12.6%", parkingFree: 126, parkingTotal: 380, cameras: 46, regions: ["主入口", "水岸街区", "圆楼广场"] },
+  { id: "yongquan", name: "永泉小镇", visitors: 2418, trend: "+8.3%", parkingFree: 82, parkingTotal: 260, cameras: 38, regions: ["游客中心", "温泉入口", "江南味道"] },
+  { id: "fenghuang", name: "凤凰山景区", visitors: 1296, trend: "-3.2%", parkingFree: 94, parkingTotal: 180, cameras: 29, regions: ["山门广场", "牡丹园", "登山步道"] },
+] as const;
+
+const monitorPoints = [
+  { id: "M-001", name: "犁桥水镇主入口", area: "西联镇", scenic: "犁桥水镇", status: "在线", scene: "gate", targets: ["人", "车"] },
+  { id: "M-017", name: "水岸街区东侧", area: "西联镇", scenic: "犁桥水镇", status: "在线", scene: "water", targets: ["人", "溺水"] },
+  { id: "M-032", name: "永泉游客中心", area: "钟鸣镇", scenic: "永泉小镇", status: "在线", scene: "square", targets: ["人", "车", "异常聚集"] },
+  { id: "M-048", name: "凤凰山登山步道", area: "顺安镇", scenic: "凤凰山景区", status: "在线", scene: "mountain", targets: ["人", "动物", "危险行为"] },
+  { id: "M-063", name: "东湖湿地观景台", area: "顺安镇", scenic: "全区点位", status: "维护", scene: "wetland", targets: ["动物", "人"] },
+  { id: "M-079", name: "胥坝渡口堤岸", area: "胥坝乡", scenic: "全区点位", status: "在线", scene: "river", targets: ["车", "人", "溺水"] },
+] as const;
+
+const governmentWarnings = [
+  { level: "紧急", type: "溺水风险", point: "胥坝渡口堤岸", time: "10:42:18", detail: "识别到人员长时间靠近深水区警戒线" },
+  { level: "较高", type: "异常聚集", point: "永泉游客中心", time: "10:36:05", detail: "入口区域人群密度超过预警阈值" },
+  { level: "一般", type: "危险行为", point: "凤凰山登山步道", time: "10:28:44", detail: "游客翻越步道安全护栏" },
+  { level: "提示", type: "动物出现", point: "东湖湿地观景台", time: "09:58:21", detail: "识别到野生动物进入游客步道" },
+] as const;
+
+const townStatistics = [
+  { name: "五松镇", population: 68400, ages: [14, 63, 23], income: 46800, tourists: 162000, villages: 8 },
+  { name: "顺安镇", population: 52900, ages: [17, 60, 23], income: 42100, tourists: 386000, villages: 12 },
+  { name: "钟鸣镇", population: 38700, ages: [16, 61, 23], income: 39800, tourists: 512000, villages: 10 },
+  { name: "天门镇", population: 31400, ages: [18, 59, 23], income: 37600, tourists: 126000, villages: 9 },
+  { name: "东联镇", population: 35500, ages: [16, 62, 22], income: 40500, tourists: 84000, villages: 11 },
+  { name: "西联镇", population: 29800, ages: [17, 60, 23], income: 38900, tourists: 448000, villages: 8 },
+  { name: "胥坝乡", population: 18600, ages: [15, 58, 27], income: 35100, tourists: 93000, villages: 7 },
+  { name: "老洲乡", population: 16400, ages: [14, 57, 29], income: 34600, tourists: 76000, villages: 6 },
+] as const;
+
+const governmentBusinessSeed = [
+  { id: "B-26072801", type: "惠农补贴", title: "高标准农田建设补助申请", source: "顺安镇 · 王师傅", time: "今天 09:18", status: "待审核" as GovernmentReviewStatus },
+  { id: "B-26072802", type: "就业岗位", title: "农产品直播运营岗位发布", source: "义安乡创中心", time: "今天 08:45", status: "待审核" as GovernmentReviewStatus },
+  { id: "B-26072716", type: "村务内容", title: "东垅村七月财务公开文章", source: "顺安镇东垅村", time: "昨天 16:30", status: "待审核" as GovernmentReviewStatus },
+  { id: "B-26072709", type: "议事投票", title: "村口闲置地改造方案票选", source: "顺安镇村委会", time: "昨天 14:12", status: "办理中" as GovernmentReviewStatus },
+  { id: "B-26072621", type: "课程培训", title: "短视频助农直播实操课", source: "区农业农村局", time: "07月26日", status: "已通过" as GovernmentReviewStatus },
+  { id: "B-26072608", type: "游客内容", title: "犁桥水镇游记与好物推荐", source: "游客内容平台", time: "07月26日", status: "待审核" as GovernmentReviewStatus },
+] as const;
+
+const villagerServices = [
+  { name: "村务公开", detail: "查看村务公开信息、通知公告与政策文章", icon: HomeIcon, group: "村务服务", accent: "公开透明" },
+  { name: "积分超市", detail: "使用参与乡村事务获得的积分兑换商品", icon: ShoppingBag, group: "积分服务", accent: "积分兑换" },
+  { name: "议事投票", detail: "参与村务投票和公共决策，完成后获得积分", icon: UserRound, group: "积分服务", accent: "共商共议" },
+  { name: "我的货摊", detail: "发布自家农产品，审核通过后展示至义安好物", icon: Store, group: "我要发布", accent: "村民发布" },
+  { name: "农房盘活", detail: "发布农房出租、改造需求，参与乡村资源盘活", icon: HomeIcon, group: "我要发布", accent: "资源盘活" },
+  { name: "课程培训", detail: "参与农业、电商等培训课程，学习并获得积分", icon: Compass, group: "积分服务", accent: "学习得分" },
+  { name: "补贴申领", detail: "查看政府补贴政策并在线提交申领信息", icon: Heart, group: "村务服务", accent: "惠农政策" },
+  { name: "就业岗位", detail: "查看政府发布的本地岗位并提交岗位申请", icon: Store, group: "村务服务", accent: "家门口就业" },
+  { name: "民情诉求", detail: "提交意见建议和待解决事项，采纳解决可获积分", icon: UserRound, group: "我要发布", accent: "有事我来办" },
+  { name: "先锋案例", detail: "展示党员活动、先锋事迹与基层服务风采", icon: MapIcon, group: "村务服务", accent: "先锋风采" },
+] as const;
+
+type VillagerPublication = {
+  id: string;
+  type: "农产品" | "农房" | "民情诉求";
+  title: string;
+  detail: string;
+  status: string;
+  createdAt: string;
+  images: string[];
+};
+
+const VILLAGER_PUBLICATIONS_KEY = "yian-villager-publications";
+
 const imageUrl = (prompt: string) => `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
+
+const villagePublicArticles = [
+  { type: "村务公开", title: "顺安镇六月村级财务收支公示", date: "2026-07-25", summary: "公开村集体经营收入、公益支出及重点项目资金使用情况。", image: imageUrl("Documentary photography of a clean Chinese village service center public information board, villagers reading financial disclosure notices, Anhui countryside, warm daylight, realistic, no text, no watermark") },
+  { type: "通知公告", title: "关于开展人居环境集中整治的通知", date: "2026-07-22", summary: "本周六开展村庄清洁志愿行动，参与村民可获得共建积分。", image: imageUrl("Chinese rural villagers and volunteers cleaning a beautiful village lane together, green trees and white houses, community participation, realistic documentary photography, no text, no watermark") },
+  { type: "项目进展", title: "村口闲置地改造项目进入方案票选", date: "2026-07-19", summary: "三套改造方案已完成公示，邀请全体村民参与线上表决。", image: imageUrl("Renovated village public garden in Anhui China, walking path, benches, native trees, villagers discussing community planning, realistic architectural documentary photography, no text, no watermark") },
+];
+const villageSubsidies = [
+  { title: "2026年高标准农田建设补助", deadline: "08月20日截止", amount: "最高 2万元", status: "可申领" },
+  { title: "农村电商创业扶持补贴", deadline: "长期受理", amount: "最高 1万元", status: "可申领" },
+  { title: "特色种养产业奖补", deadline: "09月15日截止", amount: "按规模核定", status: "材料准备" },
+];
+const villageJobs = [
+  { title: "农产品直播运营", company: "义安乡创中心", salary: "4000—6000元/月", tag: "本地就业", image: imageUrl("Young Chinese rural ecommerce presenter livestreaming local farm products in a modern village studio, rice and tea products on table, realistic photography, no text, no watermark") },
+  { title: "民宿管家", company: "犁桥水镇民宿", salary: "3500—5000元/月", tag: "提供培训", image: imageUrl("Friendly Chinese homestay manager preparing an elegant guest room in a Jiangnan water town boutique inn, warm natural light, realistic hospitality photography, no text, no watermark") },
+  { title: "农业技术员", company: "铜勤生态农业", salary: "5000—7000元/月", tag: "五险", image: imageUrl("Chinese agricultural technician inspecting healthy rice plants in a green paddy field with a tablet, Anhui countryside, realistic professional photography, no text, no watermark") },
+];
+const pointsGoods = [
+  { name: "义安大米 5kg", points: 680, stock: 24, icon: "米", image: imageUrl("Premium bag of Anhui Yian rice with a wooden bowl of polished rice on a rustic table, green rice fields softly blurred behind, commercial product photography, no visible brand text, no watermark") },
+  { name: "家用洗护套装", points: 520, stock: 36, icon: "惠", image: imageUrl("Neatly arranged eco friendly household cleaning and personal care gift set on a warm cream background with green leaves, realistic commercial product photography, no text, no watermark") },
+  { name: "永泉温泉体验券", points: 1200, stock: 8, icon: "泉", image: imageUrl("Peaceful outdoor hot spring pool surrounded by bamboo and traditional Chinese garden architecture at dusk, warm steam, premium travel photography, no text, no watermark") },
+];
+const villageVotes = [
+  { title: "村口闲置地改造方案票选", joined: 186, total: 260, reward: 30, deadline: "还剩2天", image: imageUrl("Chinese villagers gathered around a community planning table reviewing three landscape design proposals for village public space, realistic documentary photography, no text, no watermark") },
+  { title: "2026年村民文化节主题征集", joined: 98, total: 180, reward: 20, deadline: "还剩5天", image: imageUrl("Joyful Chinese rural cultural festival in an Anhui village square, folk performance, lanterns, families participating, realistic documentary photography, no text, no watermark") },
+];
+const villageCourses = [
+  { title: "短视频助农直播实操课", time: "周六 09:00", teacher: "乡村电商讲师 王老师", seats: 12, reward: 50, image: imageUrl("Chinese instructor teaching rural villagers smartphone video and livestream ecommerce skills in a bright modern classroom, hands-on workshop, realistic photography, no text, no watermark") },
+  { title: "水稻病虫害绿色防控", time: "下周三 14:00", teacher: "区农技中心 李老师", seats: 28, reward: 30, image: imageUrl("Chinese agricultural expert teaching farmers green pest control in a lush rice field, group learning outdoors, realistic documentary photography, no text, no watermark") },
+];
 
 const tourPoints = [
   { x: 0.27, y: 0.24, zoom: 1.9, offset: 0 },
@@ -323,7 +431,26 @@ export default function Home() {
   const [activeCharmCategory, setActiveCharmCategory] = useState<CharmGuideCategory>("美食");
   const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("景点");
   const [selectedGood, setSelectedGood] = useState<YianGood | null>(null);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole>("游客");
+  const [isRoleSelectorOpen, setIsRoleSelectorOpen] = useState(false);
+  const [governmentSection, setGovernmentSection] = useState<GovernmentSection>("政务首页");
+  const [governmentScenicId, setGovernmentScenicId] = useState<(typeof governmentScenics)[number]["id"]>(governmentScenics[0].id);
+  const [selectedMonitorId, setSelectedMonitorId] = useState<string>(monitorPoints[0].id);
+  const [monitorFilter, setMonitorFilter] = useState("全区点位");
+  const [selectedTown, setSelectedTown] = useState<string>(townStatistics[1].name);
+  const [governmentBusiness, setGovernmentBusiness] = useState<GovernmentBusiness>("全部");
+  const [businessStatuses, setBusinessStatuses] = useState<Record<string, GovernmentReviewStatus>>({});
+  const [governmentNotice, setGovernmentNotice] = useState("");
+  const [governmentModal, setGovernmentModal] = useState<"dispatch" | "notice" | "emergency" | null>(null);
+  const [villagerSection, setVillagerSection] = useState<VillagerSection>("村民首页");
+  const [activeVillagerService, setActiveVillagerService] = useState("村务公开");
+  const [villagerNotice, setVillagerNotice] = useState("");
+  const [likedVillageStory, setLikedVillageStory] = useState(false);
+  const [villagerDetail, setVillagerDetail] = useState<{ type: string; title: string; data?: string } | null>(null);
+  const [villagerPublications, setVillagerPublications] = useState<VillagerPublication[]>(() => {
+    try { return JSON.parse(localStorage.getItem(VILLAGER_PUBLICATIONS_KEY) || "[]") as VillagerPublication[]; } catch { return []; }
+  });
+  const [publicationImages, setPublicationImages] = useState<string[]>([]);
   const [isTownOpen, setIsTownOpen] = useState(false);
   const [activeTownCategory, setActiveTownCategory] = useState<TownCategory>("美食");
   const [activeTab, setActiveTab] = useState<DetailTab>("介绍");
@@ -608,6 +735,156 @@ export default function Home() {
     return <ul className="show-list">{selectedSpot.shows.map((item: string) => <li key={item}>{item}</li>)}</ul>;
   };
 
+  const showVillagerNotice = (message: string) => {
+    setVillagerNotice(message);
+    window.setTimeout(() => setVillagerNotice(""), 2400);
+  };
+
+  const openVillagerDetail = (type: string, title: string, data?: string) => setVillagerDetail({ type, title, data });
+
+  const handlePublicationImages = (files: FileList | null) => {
+    if (!files) return;
+    const selected = Array.from(files).slice(0, 6 - publicationImages.length);
+    selected.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => setPublicationImages((images) => [...images, String(reader.result)].slice(0, 6));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const saveVillagerPublication = (type: VillagerPublication["type"], title: string, detail: string) => {
+    const publication: VillagerPublication = { id: `${Date.now()}`, type, title, detail, status: type === "农产品" ? "政务审核中" : "已受理", createdAt: new Date().toLocaleString("zh-CN"), images: publicationImages };
+    setVillagerPublications((items) => {
+      const next = [publication, ...items];
+      localStorage.setItem(VILLAGER_PUBLICATIONS_KEY, JSON.stringify(next));
+      return next;
+    });
+    setPublicationImages([]);
+    showVillagerNotice(`${type}发布成功，可在“我的发布”查看`);
+  };
+
+  const publicationUploader = () => <div className="publication-uploader"><label><input type="file" accept="image/*" multiple onChange={(event) => handlePublicationImages(event.target.files)} /><span>＋ 上传图片</span><small>最多6张，建议展示实景和细节</small></label>{publicationImages.length > 0 && <div>{publicationImages.map((image, index) => <figure key={`${image.slice(0, 24)}-${index}`}><img src={image} alt={`待发布图片${index + 1}`} /><button type="button" onClick={() => setPublicationImages((images) => images.filter((_, imageIndex) => imageIndex !== index))}>删除</button></figure>)}</div>}</div>;
+
+  const getVillagerDetailImage = (type: string, title: string) => {
+    if (type === "article") return villagePublicArticles.find((item) => item.title === title)?.image || imageUrl("Chinese village public affairs meeting in a clean community service hall, realistic documentary photography, no text, no watermark");
+    if (type === "case") return title.includes("水稻") ? imageUrl("Chinese Communist Party volunteer members helping farmers inspect a green rice field, rural Anhui, realistic documentary photography, no text, no watermark") : imageUrl("Chinese villagers and local officials holding an outdoor bench discussion meeting under a large tree, warm community atmosphere, realistic photography, no text, no watermark");
+    if (type === "story") return imageUrl("New solar street lights illuminating a peaceful Chinese village road at dusk, villagers walking home safely, realistic documentary photography, no text, no watermark");
+    if (type === "course") return villageCourses.find((item) => item.title === title)?.image || villageCourses[0].image;
+    if (type === "goods") return pointsGoods.find((item) => item.name === title)?.image || pointsGoods[0].image;
+    return "";
+  };
+
+  const renderVillagerDetail = () => {
+    if (!villagerDetail) return null;
+    const { type, title, data } = villagerDetail;
+    const detailImage = getVillagerDetailImage(type, title);
+    const close = () => setVillagerDetail(null);
+    const detailHero = (eyebrow: string, description: string) => <><div className="villager-detail-hero"><small>{eyebrow}</small><h2>{title}</h2><p>{description}</p></div>{detailImage && <img className="villager-detail-cover" src={detailImage} alt={`${title}相关图片`} />}</>;
+    if (type === "article" || type === "case" || type === "story") return <>{detailHero(type === "case" ? "先锋案例" : type === "story" ? "乡亲动态" : "村务公开", type === "story" ? "民情有回应，办理有结果，共建成果由全体村民共同见证。" : "信息公开透明，邀请每一位村民共同监督、共同参与。")}<article className="villager-article-detail"><p>{data || "本事项已按照村务公开程序完成整理与公示。相关内容经村务监督委员会审核，现向全体村民公开。"}</p><h3>详细内容</h3><p>本次工作坚持村民知情、村民参与、村民监督原则，事项进度、资金使用和办理结果将持续更新。如有疑问，可通过民情诉求提交意见，也可在村务公开日到村服务中心现场咨询。</p><div><span>发布单位：顺安镇村民委员会</span><span>发布日期：2026-07-28</span></div></article></>;
+    if (type === "vote") return <>{detailHero("议事投票 · 参与得30积分", "请选择您支持的改造方案，每位认证村民仅可提交一次。")}<form className="villager-choice-form" onSubmit={(event) => { event.preventDefault(); showVillagerNotice("投票提交成功，感谢参与家乡建设"); close(); }}><label><input type="radio" name="vote" required /><span><strong>A方案 · 乡村共享花园</strong><small>保留原有树木，增加休闲步道、儿童活动区和公共座椅。</small></span></label><label><input type="radio" name="vote" /><span><strong>B方案 · 农产品周末集市</strong><small>建设可移动摊位，为村民农产品销售和节庆活动提供空间。</small></span></label><label><input type="radio" name="vote" /><span><strong>C方案 · 停车与便民服务点</strong><small>增加停车位、充电设施和便民服务驿站。</small></span></label><button type="submit">确认提交投票</button></form></>;
+    if (type === "course") return <>{detailHero("课程培训 · 完成得50积分", "面向村民提供实操型技能培训，完成签到与课程学习后发放积分。")}<div className="villager-detail-info"><dl><div><dt>开课时间</dt><dd>本周六 09:00—16:30</dd></div><div><dt>培训地点</dt><dd>顺安镇乡村振兴学堂</dd></div><div><dt>授课老师</dt><dd>乡村电商讲师 王老师</dd></div><div><dt>剩余名额</dt><dd>12人</dd></div></dl><h3>课程内容</h3><p>账号定位、短视频拍摄、直播间搭建、农产品讲解、订单与售后处理。</p><button type="button" onClick={() => { showVillagerNotice("课程报名成功，开课前将发送提醒"); close(); }}>确认报名</button></div></>;
+    if (type === "goods") return <>{detailHero("积分商品", "使用共建积分兑换，兑换成功后可选择到村服务中心领取或配送到家。")}<div className="villager-exchange-detail"><dl><div><dt>所需积分</dt><dd>{title.includes("大米") ? "680" : title.includes("洗护") ? "520" : "1200"}积分</dd></div><div><dt>领取方式</dt><dd>服务中心自提 / 村内配送</dd></div><div><dt>兑换说明</dt><dd>兑换后不支持退换，商品以实际领取为准。</dd></div></dl><button type="button" onClick={() => { showVillagerNotice(`已成功兑换${title}`); close(); }}>确认兑换</button></div></>;
+    if (type === "subsidy" || type === "job") return <>{detailHero(type === "subsidy" ? "惠农补贴" : "本地就业", type === "subsidy" ? "请核对申领条件并填写申请信息，提交后可在个人中心查询进度。" : "查看岗位要求并完善申请信息，用工单位将在审核后联系您。")}<form className="village-form-page villager-detail-form" onSubmit={(event) => { event.preventDefault(); showVillagerNotice(type === "subsidy" ? "补贴申请已提交" : "岗位申请已提交"); close(); }}><label>申请人姓名<input required placeholder="请输入姓名" /></label><label>联系电话<input required placeholder="请输入联系电话" /></label><label>{type === "subsidy" ? "申请说明" : "个人经历"}<textarea required placeholder={type === "subsidy" ? "填写经营规模、申请理由等" : "简要填写相关工作经历和技能"} /></label><button type="submit">提交申请</button></form></>;
+    if (type === "publications") return <><div className="villager-detail-hero"><small>我的发布</small><h2>发布记录</h2><p>农产品、农房和民情诉求均保存在当前浏览器，可在这里查看审核与受理状态。</p></div><div className="villager-publication-list">{villagerPublications.length ? villagerPublications.map((item) => <article key={item.id}>{item.images.length > 0 && <div>{item.images.map((image, index) => <img key={`${item.id}-${index}`} src={image} alt={`${item.title}图片${index + 1}`} />)}</div>}<header><span>{item.type}</span><small>{item.status}</small></header><h3>{item.title}</h3><p>{item.detail}</p><time>{item.createdAt}</time></article>) : <div className="villager-publication-empty"><strong>暂无发布内容</strong><p>前往“我要发布”，可发布农产品、农房需求或民情诉求。</p></div>}</div></>;
+    if (type === "record") return <><div className="villager-detail-hero"><small>办理进度</small><h2>{title}</h2><p>事项进度实时更新，如需补充材料，工作人员会通过消息通知联系您。</p></div><div className="villager-timeline"><article className="is-done"><span /><div><strong>申请已提交</strong><small>2026-07-26 09:30</small><p>申请材料已成功提交。</p></div></article><article className="is-done"><span /><div><strong>材料初审完成</strong><small>2026-07-27 15:20</small><p>材料完整，已转交相关负责人办理。</p></div></article><article><span /><div><strong>业务办理中</strong><small>预计3个工作日内完成</small><p>您可以在本页面持续查看处理结果。</p></div></article></div></>;
+    if (type === "identity") return <><div className="villager-detail-hero"><small>村民认证</small><h2>认证信息</h2><p>认证信息用于参与村务投票、补贴申请和积分发放。</p></div><div className="villager-settings-detail"><dl><div><dt>姓名</dt><dd>王师傅</dd></div><div><dt>所属村镇</dt><dd>顺安镇</dd></div><div><dt>认证状态</dt><dd>已认证</dd></div><div><dt>认证时间</dt><dd>2026-03-18</dd></div></dl><button type="button" onClick={() => showVillagerNotice("认证信息更新申请已提交")}>更新认证信息</button></div></>;
+    if (type === "address") return <><div className="villager-detail-hero"><small>账户设置</small><h2>收货地址</h2><p>用于积分商品配送和惠农物资领取。</p></div><div className="villager-address-list"><article><strong>王师傅 138****6688</strong><p>安徽省铜陵市义安区顺安镇东垅村18号</p><span>默认地址</span></article><article><strong>王师傅 138****6688</strong><p>顺安镇村民服务中心代收点</p><button type="button" onClick={() => showVillagerNotice("默认收货地址已更新")}>设为默认</button></article><button type="button" onClick={() => showVillagerNotice("已进入新增地址页面")}>新增收货地址</button></div></>;
+    if (type === "messages") return <><div className="villager-detail-hero"><small>消息中心</small><h2>消息通知</h2><p>办理进度、活动提醒和积分变化都会在这里通知您。</p></div><div className="villager-message-list"><article className="is-unread"><span>审核</span><div><strong>您的农产品发布正在审核</strong><p>预计2个工作日内完成审核。</p><small>今天 09:20</small></div></article><article className="is-unread"><span>积分</span><div><strong>30共建积分已到账</strong><p>来源：村口闲置地改造方案投票。</p><small>昨天 16:35</small></div></article><article><span>课程</span><div><strong>直播实操课即将开课</strong><p>请于周六08:50前完成签到。</p><small>07月26日</small></div></article></div></>;
+    return <><div className="villager-detail-hero"><small>服务支持</small><h2>帮助与反馈</h2><p>使用过程中遇到问题，可提交反馈或联系村民服务中心。</p></div><form className="villager-feedback-form" onSubmit={(event) => { event.preventDefault(); showVillagerNotice("反馈提交成功，我们会尽快处理"); close(); }}><label>问题类型<select><option>功能使用</option><option>内容纠错</option><option>服务建议</option><option>其他问题</option></select></label><label>问题描述<textarea required placeholder="请详细描述遇到的问题" /></label><button type="submit">提交反馈</button></form></>;
+  };
+
+  const renderVillagerService = () => {
+    if (activeVillagerService === "村务公开") return <div className="village-content-list">{villagePublicArticles.map((item) => <article className="has-image" key={item.title}><img src={item.image} alt={item.title} /><div><small>{item.type} · {item.date}</small><h3>{item.title}</h3><p>{item.summary}</p><button type="button" onClick={() => openVillagerDetail("article", item.title, item.summary)}>阅读文章</button></div></article>)}</div>;
+    if (activeVillagerService === "补贴申领") return <div className="village-policy-list">{villageSubsidies.map((item) => <article key={item.title}><span>{item.status}</span><div><h3>{item.title}</h3><p>{item.deadline} · {item.amount}</p></div><button type="button" onClick={() => openVillagerDetail("subsidy", item.title)}>查看申领</button></article>)}</div>;
+    if (activeVillagerService === "就业岗位") return <div className="village-job-list">{villageJobs.map((item) => <article key={item.title}><small>{item.tag}</small><h3>{item.title}</h3><p>{item.company}</p><strong>{item.salary}</strong><button type="button" onClick={() => openVillagerDetail("job", item.title)}>岗位详情</button></article>)}</div>;
+    if (activeVillagerService === "先锋案例") return <div className="village-content-list"><article className="has-image"><img src={getVillagerDetailImage("case", "党员志愿队助力水稻夏管")} alt="党员志愿队助力水稻夏管" /><div><small>党员风采 · 7月主题活动</small><h3>党员志愿队助力水稻夏管</h3><p>先锋党员联合农技人员走进田间，为种植户提供病虫害防治与水肥管理指导。</p><button type="button" onClick={() => openVillagerDetail("case", "党员志愿队助力水稻夏管")}>查看风采</button></div></article><article className="has-image"><img src={getVillagerDetailImage("case", "“板凳议事会”让村民意见有回音")} alt="板凳议事会" /><div><small>基层治理 · 先锋案例</small><h3>“板凳议事会”让村民意见有回音</h3><p>每月一次面对面议事，将村民建议转化为可跟踪、可评价的共建项目。</p><button type="button" onClick={() => openVillagerDetail("case", "“板凳议事会”让村民意见有回音")}>查看案例</button></div></article></div>;
+    if (activeVillagerService === "积分超市") return <><div className="village-points-balance"><div><small>可用积分</small><strong>1,280</strong></div><span>本月已获得 160 分</span></div><div className="points-goods-grid">{pointsGoods.map((item) => <article key={item.name}><img src={item.image} alt={item.name} /><h3>{item.name}</h3><p>库存 {item.stock} 件</p><strong>{item.points} 积分</strong><button type="button" onClick={() => openVillagerDetail("goods", item.name, item.icon)}>查看兑换</button></article>)}</div></>;
+    if (activeVillagerService === "议事投票") return <div className="village-vote-list">{villageVotes.map((item) => <article key={item.title}><small>{item.deadline} · 参与得 {item.reward} 积分</small><h3>{item.title}</h3><p>{item.joined} / {item.total} 位村民已参与</p><i><b style={{ width: `${item.joined / item.total * 100}%` }} /></i><button type="button" onClick={() => openVillagerDetail("vote", item.title)}>查看并投票</button></article>)}</div>;
+    if (activeVillagerService === "课程培训") return <div className="village-course-list">{villageCourses.map((item) => <article className="has-image" key={item.title}><img src={item.image} alt={item.title} /><div><small>{item.time} · 学完得 {item.reward} 积分</small><h3>{item.title}</h3><p>{item.teacher}</p><span>剩余 {item.seats} 个名额</span><button type="button" onClick={() => openVillagerDetail("course", item.title)}>课程详情</button></div></article>)}</div>;
+    if (activeVillagerService === "我的货摊") return <div className="village-form-page"><div className="village-form-guide"><small>发布后将由政务端审核</small><h3>把家乡好物卖得更远</h3><p>审核通过后，商品将在游客端“义安好物”中展示，并标记“村民发布”。</p></div><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); saveVillagerPublication("农产品", String(form.get("title")), String(form.get("detail"))); event.currentTarget.reset(); }}><label>农产品名称<input name="title" required placeholder="如：自家种植富硒大米" /></label><label>产品介绍<textarea name="detail" required placeholder="介绍产地、种植方式、规格等" /></label><div><label>参考价格<input required placeholder="如：68元/袋" /></label><label>联系电话<input required placeholder="请输入联系电话" /></label></div>{publicationUploader()}<button type="submit">提交政务审核</button></form></div>;
+    if (activeVillagerService === "农房盘活") return <div className="village-form-page"><div className="village-form-guide"><small>农房资源盘活</small><h3>让闲置农房焕发新价值</h3><p>可发布出租、合作改造、民宿经营等需求，也可参与已有盘活项目。</p></div><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); saveVillagerPublication("农房", String(form.get("type")), String(form.get("detail"))); event.currentTarget.reset(); }}><label>需求类型<select name="type"><option>房屋出租</option><option>合作改造</option><option>寻找运营方</option><option>我想参与项目</option></select></label><label>农房情况<textarea name="detail" required placeholder="填写位置、面积、现状及合作设想" /></label>{publicationUploader()}<button type="submit">发布盘活需求</button></form></div>;
+    return <div className="village-form-page"><div className="village-form-guide"><small>民有所呼 · 我有所应</small><h3>您的每条建议都会被跟踪</h3><p>诉求被采纳并解决后可获得共建积分，办理进度将在“我的申请”中更新。</p></div><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); saveVillagerPublication("民情诉求", String(form.get("type")), String(form.get("detail"))); event.currentTarget.reset(); }}><label>诉求类型<select name="type"><option>意见建议</option><option>环境治理</option><option>公共设施</option><option>邻里协调</option><option>其他事项</option></select></label><label>具体内容<textarea name="detail" required placeholder="请详细描述需要解决的事情或建议" /></label><label>期望结果<input placeholder="希望如何解决" /></label>{publicationUploader()}<button type="submit">提交民情诉求</button></form></div>;
+  };
+
+  const showGovernmentNotice = (message: string) => {
+    setGovernmentNotice(message);
+    window.setTimeout(() => setGovernmentNotice(""), 2400);
+  };
+
+  const activeGovernmentScenic = governmentScenics.find((item) => item.id === governmentScenicId) || governmentScenics[0];
+  const activeMonitor = monitorPoints.find((item) => item.id === selectedMonitorId) || monitorPoints[0];
+  const activeTownStats = townStatistics.find((item) => item.name === selectedTown) || townStatistics[0];
+  const publicationBusiness = villagerPublications.map((item) => ({
+    id: item.id,
+    type: item.type === "农产品" ? "农产品审核" : item.type === "农房" ? "农房需求" : "民情诉求",
+    title: item.title,
+    source: `村民端发布 · ${item.createdAt}`,
+    time: item.createdAt,
+    status: (businessStatuses[item.id] || (item.status.includes("审核") ? "待审核" : "办理中")) as GovernmentReviewStatus,
+    detail: item.detail,
+    images: item.images,
+  }));
+  const governmentBusinesses = [
+    ...publicationBusiness,
+    ...governmentBusinessSeed.map((item) => ({ ...item, status: businessStatuses[item.id] || item.status, detail: "请核验提交内容、主体信息与相关材料，处理结果将同步至对应用户端。", images: [] as string[] })),
+  ];
+  const visibleGovernmentBusinesses = governmentBusiness === "全部" ? governmentBusinesses : governmentBusinesses.filter((item) => item.type === governmentBusiness);
+
+  const updateGovernmentBusiness = (id: string, status: GovernmentReviewStatus) => {
+    setBusinessStatuses((items) => ({ ...items, [id]: status }));
+    const publication = villagerPublications.find((item) => item.id === id);
+    if (publication) {
+      const next = villagerPublications.map((item) => item.id === id ? { ...item, status: status === "已通过" ? "审核通过" : status === "已驳回" ? "审核未通过" : "办理中" } : item);
+      setVillagerPublications(next);
+      localStorage.setItem(VILLAGER_PUBLICATIONS_KEY, JSON.stringify(next));
+    }
+    showGovernmentNotice(status === "已通过" ? "审核已通过，结果已同步至用户端" : status === "已驳回" ? "已退回并通知提交人补充材料" : "事项已转入办理流程");
+  };
+
+  const exportGovernmentData = () => {
+    const rows = ["模块,指标,数值", `景区客流,${activeGovernmentScenic.name},${activeGovernmentScenic.visitors}`, `剩余车位,${activeGovernmentScenic.name},${activeGovernmentScenic.parkingFree}`, `镇村人口,${activeTownStats.name},${activeTownStats.population}`, `人均收入,${activeTownStats.name},${activeTownStats.income}`, `游客量,${activeTownStats.name},${activeTownStats.tourists}`];
+    const blob = new Blob([`\ufeff${rows.join("\n")}`], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `义安政务数据-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    showGovernmentNotice("数据报表已导出");
+  };
+
+  const renderGovernmentHome = () => <>
+    <section className="gov-section-heading"><div><small>今日概览</small><h2>政务工作台</h2></div><span><i /> 数据已更新</span></section>
+    <section className="gov-kpi-grid">
+      <article><span><Users /></span><div><small>全区实时客流</small><strong>7,576</strong><em>较昨日 +9.8%</em></div></article>
+      <article><span><Car /></span><div><small>景区剩余车位</small><strong>302</strong><em>总容量 820</em></div></article>
+      <article><span><Camera /></span><div><small>在线监控点位</small><strong>148</strong><em>在线率 98.7%</em></div></article>
+      <article className="is-warning"><span><ShieldAlert /></span><div><small>今日智能预警</small><strong>12</strong><em>2 条待处置</em></div></article>
+    </section>
+    <section className="gov-panel gov-scenic-panel">
+      <header><div><small>景区运行</small><h2>运行数据概览</h2></div><span>{activeGovernmentScenic.name}</span></header>
+      <nav className="gov-scenic-tabs" aria-label="选择景区">{governmentScenics.map((item) => <button type="button" key={item.id} className={governmentScenicId === item.id ? "is-active" : ""} onClick={() => setGovernmentScenicId(item.id)}>{item.name}</button>)}</nav>
+      <div className="gov-scenic-summary"><div><small>实时入园</small><strong>{activeGovernmentScenic.visitors.toLocaleString()}</strong><span className={activeGovernmentScenic.trend.startsWith("-") ? "is-down" : ""}>{activeGovernmentScenic.trend}</span></div><div><small>剩余停车位</small><strong>{activeGovernmentScenic.parkingFree}<em> / {activeGovernmentScenic.parkingTotal}</em></strong><i><b style={{ width: `${activeGovernmentScenic.parkingFree / activeGovernmentScenic.parkingTotal * 100}%` }} /></i></div><div><small>监控在线</small><strong>{activeGovernmentScenic.cameras}<em> 路</em></strong><span>运行正常</span></div></div>
+      <div className="gov-mini-monitor-grid">{activeGovernmentScenic.regions.map((region, index) => <button type="button" key={region} onClick={() => { const target = monitorPoints.find((point) => point.scenic === activeGovernmentScenic.name) || monitorPoints[index]; setSelectedMonitorId(target.id); setGovernmentSection("监控中心"); }}><span className={`gov-video gov-video--${["gate", "water", "square"][index]}`}><i className="scan-line" /><b>实时</b><em>{String(index + 1).padStart(2, "0")}</em></span><strong>{region}</strong><small>点击查看实时画面</small></button>)}</div>
+    </section>
+    <section className="gov-home-grid">
+      <article className="gov-panel gov-warning-panel"><header><div><small>风险预警</small><h2>待处置预警</h2></div><button type="button" onClick={() => setGovernmentSection("监控中心")}>查看全部</button></header><div>{governmentWarnings.slice(0, 3).map((warning) => <button type="button" key={`${warning.type}-${warning.time}`} onClick={() => setGovernmentSection("监控中心")}><span className={`level-${warning.level}`}>{warning.level}</span><div><strong>{warning.type} · {warning.point}</strong><small>{warning.detail}</small></div><time>{warning.time}</time></button>)}</div></article>
+      <section className="gov-panel gov-command-panel"><header><div><small>快捷办事</small><h2>常用政务操作</h2></div><span>今日值班：张主任</span></header><div>{[{ title: "值班调度", detail: "人员与巡查任务", icon: Radio, action: "dispatch" as const }, { title: "通知发布", detail: "镇村景区通知", icon: Megaphone, action: "notice" as const }, { title: "应急处置", detail: "启动联动预案", icon: Siren, action: "emergency" as const }, { title: "数据导出", detail: "导出统计报表", icon: Download, action: "export" as const }].map((item) => { const Icon = item.icon; return <button type="button" key={item.title} onClick={() => item.action === "export" ? exportGovernmentData() : setGovernmentModal(item.action)}><span><Icon /></span><strong>{item.title}</strong><small>{item.detail}</small></button>; })}</div></section>
+    </section>
+  </>;
+
+  const renderGovernmentMonitor = () => {
+    const filtered = monitorFilter === "全区点位" ? monitorPoints : monitorPoints.filter((point) => point.scenic === monitorFilter || point.area === monitorFilter);
+    return <section className="gov-monitor-layout"><aside className="gov-panel gov-monitor-list"><header><div><small>DISTRIBUTION</small><h2>监控点位分布</h2></div><span>{filtered.length} 个点位</span></header><nav>{["全区点位", ...governmentScenics.map((item) => item.name), "顺安镇", "胥坝乡"].map((item) => <button type="button" key={item} className={monitorFilter === item ? "is-active" : ""} onClick={() => setMonitorFilter(item)}>{item}</button>)}</nav><div className="gov-monitor-map"><i className="road road-one" /><i className="road road-two" />{filtered.map((point, index) => <button type="button" key={point.id} className={`${selectedMonitorId === point.id ? "is-active" : ""} ${point.status === "维护" ? "is-offline" : ""}`} style={{ left: `${18 + index % 3 * 31}%`, top: `${21 + Math.floor(index / 3) * 45 + index % 2 * 7}%` }} onClick={() => setSelectedMonitorId(point.id)}><Camera /><small>{point.id}</small></button>)}</div><div className="gov-point-list">{filtered.map((point) => <button type="button" key={point.id} className={selectedMonitorId === point.id ? "is-active" : ""} onClick={() => setSelectedMonitorId(point.id)}><span className={point.status === "在线" ? "is-online" : ""} /><div><strong>{point.name}</strong><small>{point.id} · {point.area}</small></div><em>{point.status}</em></button>)}</div></aside><div className="gov-monitor-main"><article className="gov-panel gov-live-panel"><header><div><small>REAL-TIME VIDEO</small><h2>{activeMonitor.name}</h2></div><span><i /> {activeMonitor.status === "在线" ? "实时画面" : "设备维护中"}</span></header><div className={`gov-live-video gov-video--${activeMonitor.scene}`}><div className="video-hud"><span>{activeMonitor.id} / 1080P</span><time>{new Date().toLocaleDateString("zh-CN")} 10:48:32</time></div><i className="scan-line" /><div className="detection-box box-person"><span>人员 98%</span></div><div className="detection-box box-car"><span>车辆 96%</span></div><div className="video-crosshair" /><footer><span>AI识别：{activeMonitor.targets.join(" · ")}</span><strong>REC ●</strong></footer></div><div className="gov-monitor-actions"><button type="button" onClick={() => showGovernmentNotice("已抓拍当前画面并存入事件中心")}><Camera />手动抓拍</button><button type="button" onClick={() => setGovernmentModal("dispatch")}><Radio />调度人员</button><button type="button" onClick={() => setGovernmentModal("emergency")}><Siren />上报事件</button></div></article><article className="gov-panel gov-capture-panel"><header><div><small>SMART CAPTURE</small><h2>智能抓拍记录</h2></div><span>车 · 人 · 动物 · 行为</span></header><div>{governmentWarnings.map((warning, index) => <article key={`${warning.type}-${warning.time}`}><span className={`capture-thumb capture-${index}`}><AlertTriangle /></span><div><small>{warning.point} · {warning.time}</small><strong>{warning.type}</strong><p>{warning.detail}</p></div><button type="button" onClick={() => showGovernmentNotice("预警已确认并加入处置记录")}>确认</button></article>)}</div></article></div></section>;
+  };
+
+  const renderGovernmentTown = () => <section className="gov-town-layout"><nav className="gov-town-selector">{townStatistics.map((town) => <button type="button" key={town.name} className={selectedTown === town.name ? "is-active" : ""} onClick={() => setSelectedTown(town.name)}><strong>{town.name}</strong><small>{town.villages} 个行政村</small></button>)}</nav><section className="gov-town-kpis"><article><small>常住人口</small><strong>{activeTownStats.population.toLocaleString()}</strong><span>人</span></article><article><small>村级单元</small><strong>{activeTownStats.villages}</strong><span>个</span></article><article><small>人均可支配收入</small><strong>{activeTownStats.income.toLocaleString()}</strong><span>元 / 年</span></article><article><small>年度游客量</small><strong>{(activeTownStats.tourists / 10000).toFixed(1)}</strong><span>万人次</span></article></section><section className="gov-town-charts"><article className="gov-panel"><header><div><small>AGE STRUCTURE</small><h2>年龄结构</h2></div><span>{activeTownStats.name}</span></header><div className="gov-age-chart"><div className="age-ring" style={{ background: `conic-gradient(#25b7ff 0 ${activeTownStats.ages[0]}%, #3378ff ${activeTownStats.ages[0]}% ${activeTownStats.ages[0] + activeTownStats.ages[1]}%, #f6b84a ${activeTownStats.ages[0] + activeTownStats.ages[1]}% 100%)` }}><span><strong>{activeTownStats.population.toLocaleString()}</strong><small>总人口</small></span></div><ul><li><i className="age-young" /><span>0—17岁</span><strong>{activeTownStats.ages[0]}%</strong></li><li><i className="age-working" /><span>18—59岁</span><strong>{activeTownStats.ages[1]}%</strong></li><li><i className="age-old" /><span>60岁以上</span><strong>{activeTownStats.ages[2]}%</strong></li></ul></div></article><article className="gov-panel"><header><div><small>DATA TREND</small><h2>收入与游客趋势</h2></div><button type="button" onClick={exportGovernmentData}><Download />导出</button></header><div className="gov-bar-chart">{[72, 78, 83, 88, 94].map((height, index) => <div key={height}><span style={{ height: `${height}%` }} /><small>{2022 + index}</small></div>)}</div><div className="gov-chart-legend"><span><i />人均收入连续增长</span><strong>较2022年 +22.4%</strong></div></article></section><section className="gov-panel gov-village-ranking"><header><div><small>VILLAGE OVERVIEW</small><h2>重点村数据概览</h2></div><span>数据更新于 10:30</span></header><div className="gov-table"><div className="gov-table-row is-head"><span>村庄</span><span>人口</span><span>集体收入</span><span>游客量</span><span>治理指数</span></div>{["东垅村", "犁桥村", "凤凰村", "龙潭肖村"].map((name, index) => <div className="gov-table-row" key={name}><strong>{name}</strong><span>{(4820 - index * 570).toLocaleString()}人</span><span>{128 - index * 13}万元</span><span>{38.6 - index * 5.2}万人</span><span><i><b style={{ width: `${92 - index * 4}%` }} /></i>{92 - index * 4}</span></div>)}</div></section></section>;
+
+  const renderGovernmentBusiness = () => <section className="gov-business-layout"><nav className="gov-business-tabs">{(["全部", "农产品审核", "农房需求", "民情诉求", "惠农补贴", "就业岗位", "村务内容", "议事投票", "课程培训", "游客内容"] as GovernmentBusiness[]).map((item) => <button type="button" key={item} className={governmentBusiness === item ? "is-active" : ""} onClick={() => setGovernmentBusiness(item)}>{item}<small>{item === "全部" ? governmentBusinesses.length : governmentBusinesses.filter((business) => business.type === item).length}</small></button>)}</nav><section className="gov-panel gov-business-panel"><header><div><small>SERVICE CENTER</small><h2>{governmentBusiness === "全部" ? "全量业务事项" : governmentBusiness}</h2></div><span>{visibleGovernmentBusinesses.filter((item) => item.status === "待审核").length} 项待审核</span></header><div className="gov-business-list">{visibleGovernmentBusinesses.length ? visibleGovernmentBusinesses.map((item) => <article key={item.id}>{item.images.length > 0 ? <div className="gov-business-images">{item.images.slice(0, 3).map((image, index) => <img src={image} alt={`${item.title}材料${index + 1}`} key={`${item.id}-${index}`} />)}</div> : <span className="gov-business-icon">{item.type.includes("农产品") ? <Store /> : item.type.includes("农房") ? <HomeIcon /> : item.type.includes("诉求") ? <Bell /> : item.type.includes("补贴") ? <ClipboardCheck /> : item.type.includes("岗位") ? <Briefcase /> : item.type.includes("投票") ? <Vote /> : item.type.includes("课程") ? <GraduationCap /> : <FileText />}</span>}<div className="gov-business-copy"><small>{item.id} · {item.type}</small><h3>{item.title}</h3><p>{item.detail}</p><span>{item.source} · {item.time}</span></div><div className="gov-business-status"><span className={`status-${item.status}`}>{item.status}</span>{item.status === "待审核" && <><button type="button" onClick={() => updateGovernmentBusiness(item.id, "已通过")}>通过</button><button type="button" className="is-reject" onClick={() => updateGovernmentBusiness(item.id, "已驳回")}>退回</button></>}{item.status === "办理中" && <button type="button" onClick={() => updateGovernmentBusiness(item.id, "已通过")}>办结</button>}</div></article>) : <div className="gov-empty"><CheckCircle2 /><strong>当前分类暂无待办</strong><p>新的用户端发布和业务申请会实时汇入此处。</p></div>}</div></section></section>;
+
+  const renderGovernmentProfile = () => <section className="gov-profile-layout"><article className="gov-profile-card"><span><UserRound /></span><div><small>义安区政务协同平台</small><h2>张主任，上午好</h2><p>区文旅与乡村治理综合值班 · 今日值守至 18:00</p></div><button type="button" onClick={() => setIsRoleSelectorOpen(true)}>切换角色</button></article><section className="gov-profile-stats"><article><small>今日已办结</small><strong>18</strong></article><article><small>本周调度</small><strong>32</strong></article><article><small>发布通知</small><strong>6</strong></article><article><small>平均响应</small><strong>8.6<em>分钟</em></strong></article></section><section className="gov-panel gov-duty-card"><header><div><small>DUTY SCHEDULE</small><h2>今日值班与联络</h2></div><span>在线 6 人</span></header><div>{["综合值守 · 张主任", "文旅调度 · 李晨", "应急联络 · 王海", "镇村协同 · 陈敏"].map((name, index) => <article key={name}><span>{name.slice(-1)}</span><div><strong>{name}</strong><small>{index === 0 ? "总值班 · 138****6018" : `分机 80${index + 6} · 当前在线`}</small></div><i /></article>)}</div></section><section className="gov-panel gov-system-menu"><button type="button" onClick={() => setGovernmentModal("notice")}><Megaphone /><span><strong>通知发布记录</strong><small>查看已发布与定时通知</small></span><em>›</em></button><button type="button" onClick={() => setGovernmentSection("业务办理")}><ClipboardCheck /><span><strong>我的办理记录</strong><small>查看审核、退回与办结事项</small></span><em>›</em></button><button type="button" onClick={exportGovernmentData}><Database /><span><strong>数据导出中心</strong><small>生成景区、镇村与治理报表</small></span><em>›</em></button><button type="button" onClick={() => showGovernmentNotice("系统运行正常，数据同步完成")}><Activity /><span><strong>系统运行状态</strong><small>数据更新时间 10:48:32</small></span><em>正常</em></button></section></section>;
+
+  const renderGovernmentView = () => <section className="government-view" onPointerDown={(event) => event.stopPropagation()}><header className="government-header"><div className="government-brand"><span><Database /></span><div><small>义安区数字政务</small><h1>义安智治</h1><p>文旅监测 · 镇村治理 · 协同办理</p></div></div><div className="government-header-status"><span><i />今日值班中</span><time>7月28日 周二</time><button type="button" aria-label="打开政务人员中心" onClick={() => setIsRoleSelectorOpen(true)}><UserRound /><b>张主任</b></button></div></header><main>{governmentSection === "政务首页" ? renderGovernmentHome() : governmentSection === "监控中心" ? renderGovernmentMonitor() : governmentSection === "镇村数据" ? renderGovernmentTown() : governmentSection === "业务办理" ? renderGovernmentBusiness() : renderGovernmentProfile()}</main></section>;
+
   return (
     <main className="panorama-shell">
       <div
@@ -629,7 +906,45 @@ export default function Home() {
           decoding="async"
           onLoad={() => setIsReady(true)}
         />
-        {isReady && (
+        {activeSection === "我的" && userRole !== "政务" && (
+          <section className="profile-view" onPointerDown={(event) => event.stopPropagation()}>
+            <header className="profile-hero">
+              <div className="profile-hero__icon"><UserRound aria-hidden="true" /></div>
+              <div><span>MY YI'AN</span><h1>我的义安</h1><p>当前角色：{userRole}端</p></div>
+              <button className="role-change-button" type="button" onClick={() => setIsRoleSelectorOpen(true)}>切换角色</button>
+            </header>
+            {userRole === "村民" ? <>
+              <section className="villager-profile-card"><div className="villager-profile-card__avatar">村</div><div><small>已认证村民 · 顺安镇</small><h2>王师傅，欢迎回家</h2><p>共建等级：银杏村民 3级</p></div><button type="button" onClick={() => setIsRoleSelectorOpen(true)}>切换角色</button></section>
+              <section className="villager-profile-stats"><div><strong>1,280</strong><small>可用积分</small></div><div><strong>8</strong><small>参与村务</small></div><button type="button" onClick={() => openVillagerDetail("publications", "我的发布")}><strong>{villagerPublications.length}</strong><small>我的发布</small></button><div><strong>2</strong><small>办理中</small></div></section>
+              <section className="villager-profile-section"><header><small>我的事项</small><h3>办理进度</h3></header><div className="villager-record-list"><article><span className="is-review">审核中</span><div><h4>自家富硒大米上架申请</h4><p>我的货摊 · 2026-07-26提交</p></div><button type="button" onClick={() => openVillagerDetail("record", "自家富硒大米上架申请")}>查看</button></article><article><span className="is-progress">处理中</span><div><h4>村东路口增设反光标识建议</h4><p>民情诉求 · 预计08月02日前反馈</p></div><button type="button" onClick={() => openVillagerDetail("record", "村东路口增设反光标识建议")}>查看</button></article><article><span className="is-done">已通过</span><div><h4>农村电商创业扶持补贴</h4><p>补贴申领 · 等待资金拨付</p></div><button type="button" onClick={() => openVillagerDetail("record", "农村电商创业扶持补贴")}>查看</button></article></div></section>
+              <section className="villager-profile-section"><header><small>积分足迹</small><h3>最近获得</h3></header><div className="villager-points-history"><div><span>参与闲置地改造投票</span><strong>+30</strong><small>07月25日</small></div><div><span>完成电商基础课程</span><strong>+50</strong><small>07月20日</small></div><div><span>民情建议被采纳</span><strong>+100</strong><small>07月16日</small></div></div></section>
+              <section className="villager-profile-menu"><button type="button" onClick={() => openVillagerDetail("identity", "村民认证信息")}>村民认证信息<span>已认证 ›</span></button><button type="button" onClick={() => openVillagerDetail("address", "收货地址")}>收货地址<span>2个地址 ›</span></button><button type="button" onClick={() => openVillagerDetail("messages", "消息通知")}>消息通知<span>3条未读 ›</span></button><button type="button" onClick={() => openVillagerDetail("feedback", "帮助与反馈")}>帮助与反馈<span>›</span></button></section>
+            </> : <>
+              <article className="role-summary">
+                <small>{userRole === "游客" ? "游客服务" : "政务服务"}</small>
+                <h2>{userRole === "游客" ? "游客，欢迎来到义安" : "政务端 · 乡村治理服务"}</h2>
+                <p>{userRole === "游客" ? "收藏心仪地点、查看好物订单，记录每一次义安旅程。" : "管理村务信息、审核村民发布内容，响应民情诉求与公共事务。"}</p>
+              </article>
+              <div className="profile-action-grid">
+                {(userRole === "游客" ? [
+                  { title: "我的收藏", detail: "保存心仪地点", icon: Heart },
+                  { title: "购买订单", detail: "查看好物订单", icon: ShoppingBag },
+                  { title: "游览足迹", detail: "记录义安旅程", icon: Compass },
+                ] : [
+                  { title: "待办事项", detail: "处理村务申请", icon: UserRound },
+                  { title: "内容审核", detail: "审核村民发布", icon: Store },
+                  { title: "数据概览", detail: "查看治理数据", icon: MapIcon },
+                ]).map((action) => {
+                  const Icon = action.icon;
+                  return <button type="button" key={action.title}><span><Icon aria-hidden="true" /></span><strong>{action.title}</strong><small>{action.detail}</small></button>;
+                })}
+              </div>
+              <section className="profile-service-card"><div><small>账户服务</small><h3>{userRole === "游客" ? "登录后同步个人数据" : "完成政务人员认证"}</h3><p>{userRole === "游客" ? "收藏、订单和足迹将在登录后跨设备同步。" : "认证后可进入政务工作台处理审核和治理事项。"}</p></div><a href={MEITUAN_MINI_PROGRAM}>{userRole === "游客" ? "微信授权登录" : "前往政务认证"}</a></section>
+            </>}
+          </section>
+        )}
+
+        {isReady && activeSection === "智慧导览" && (
           <div
             ref={overlayRef}
             className="hotspot-layer"
@@ -675,7 +990,60 @@ export default function Home() {
         <div className="vignette" aria-hidden="true" />
         <div className="film-grain" aria-hidden="true" />
 
-        {activeSection === "魅力义安" && (
+        {userRole === "政务" && renderGovernmentView()}
+
+        {userRole === "村民" && activeSection !== "我的" && (
+          <section className="villager-view" onPointerDown={(event) => event.stopPropagation()}>
+            <header className="villager-hero">
+              <div><span>BEAUTIFUL VILLAGE</span><h1>{villagerSection === "村民首页" ? "村民服务中心" : villagerSection}</h1><p>{villagerSection === "村民首页" ? "村务共商、积分共享、资源共建，让每一位村民都成为家乡发展的参与者。" : "汇集与当前栏目相关的村民服务，点击功能进入办理。"}</p></div>
+              <button type="button" onClick={() => setIsRoleSelectorOpen(true)}>切换角色</button>
+            </header>
+            {villagerSection === "村民首页" ? <>
+              <section className="villager-dashboard">
+                <div className="villager-growth-card">
+                  <small>我的共建成长值</small><div><strong>1,280</strong><span>银杏村民 · 3级</span></div>
+                  <p>再参与 2 项村务，可升级为“乡村合伙人”</p><i><b style={{ width: "72%" }} /></i>
+                </div>
+                <article className="village-progress-card"><small>本月共建进度</small><strong>76%</strong><p>已有 328 位村民参与</p><span><b style={{ width: "76%" }} /></span></article>
+              </section>
+
+              <section className="village-action-section">
+                <header><div><small>一起建设家乡</small><h2>本周共建任务</h2></div><button type="button" onClick={() => { setVillagerSection("积分服务"); setActiveSection("积分服务"); }}>全部任务</button></header>
+                <div className="village-task-list">
+                  <article><span><UserRound /></span><div><small>议事投票 · 还剩2天</small><h3>村口闲置地改造方案，由你决定</h3><p>已有 186 位村民参与讨论</p></div><button type="button" onClick={() => openVillagerDetail("vote", "村口闲置地改造方案票选")}>去投票 <em>+30</em></button></article>
+                  <article><span><Compass /></span><div><small>课程培训 · 周六开课</small><h3>短视频助农直播实操课</h3><p>剩余 12 个名额</p></div><button type="button" onClick={() => openVillagerDetail("course", "短视频助农直播实操课")}>去报名 <em>+50</em></button></article>
+                </div>
+              </section>
+
+              <section className="village-community-section">
+                <header><div><small>家乡正在发生</small><h2>乡亲动态</h2></div><span>共建有回应</span></header>
+                <article className="village-story-card"><div className="village-story-card__badge"><Heart /></div><div><small>民情诉求 · 已解决</small><h3>张大姐提出的夜间照明建议已完成</h3><p>新增太阳能路灯 6 盏，照亮村民回家路。该建议获得 100 共建积分。</p><footer><span>{likedVillageStory ? "29" : "28"} 位乡亲点赞</span><div><button type="button" onClick={() => openVillagerDetail("story", "夜间照明建议办理结果", "张大姐提出村东道路夜间照明不足后，村委会完成现场勘查、方案公示和施工安装，共新增太阳能路灯6盏。")}>查看详情</button><button type="button" className={likedVillageStory ? "is-liked" : ""} onClick={() => setLikedVillageStory((liked) => !liked)}>{likedVillageStory ? "已点赞" : "点赞"}</button></div></footer></div></article>
+              </section>
+
+              <section className="village-quick-section">
+                <header><div><small>常用服务</small><h2>我也要参与</h2></div></header>
+                <div className="village-quick-grid">
+                  {[
+                    { title: "我要建议", detail: "村里事，一起商量", icon: UserRound, section: "我要发布" as VillagerSection },
+                    { title: "分享好物", detail: "让家乡特产被看见", icon: Store, section: "我要发布" as VillagerSection },
+                    { title: "积分兑换", detail: "参与越多，收获越多", icon: ShoppingBag, section: "积分服务" as VillagerSection },
+                    { title: "惠农服务", detail: "政策岗位及时掌握", icon: HomeIcon, section: "村务服务" as VillagerSection },
+                  ].map((item) => { const Icon = item.icon; return <button type="button" key={item.title} onClick={() => { setVillagerSection(item.section); setActiveVillagerService(item.title === "我要建议" ? "民情诉求" : item.title === "分享好物" ? "我的货摊" : item.title === "积分兑换" ? "积分超市" : "补贴申领"); setActiveSection(item.section); }}><span><Icon /></span><strong>{item.title}</strong><small>{item.detail}</small></button>; })}
+                </div>
+              </section>
+
+              <section className="villager-notice"><span>村务速递</span><strong>顺安镇本月村务公开信息已更新</strong><button type="button" onClick={() => openVillagerDetail("article", "顺安镇本月村务公开信息", "本月村务公开包含村级财务收支、公益项目进展、惠农政策落实和村民议事结果等内容。")}>查看详情</button></section>
+            </> : <>
+              <section className="villager-category-intro"><small>{villagerSection === "村务服务" ? "信息公开 · 惠农服务" : villagerSection === "积分服务" ? "参与有分 · 成长有礼" : "我的资源 · 我来建设"}</small><h2>{villagerSection}</h2><p>{villagerSection === "村务服务" ? "村务信息看得见，惠农政策找得到，就业服务送到家。" : villagerSection === "积分服务" ? "参与议事、学习培训、共建家乡，点滴行动都能积累成长。" : "发布好物、盘活农房、反映诉求，让每份家乡资源都产生价值。"}</p></section>
+              <nav className="villager-service-tabs" aria-label={`${villagerSection}功能`}>
+                {villagerServices.filter((service) => service.group === villagerSection).map((service) => { const Icon = service.icon; return <button type="button" key={service.name} className={activeVillagerService === service.name ? "is-active" : ""} onClick={() => setActiveVillagerService(service.name)}><Icon /><span>{service.name}</span></button>; })}
+              </nav>
+              <section className="villager-service-content">{renderVillagerService()}</section>
+            </>}
+          </section>
+        )}
+
+        {activeSection === "魅力义安" && userRole === "游客" && (
           <section className="charm-view" onPointerDown={(event) => event.stopPropagation()}>
             <div className="charm-view__wash" aria-hidden="true" />
             <header className="charm-hero">
@@ -695,7 +1063,7 @@ export default function Home() {
           </section>
         )}
 
-        {activeSection === "商旅食宿" && (
+        {activeSection === "商旅食宿" && userRole === "游客" && (
           <section className="catalog-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="catalog-hero">
               <span>TRAVEL & STAY</span>
@@ -717,7 +1085,7 @@ export default function Home() {
           </section>
         )}
 
-        {activeSection === "义安好物" && (
+        {activeSection === "义安好物" && userRole === "游客" && (
           <section className="goods-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="goods-hero"><span>GIFTS FROM YI'AN</span><h1>义安好物</h1><p>把白姜的清脆、酥糖的香甜、凤丹的芬芳与千年铜韵带回家。</p></header>
             <div className="goods-grid">
@@ -733,13 +1101,78 @@ export default function Home() {
         )}
 
         {isReady && (
-          <nav className="map-menu" aria-label="义安旅游服务" onPointerDown={(event) => event.stopPropagation()}>
-            <button type="button" className={activeSection === "智慧导览" ? "is-active" : ""} onClick={() => setActiveSection("智慧导览")}><MapIcon aria-hidden="true" /><span>导览</span></button>
-            <button type="button" className={activeSection === "魅力义安" ? "is-active" : ""} onClick={() => setActiveSection("魅力义安")}><Compass aria-hidden="true" /><span>魅力义安</span></button>
-            <button type="button" className={activeSection === "商旅食宿" ? "is-active" : ""} onClick={() => setActiveSection("商旅食宿")}><Store aria-hidden="true" /><span>商旅食宿</span></button>
-            <button type="button" className={activeSection === "义安好物" ? "is-active" : ""} onClick={() => setActiveSection("义安好物")}><ShoppingBag aria-hidden="true" /><span>义安好物</span></button>
-            <button type="button" className={isProfileOpen ? "is-active" : ""} onClick={() => setIsProfileOpen(true)}><UserRound aria-hidden="true" /><span>我的</span></button>
+          <nav className="map-menu" aria-label={userRole === "游客" ? "义安旅游服务" : "义安村民服务"} onPointerDown={(event) => event.stopPropagation()}>
+            {userRole === "游客" ? <>
+              <button type="button" className={activeSection === "智慧导览" ? "is-active" : ""} onClick={() => setActiveSection("智慧导览")}><MapIcon aria-hidden="true" /><span>导览</span></button>
+              <button type="button" className={activeSection === "魅力义安" ? "is-active" : ""} onClick={() => setActiveSection("魅力义安")}><Compass aria-hidden="true" /><span>魅力义安</span></button>
+              <button type="button" className={activeSection === "商旅食宿" ? "is-active" : ""} onClick={() => setActiveSection("商旅食宿")}><Store aria-hidden="true" /><span>商旅食宿</span></button>
+              <button type="button" className={activeSection === "义安好物" ? "is-active" : ""} onClick={() => setActiveSection("义安好物")}><ShoppingBag aria-hidden="true" /><span>义安好物</span></button>
+              <button type="button" className={activeSection === "我的" ? "is-active" : ""} onClick={() => setActiveSection("我的")}><UserRound aria-hidden="true" /><span>我的</span></button>
+            </> : userRole === "村民" ? <>
+              <button type="button" className={villagerSection === "村民首页" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("村民首页"); setActiveSection("村民首页"); }}><HomeIcon aria-hidden="true" /><span>首页</span></button>
+              <button type="button" className={villagerSection === "村务服务" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("村务服务"); setActiveVillagerService("村务公开"); setActiveSection("村务服务"); }}><MapIcon aria-hidden="true" /><span>村务服务</span></button>
+              <button type="button" className={villagerSection === "积分服务" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("积分服务"); setActiveVillagerService("积分超市"); setActiveSection("积分服务"); }}><Heart aria-hidden="true" /><span>积分服务</span></button>
+              <button type="button" className={villagerSection === "我要发布" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("我要发布"); setActiveVillagerService("我的货摊"); setActiveSection("我要发布"); }}><Store aria-hidden="true" /><span>我要发布</span></button>
+              <button type="button" className={activeSection === "我的" ? "is-active" : ""} onClick={() => setActiveSection("我的")}><UserRound aria-hidden="true" /><span>我的</span></button>
+            </> : <>
+              <button type="button" className={governmentSection === "政务首页" ? "is-active" : ""} onClick={() => setGovernmentSection("政务首页")}><HomeIcon aria-hidden="true" /><span>政务首页</span></button>
+              <button type="button" className={governmentSection === "监控中心" ? "is-active" : ""} onClick={() => setGovernmentSection("监控中心")}><Camera aria-hidden="true" /><span>监控中心</span></button>
+              <button type="button" className={governmentSection === "镇村数据" ? "is-active" : ""} onClick={() => setGovernmentSection("镇村数据")}><Database aria-hidden="true" /><span>镇村数据</span></button>
+              <button type="button" className={governmentSection === "业务办理" ? "is-active" : ""} onClick={() => setGovernmentSection("业务办理")}><ClipboardCheck aria-hidden="true" /><span>业务办理</span></button>
+              <button type="button" className={governmentSection === "我的" ? "is-active" : ""} onClick={() => setGovernmentSection("我的")}><UserRound aria-hidden="true" /><span>我的</span></button>
+            </>}
           </nav>
+        )}
+
+        {governmentModal && (
+          <div className="gov-modal-backdrop" onPointerDown={(event) => event.stopPropagation()} onClick={() => setGovernmentModal(null)}>
+            <section className="gov-action-modal" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
+              <header><div><small>政务协同操作</small><h2>{governmentModal === "dispatch" ? "值班调度" : governmentModal === "notice" ? "通知发布" : "应急处置"}</h2></div><button type="button" onClick={() => setGovernmentModal(null)}>×</button></header>
+              <form onSubmit={(event) => { event.preventDefault(); showGovernmentNotice(governmentModal === "dispatch" ? "调度任务已下发，相关人员已收到提醒" : governmentModal === "notice" ? "通知发布成功，送达情况可在记录中查看" : "应急事件已建档并启动联动处置"); setGovernmentModal(null); }}>
+                <label>{governmentModal === "notice" ? "通知范围" : "任务区域"}<select><option>全区镇村与景区</option><option>顺安镇</option><option>西联镇</option><option>钟鸣镇</option><option>相关景区</option></select></label>
+                {governmentModal === "dispatch" && <label>调度力量<select><option>综合巡查组</option><option>景区安保组</option><option>应急救援组</option><option>镇村联络员</option></select></label>}
+                {governmentModal === "emergency" && <label>事件等级<select><option>一般事件（Ⅳ级）</option><option>较大事件（Ⅲ级）</option><option>重大事件（Ⅱ级）</option></select></label>}
+                <label>{governmentModal === "notice" ? "通知标题" : "事项标题"}<input required placeholder="请输入标题" /></label>
+                <label>{governmentModal === "notice" ? "通知内容" : "任务说明"}<textarea required placeholder="请填写详细内容、位置与处置要求" /></label>
+                <button type="submit"><Send />确认{governmentModal === "notice" ? "发布" : governmentModal === "dispatch" ? "下发" : "启动处置"}</button>
+              </form>
+            </section>
+          </div>
+        )}
+
+        {governmentNotice && <div className="government-toast" role="status">{governmentNotice}</div>}
+
+        {villagerDetail && (
+          <section className="villager-detail-page" onPointerDown={(event) => event.stopPropagation()}>
+            <header className="villager-detail-page__header"><button type="button" onClick={() => setVillagerDetail(null)}>‹ 返回</button><span>义安村民服务</span></header>
+            <div className="villager-detail-page__body">{renderVillagerDetail()}</div>
+          </section>
+        )}
+
+        {villagerNotice && <div className="villager-toast" role="status">{villagerNotice}</div>}
+
+        {isRoleSelectorOpen && (
+          <div className="role-selector-backdrop" role="presentation" onClick={() => setIsRoleSelectorOpen(false)} onPointerDown={(event) => event.stopPropagation()}>
+            <section className="role-selector-modal" role="dialog" aria-modal="true" aria-labelledby="role-selector-title" onClick={(event) => event.stopPropagation()}>
+              <header><div><small>角色切换</small><h2 id="role-selector-title">请选择服务端</h2><p>切换后将刷新首页内容与底部导航。</p></div><button type="button" onClick={() => setIsRoleSelectorOpen(false)} aria-label="关闭角色选择">×</button></header>
+              <div className="role-selector-list">
+                {([
+                  { role: "游客" as UserRole, title: "游客端", detail: "智慧导览、魅力义安、商旅食宿与义安好物", icon: Compass },
+                  { role: "村民" as UserRole, title: "村民端", detail: "村务服务、积分服务、资源发布与惠农服务", icon: HomeIcon },
+                  { role: "政务" as UserRole, title: "政务端", detail: "村务管理、内容审核、民情处理与运营数据", icon: UserRound },
+                ]).map((item) => {
+                  const Icon = item.icon;
+                  return <button type="button" key={item.role} className={userRole === item.role ? "is-current" : ""} onClick={() => {
+                    setUserRole(item.role);
+                    setIsRoleSelectorOpen(false);
+                    if (item.role === "游客") setActiveSection("智慧导览");
+                    if (item.role === "村民") { setVillagerSection("村民首页"); setActiveSection("村民首页"); }
+                    if (item.role === "政务") { setGovernmentSection("政务首页"); setActiveSection("智慧导览"); }
+                  }}><span><Icon aria-hidden="true" /></span><div><strong>{item.title}</strong><small>{item.detail}</small></div>{userRole === item.role && <em>当前</em>}</button>;
+                })}
+              </div>
+            </section>
+          </div>
         )}
 
         {selectedGood && (
@@ -759,24 +1192,13 @@ export default function Home() {
           </div>
         )}
 
-        {isProfileOpen && (
-          <div className="spot-modal-backdrop profile-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setIsProfileOpen(false)}>
-            <section className="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-title" onClick={(event) => event.stopPropagation()}>
-              <button className="profile-modal__close" type="button" onClick={() => setIsProfileOpen(false)} aria-label="关闭个人中心">×</button>
-              <header><span><UserRound aria-hidden="true" /></span><div><small>个人中心</small><h2 id="profile-title">游客，欢迎来到义安</h2><p>登录后可同步收藏、订单与游览足迹</p></div></header>
-              <div className="profile-stats"><button type="button"><Heart /><strong>我的收藏</strong><small>保存心仪地点</small></button><button type="button"><ShoppingBag /><strong>购买订单</strong><small>查看好物订单</small></button><button type="button"><HomeIcon /><strong>游览足迹</strong><small>记录义安旅程</small></button></div>
-              <a className="profile-login" href={MEITUAN_MINI_PROGRAM}>微信授权登录</a>
-              <small className="detail-disclaimer">当前为导览展示入口，账户及订单数据将在接入正式用户服务后同步。</small>
-            </section>
-          </div>
-        )}
-
         {selectedCharmTown && (
           <div className="spot-modal-backdrop charm-modal-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setSelectedCharmTown(null)}>
             <section className="spot-modal charm-modal" role="dialog" aria-modal="true" aria-labelledby="charm-town-title" onClick={(event) => event.stopPropagation()}>
               <div className="charm-modal__image">
                 <img src={imageUrl(selectedCharmTown.scene)} alt={`${selectedCharmTown.name}风光`} />
                 <span />
+                <a className="charm-modal__navigate" href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`安徽铜陵义安区${selectedCharmTown.name}`)}&callnative=1`} target="_blank" rel="noreferrer" aria-label={`导航到${selectedCharmTown.name}`}><Compass aria-hidden="true" />导航</a>
                 <button type="button" onClick={() => setSelectedCharmTown(null)} aria-label="关闭乡镇介绍">×</button>
                 <div><small>{selectedCharmTown.subtitle}</small><h2 id="charm-town-title">{selectedCharmTown.name}</h2></div>
               </div>
@@ -801,7 +1223,6 @@ export default function Home() {
                     </article>
                   ))}
                 </div>
-                <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`安徽铜陵义安区${selectedCharmTown.name}`)}&callnative=1`} target="_blank" rel="noreferrer">在地图中查看 {selectedCharmTown.name}</a>
                 <small className="detail-disclaimer">图像为乡镇主题视觉展示，具体景观和开放信息以当地实际情况为准。</small>
               </div>
             </section>
