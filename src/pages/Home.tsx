@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import {
   Activity, AlertTriangle, Bell, Briefcase, Camera, Car, CheckCircle2, ChevronLeft, ClipboardCheck,
   Compass, Database, Download, FileText, GraduationCap, Heart, Home as HomeIcon,
-  Map as MapIcon, Megaphone, Play, Radio, Send, ShieldAlert, ShoppingBag, Siren, Store,
-  UserRound, Users, Vote,
+  Map as MapIcon, Megaphone, Phone, Play, Radio, Search, Send, ShieldAlert, ShoppingBag, Siren, Store,
+  UserRound, Users, Vote, X,
 } from "lucide-react";
 
 const TOUR_DURATION = 42000;
@@ -105,8 +105,8 @@ const scenicSpots = [
 ] as const;
 
 type ScenicSpot = (typeof scenicSpots)[number];
-type DetailTab = "介绍" | "攻略" | "路线" | "服务" | "文化" | "打卡" | "周边" | "交通" | "节目单";
-const detailTabs: DetailTab[] = ["介绍", "攻略", "路线", "服务", "文化", "打卡", "周边", "交通", "节目单"];
+type DetailTab = "介绍" | "攻略" | "路线" | "服务" | "打卡" | "周边" | "交通" | "节目单";
+const detailTabs: DetailTab[] = ["介绍", "攻略", "路线", "服务", "打卡", "周边", "交通", "节目单"];
 const MEITUAN_MINI_PROGRAM = "weixin://dl/business/?t=IYgDT21eme4SAJA";
 
 type TownGuideCategory = "美食" | "游玩" | "住宿" | "特产" | "文化活动";
@@ -244,17 +244,28 @@ const travelCatalog = {
 } as const;
 
 const yianGoods = [
-  { name: "铜陵白姜", type: "全球农遗", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", specification: "嫩姜礼盒 / 糖醋姜 / 姜膏", service: "支持产地直发，具体规格与配送范围以购买页为准。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
-  { name: "顺安酥糖", type: "传统风味", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", specification: "经典袋装 / 节庆礼盒", service: "建议密封避光保存，过敏原等信息请查看商品包装。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
-  { name: "凤丹系列", type: "农遗好物", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", specification: "牡丹籽油 / 凤丹花茶 / 护肤礼盒", service: "不同品类适用方式不同，下单前请核对产品说明。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
-  { name: "铜拓本画", type: "非遗文创", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", specification: "装裱画 / 手作体验套装", service: "手工产品纹理略有差异，装裱尺寸以商品详情为准。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
-  { name: "铜艺文创", type: "铜都手作", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", specification: "铜书签 / 桌面摆件 / 茶器", service: "铜器会随使用形成自然氧化色泽，请按说明进行养护。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
-  { name: "太平烧饼", type: "地方糕点", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", specification: "现烤散装 / 便携礼袋", service: "糕点建议尽快食用，保质期和储存方式以包装为准。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
-  { name: "顺安山芋粉丝", type: "乡村物产", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", specification: "家庭装 / 农产礼盒", service: "干燥阴凉处保存，烹饪前可根据口感需求浸泡。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
-  { name: "西联故事礼盒", type: "水乡礼物", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", specification: "文创组合 / 节庆定制礼盒", service: "礼盒内容会随季节调整，实际组合以购买页面为准。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
+  { name: "铜陵白姜", type: "全球农遗", source: "官方发布", publisher: "义安区文旅推荐", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", specification: "嫩姜礼盒 / 糖醋姜 / 姜膏", service: "支持产地直发，具体规格与配送范围以购买页为准。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
+  { name: "顺安酥糖", type: "传统风味", source: "官方发布", publisher: "顺安镇特色产业推荐", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", specification: "经典袋装 / 节庆礼盒", service: "建议密封避光保存，过敏原等信息请查看商品包装。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
+  { name: "凤丹系列", type: "农遗好物", source: "官方发布", publisher: "义安区文旅推荐", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", specification: "牡丹籽油 / 凤丹花茶 / 护肤礼盒", service: "不同品类适用方式不同，下单前请核对产品说明。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
+  { name: "铜拓本画", type: "非遗文创", source: "官方发布", publisher: "义安区非遗保护中心", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", specification: "装裱画 / 手作体验套装", service: "手工产品纹理略有差异，装裱尺寸以商品详情为准。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
+  { name: "铜艺文创", type: "铜都手作", source: "村民发布", publisher: "钟鸣镇村民手作坊", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", specification: "铜书签 / 桌面摆件 / 茶器", service: "铜器会随使用形成自然氧化色泽，请按说明进行养护。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
+  { name: "太平烧饼", type: "地方糕点", source: "村民发布", publisher: "顺安镇村民商户", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", specification: "现烤散装 / 便携礼袋", service: "糕点建议尽快食用，保质期和储存方式以包装为准。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
+  { name: "顺安山芋粉丝", type: "乡村物产", source: "村民发布", publisher: "顺安镇农家合作户", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", specification: "家庭装 / 农产礼盒", service: "干燥阴凉处保存，烹饪前可根据口感需求浸泡。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
+  { name: "西联故事礼盒", type: "水乡礼物", source: "村民发布", publisher: "西联镇犁桥村文创铺", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", specification: "文创组合 / 节庆定制礼盒", service: "礼盒内容会随季节调整，实际组合以购买页面为准。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
 ] as const;
 
+const villagerGoodsPhones: Record<string, string> = {
+  "铜艺文创": "13856218831",
+  "太平烧饼": "13955910826",
+  "顺安山芋粉丝": "13856270918",
+  "西联故事礼盒": "13965208716",
+};
+
 type YianGood = (typeof yianGoods)[number];
+type GoodsSource = YianGood["source"];
+type GoodsSourceFilter = "全部" | GoodsSource;
+const goodsSourceFilters: GoodsSourceFilter[] = ["全部", "官方发布", "村民发布"];
+const goodsCategories = Array.from(new Set(yianGoods.map((good) => good.type)));
 
 type GoodsDelivery = "快递配送" | "到店自提";
 type GoodsOrder = {
@@ -406,7 +417,7 @@ const investmentProjects: InvestmentProject[] = [
   { id: "donglian-farm", name: "东联智慧稻渔综合示范基地", town: "东联镇", category: "现代农业", scale: "计划总投资约 6500 万元", cooperation: "土地合作 / 订单联营", summary: "依托沿江圩区高标准农田发展智慧稻作、生态水产、农产品加工和农业观光，建设可复制的数字农业样板。", highlights: ["连片高标准农田", "稻渔综合收益", "数字农业示范"], status: "重点招商", overview: "通过物联网、水肥管理和生态种养技术提升亩均效益，同步拓展加工、品牌和农事体验价值。", location: "位于东联镇沿江圩区，地势平坦、农田集中，具备机械化作业、规模化经营及物流运输条件。", construction: ["智慧农田和生态稻渔示范区", "稻米、水产初加工及仓储中心", "农业物联网和质量追溯平台", "农事研学及田园体验节点"], advantages: ["规模化土地和农业基础设施较完善", "可形成种养加工一体化收益", "政府、村集体与经营主体协同基础好"], contact: "东联镇农业招商专员 周先生", phone: "0562-823****" },
   { id: "shunan-commercial", name: "顺安城市会客厅商业配套项目", town: "顺安镇", category: "商业配套", scale: "计划总投资约 3 亿元", cooperation: "商业开发 / 招商运营", summary: "面向义安东部城区及文旅客群，引进品质餐饮、亲子娱乐、生活零售和城市公共客厅，补齐区域消费配套。", highlights: ["城区消费腹地", "文旅客流叠加", "复合商业场景"], status: "规划招商", overview: "建设服务本地居民、产业人才和旅游客群的复合型商业中心，强化顺安作为义安东部综合服务节点的功能。", location: "项目位于顺安镇核心发展片区，周边居住社区、产业园和旅游节点集中，城市道路通达性良好。", construction: ["特色餐饮与品质零售街区", "亲子成长和家庭娱乐中心", "城市展厅、共享办公及活动空间", "停车、充电和智慧商业配套"], advantages: ["常住人口与周边乡镇消费需求稳定", "可承接凤凰山、永泉等旅游外溢客流", "适合商业品牌组合及统一运营"], contact: "义安区商务局投资服务专员 许女士", phone: "0562-882****" },
 ];
-type VillagerSection = "村民首页" | "村务服务" | "积分服务" | "我要发布" | "我的";
+type VillagerSection = "村民首页" | "村务服务" | "积分超市" | "我要发布" | "我的";
 type MainSection = TouristSection | VillagerSection;
 type UserRole = "游客" | "村民" | "政务";
 type GovernmentSection = "政务首页" | "监控中心" | "镇村数据" | "业务办理" | "我的";
@@ -475,11 +486,11 @@ const governmentBusinessSeed = [
 
 const villagerServices = [
   { name: "村务公开", detail: "查看村务公开信息、通知公告与政策文章", icon: HomeIcon, group: "村务服务", accent: "公开透明" },
-  { name: "积分超市", detail: "使用参与乡村事务获得的积分兑换商品", icon: ShoppingBag, group: "积分服务", accent: "积分兑换" },
-  { name: "议事投票", detail: "参与村务投票和公共决策，完成后获得积分", icon: UserRound, group: "积分服务", accent: "共商共议" },
+  { name: "积分超市", detail: "使用参与乡村事务获得的积分兑换商品", icon: ShoppingBag, group: "积分超市", accent: "积分兑换" },
+  { name: "议事投票", detail: "参与村务投票和公共决策，完成后获得积分", icon: UserRound, group: "村务服务", accent: "共商共议" },
   { name: "我的货摊", detail: "发布自家农产品，审核通过后展示至义安好物", icon: Store, group: "我要发布", accent: "村民发布" },
   { name: "农房盘活", detail: "发布农房出租、改造需求，参与乡村资源盘活", icon: HomeIcon, group: "我要发布", accent: "资源盘活" },
-  { name: "课程培训", detail: "参与农业、电商等培训课程，学习并获得积分", icon: Compass, group: "积分服务", accent: "学习得分" },
+  { name: "课程培训", detail: "参与农业、电商等培训课程，学习并获得积分", icon: Compass, group: "村务服务", accent: "学习得分" },
   { name: "补贴申领", detail: "查看政府补贴政策并在线提交申领信息", icon: Heart, group: "村务服务", accent: "惠农政策" },
   { name: "就业岗位", detail: "查看政府发布的本地岗位并提交岗位申请", icon: Store, group: "村务服务", accent: "家门口就业" },
   { name: "民情诉求", detail: "提交意见建议和待解决事项，采纳解决可获积分", icon: UserRound, group: "我要发布", accent: "有事我来办" },
@@ -515,10 +526,71 @@ const villageJobs = [
   { title: "民宿管家", company: "犁桥水镇民宿", salary: "3500—5000元/月", tag: "提供培训", image: imageUrl("Friendly Chinese homestay manager preparing an elegant guest room in a Jiangnan water town boutique inn, warm natural light, realistic hospitality photography, no text, no watermark") },
   { title: "农业技术员", company: "铜勤生态农业", salary: "5000—7000元/月", tag: "五险", image: imageUrl("Chinese agricultural technician inspecting healthy rice plants in a green paddy field with a tablet, Anhui countryside, realistic professional photography, no text, no watermark") },
 ];
-const pointsGoods = [
-  { name: "义安大米 5kg", points: 680, stock: 24, icon: "米", image: imageUrl("Premium bag of Anhui Yian rice with a wooden bowl of polished rice on a rustic table, green rice fields softly blurred behind, commercial product photography, no visible brand text, no watermark") },
-  { name: "家用洗护套装", points: 520, stock: 36, icon: "惠", image: imageUrl("Neatly arranged eco friendly household cleaning and personal care gift set on a warm cream background with green leaves, realistic commercial product photography, no text, no watermark") },
-  { name: "永泉温泉体验券", points: 1200, stock: 8, icon: "泉", image: imageUrl("Peaceful outdoor hot spring pool surrounded by bamboo and traditional Chinese garden architecture at dusk, warm steam, premium travel photography, no text, no watermark") },
+type PointsCategory = "生活用品" | "农资用品" | "地方好物" | "文创礼品";
+type PointsGood = {
+  id: string;
+  name: string;
+  points: number;
+  stock: number;
+  category: PointsCategory;
+  image: string;
+  description: string;
+  specification: string;
+  limit: number;
+  validUntil: string;
+  listedAt: string;
+};
+type PointsOrderStatus = "待领取" | "已领取" | "已过期";
+type PointsOrder = {
+  id: string;
+  goodId: string;
+  productName: string;
+  productImage: string;
+  specification: string;
+  quantity: number;
+  points: number;
+  pickupPoint: string;
+  pickupAddress: string;
+  phone: string;
+  pickupDate: string;
+  verifyCode: string;
+  createdAt: string;
+  validUntil: string;
+  status: PointsOrderStatus;
+};
+type PointsTransaction = { id: string; title: string; points: number; createdAt: string };
+type VillagerDetail = { type: string; title: string; data?: string; id?: string; orderId?: string };
+
+const POINTS_BALANCE_KEY = "yian-villager-points-balance";
+const POINTS_STOCK_KEY = "yian-villager-points-stock";
+const POINTS_ORDERS_KEY = "yian-villager-points-orders";
+const POINTS_TRANSACTIONS_KEY = "yian-villager-points-transactions";
+const pickupPoints = [
+  { name: "顺安镇村民服务中心", address: "顺安镇顺凤路16号" },
+  { name: "东垅村党群服务中心", address: "顺安镇东垅村中心路8号" },
+  { name: "顺安镇便民服务站", address: "顺安镇临津路与东正大道交叉口" },
+] as const;
+const initialPointsTransactions: PointsTransaction[] = [
+  { id: "seed-vote", title: "参与闲置地改造投票", points: 30, createdAt: "2026-07-25T16:35:00+08:00" },
+  { id: "seed-course", title: "完成电商基础课程", points: 50, createdAt: "2026-07-20T10:20:00+08:00" },
+  { id: "seed-suggestion", title: "民情建议被采纳", points: 100, createdAt: "2026-07-16T09:10:00+08:00" },
+];
+
+const pointsGoods: PointsGood[] = [
+  { id: "pg-rice-5kg", name: "义安生态大米 5kg", points: 680, stock: 24, category: "地方好物", description: "义安本地生态稻田出产，米粒饱满，适合家庭日常食用。", specification: "5kg / 袋", limit: 2, validUntil: "2026-12-31", listedAt: "2026-07-28", image: imageUrl("Premium bag of Anhui Yian rice with a wooden bowl of polished rice, green rice fields, commercial product photography, no text, no watermark") },
+  { id: "pg-clean-set", name: "家用清洁套装", points: 520, stock: 36, category: "生活用品", description: "包含洗衣液、洗洁精和多用途清洁剂，满足家庭日常清洁。", specification: "3件 / 套", limit: 2, validUntil: "2026-11-30", listedAt: "2026-07-26", image: imageUrl("Eco friendly household cleaning set on cream background with green leaves, realistic product photography, no text, no watermark") },
+  { id: "pg-towel", name: "纯棉毛巾三件套", points: 260, stock: 48, category: "生活用品", description: "柔软吸水的纯棉毛巾组合，适合全家日常使用。", specification: "面巾 3条 / 盒", limit: 3, validUntil: "2027-01-31", listedAt: "2026-07-24", image: imageUrl("Three folded premium cotton towels in warm cream and green colors, product photography, no text, no watermark") },
+  { id: "pg-thermos", name: "便携保温杯", points: 450, stock: 0, category: "生活用品", description: "轻巧便携的不锈钢保温杯，杯盖防漏，适合出行携带。", specification: "500ml / 个", limit: 1, validUntil: "2027-02-28", listedAt: "2026-07-22", image: imageUrl("Elegant green stainless steel thermos bottle on warm beige background, product photography, no text, no watermark") },
+  { id: "pg-fertilizer", name: "有机蔬菜肥", points: 380, stock: 30, category: "农资用品", description: "适用于家庭菜园和露地蔬菜的颗粒有机肥，使用方便。", specification: "2kg / 袋", limit: 3, validUntil: "2026-10-31", listedAt: "2026-07-27", image: imageUrl("Bag of organic vegetable fertilizer beside healthy green seedlings, agricultural product photography, no text, no watermark") },
+  { id: "pg-gloves", name: "耐磨农事手套", points: 160, stock: 65, category: "农资用品", description: "防滑耐磨，适合田间劳作、园艺修剪和日常搬运。", specification: "2双 / 组", limit: 4, validUntil: "2027-03-31", listedAt: "2026-07-20", image: imageUrl("Durable farming work gloves beside garden tools, clean commercial product photography, no text, no watermark") },
+  { id: "pg-shears", name: "园艺修枝剪", points: 420, stock: 18, category: "农资用品", description: "锋利省力的园艺剪，适合果树、花木和庭院枝条修剪。", specification: "标准款 / 把", limit: 1, validUntil: "2027-03-31", listedAt: "2026-07-18", image: imageUrl("Professional pruning shears with fresh garden branches, agricultural tool photography, no text, no watermark") },
+  { id: "pg-seed-pack", name: "四季蔬菜种子包", points: 220, stock: 42, category: "农资用品", description: "精选适合本地气候的时令蔬菜种子，附简易播种说明。", specification: "6种 / 盒", limit: 2, validUntil: "2026-09-30", listedAt: "2026-07-25", image: imageUrl("Assorted vegetable seed packets with fresh vegetables and soil, product photography, no text, no watermark") },
+  { id: "pg-ginger", name: "铜陵白姜礼盒", points: 760, stock: 15, category: "地方好物", description: "精选铜陵白姜制品，清脆爽口，是具有义安特色的地方礼物。", specification: "糖醋姜 6瓶 / 盒", limit: 2, validUntil: "2026-10-15", listedAt: "2026-07-29", image: imageUrl("Elegant Tongling white ginger gift box with preserved ginger jars, Anhui specialty photography, no text, no watermark") },
+  { id: "pg-candy", name: "顺安酥糖礼袋", points: 320, stock: 33, category: "地方好物", description: "芝麻桂花香浓郁，口感酥松，是顺安经典传统风味。", specification: "400g / 袋", limit: 3, validUntil: "2026-09-30", listedAt: "2026-07-23", image: imageUrl("Traditional Shunan sesame flaky candy in elegant paper gift bag, food photography, no text, no watermark") },
+  { id: "pg-noodles", name: "山芋粉丝家庭装", points: 360, stock: 27, category: "地方好物", description: "本地山芋淀粉制作，柔韧耐煮，适合炖菜和火锅。", specification: "1.5kg / 袋", limit: 2, validUntil: "2026-12-20", listedAt: "2026-07-19", image: imageUrl("Traditional sweet potato glass noodles in woven basket, Anhui rural product photography, no text, no watermark") },
+  { id: "pg-bookmark", name: "铜韵书签礼盒", points: 580, stock: 20, category: "文创礼品", description: "以古铜都青铜纹饰为灵感的精致金属书签，兼具纪念与实用价值。", specification: "书签 2枚 / 盒", limit: 2, validUntil: "2027-06-30", listedAt: "2026-07-29", image: imageUrl("Refined copper bookmarks with ancient Chinese bronze patterns in gift box, cultural product photography, no text, no watermark") },
+  { id: "pg-water-town", name: "犁桥水镇帆布袋", points: 300, stock: 38, category: "文创礼品", description: "水乡主题日常帆布袋，容量充足，适合买菜、通勤和旅行。", specification: "米白色 / 个", limit: 2, validUntil: "2027-06-30", listedAt: "2026-07-21", image: imageUrl("Elegant cream canvas tote bag inspired by Jiangnan water town, green line art style without readable text, product photography") },
+  { id: "pg-peony", name: "凤丹花香囊", points: 240, stock: 50, category: "文创礼品", description: "以凤凰山凤丹文化为主题，香气淡雅，适合随身或居家悬挂。", specification: "手作香囊 / 个", limit: 3, validUntil: "2026-12-31", listedAt: "2026-07-17", image: imageUrl("Handmade Chinese peony scented sachet with elegant embroidery, cultural gift photography, no text, no watermark") },
 ];
 const villageVotes = [
   { title: "村口闲置地改造方案票选", joined: 186, total: 260, reward: 30, deadline: "还剩2天", image: imageUrl("Chinese villagers gathered around a community planning table reviewing three landscape design proposals for village public space, realistic documentary photography, no text, no watermark") },
@@ -578,6 +650,9 @@ export default function Home() {
   const [activeCharmCategory, setActiveCharmCategory] = useState<TownDetailTab>("镇情概览");
   const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("景点");
   const [selectedGood, setSelectedGood] = useState<YianGood | null>(null);
+  const [goodsSearch, setGoodsSearch] = useState("");
+  const [goodsSourceFilter, setGoodsSourceFilter] = useState<GoodsSourceFilter>("全部");
+  const [goodsCategoryFilter, setGoodsCategoryFilter] = useState("全部");
   const [checkoutGood, setCheckoutGood] = useState<YianGood | null>(null);
   const [goodsQuantity, setGoodsQuantity] = useState(1);
   const [goodsDelivery, setGoodsDelivery] = useState<GoodsDelivery>("快递配送");
@@ -613,7 +688,26 @@ export default function Home() {
   const [activeVillagerService, setActiveVillagerService] = useState("村务公开");
   const [villagerNotice, setVillagerNotice] = useState("");
   const [likedVillageStory, setLikedVillageStory] = useState(false);
-  const [villagerDetail, setVillagerDetail] = useState<{ type: string; title: string; data?: string } | null>(null);
+  const [villagerDetail, setVillagerDetail] = useState<VillagerDetail | null>(null);
+  const [pointsBalance, setPointsBalance] = useState(() => Number(localStorage.getItem(POINTS_BALANCE_KEY) || 1280));
+  const [pointsStocks, setPointsStocks] = useState<Record<string, number>>(() => {
+    try { return JSON.parse(localStorage.getItem(POINTS_STOCK_KEY) || "{}") as Record<string, number>; } catch { return {}; }
+  });
+  const [pointsOrders, setPointsOrders] = useState<PointsOrder[]>(() => {
+    try { return JSON.parse(localStorage.getItem(POINTS_ORDERS_KEY) || "[]") as PointsOrder[]; } catch { return []; }
+  });
+  const [pointsTransactions, setPointsTransactions] = useState<PointsTransaction[]>(() => {
+    try { const saved = JSON.parse(localStorage.getItem(POINTS_TRANSACTIONS_KEY) || "null") as PointsTransaction[] | null; return saved || initialPointsTransactions; } catch { return initialPointsTransactions; }
+  });
+  const [pointsSearch, setPointsSearch] = useState("");
+  const [pointsCategory, setPointsCategory] = useState<"全部" | PointsCategory>("全部");
+  const [pointsRange, setPointsRange] = useState("全部积分");
+  const [pointsSort, setPointsSort] = useState("综合");
+  const [exchangeQuantity, setExchangeQuantity] = useState(1);
+  const [exchangeForm, setExchangeForm] = useState<{ pickupPoint: string; pickupDate: string; phone: string; agreed: boolean }>({ pickupPoint: pickupPoints[0].name, pickupDate: "", phone: "", agreed: false });
+  const [exchangeErrors, setExchangeErrors] = useState<string[]>([]);
+  const [exchangeConfirming, setExchangeConfirming] = useState(false);
+  const [pointsOrderFilter, setPointsOrderFilter] = useState<"全部" | PointsOrderStatus>("全部");
   const [villagerPublications, setVillagerPublications] = useState<VillagerPublication[]>(() => {
     try { return JSON.parse(localStorage.getItem(VILLAGER_PUBLICATIONS_KEY) || "[]") as VillagerPublication[]; } catch { return []; }
   });
@@ -924,15 +1018,11 @@ export default function Home() {
         </div>
       );
     }
-    if (activeTab === "文化") {
-      return <div className="culture-story-list">{guide.cultureStories.map((story) => <article key={story.title}><small>{story.label}</small><h3>{story.title}</h3><p>{story.detail}</p></article>)}</div>;
-    }
     if (activeTab === "打卡") {
       return (
         <div className="photo-spot-list">
-          {guide.photoSpots.map((item, index) => (
+          {guide.photoSpots.map((item) => (
             <article className="photo-spot-card" key={item.name}>
-              <span className="photo-spot-card__index">0{index + 1}</span>
               <div><small>推荐机位</small><h3>{item.name}</h3><dl><div><dt>最佳时间</dt><dd>{item.time}</dd></div><div><dt>拍摄建议</dt><dd>{item.tip}</dd></div></dl></div>
               <a href={navigationUrl(`${selectedSpot.mapKeyword} ${item.name}`)} target="_blank" rel="noreferrer">导航到机位</a>
             </article>
@@ -974,7 +1064,61 @@ export default function Home() {
     window.setTimeout(() => setVillagerNotice(""), 2400);
   };
 
-  const openVillagerDetail = (type: string, title: string, data?: string) => setVillagerDetail({ type, title, data });
+  const openVillagerDetail = (type: string, title: string, data?: string, extra?: Partial<VillagerDetail>) => setVillagerDetail({ type, title, data, ...extra });
+  const stockFor = (good: PointsGood) => pointsStocks[good.id] ?? good.stock;
+  const openPointsGood = (good: PointsGood) => {
+    setExchangeQuantity(1);
+    setExchangeErrors([]);
+    setExchangeConfirming(false);
+    setVillagerDetail({ type: "points-good", title: good.name, id: good.id });
+  };
+  const openPointsOrders = () => {
+    setPointsOrderFilter("全部");
+    setVillagerDetail({ type: "points-orders", title: "我的兑换" });
+  };
+  const beginPointsCheckout = (good: PointsGood) => {
+    setExchangeErrors([]);
+    setExchangeConfirming(false);
+    setVillagerDetail({ type: "points-checkout", title: "确认兑换", id: good.id });
+  };
+  const validatePointsExchange = (good: PointsGood) => {
+    const errors: string[] = [];
+    const stock = stockFor(good);
+    const priorQuantity = pointsOrders.filter((order) => order.goodId === good.id).reduce((sum, order) => sum + order.quantity, 0);
+    if (exchangeQuantity < 1 || exchangeQuantity > stock) errors.push("兑换数量超过当前库存");
+    if (priorQuantity + exchangeQuantity > good.limit) errors.push(`每人累计限兑 ${good.limit} 件，您已兑换 ${priorQuantity} 件`);
+    if (good.points * exchangeQuantity > pointsBalance) errors.push("可用积分不足，请调整兑换数量");
+    if (!exchangeForm.pickupPoint) errors.push("请选择自提点");
+    if (!exchangeForm.pickupDate) errors.push("请选择领取日期");
+    if (!/^1[3-9]\d{9}$/.test(exchangeForm.phone)) errors.push("请输入正确的11位联系电话");
+    if (!exchangeForm.agreed) errors.push("请阅读并同意兑换规则");
+    setExchangeErrors(errors);
+    return errors.length === 0;
+  };
+  const submitPointsExchange = (good: PointsGood) => {
+    if (!validatePointsExchange(good)) { setExchangeConfirming(false); return; }
+    const pickup = pickupPoints.find((item) => item.name === exchangeForm.pickupPoint) || pickupPoints[0];
+    const total = good.points * exchangeQuantity;
+    const createdAt = new Date().toISOString();
+    const order: PointsOrder = {
+      id: `YD${new Date().toISOString().replace(/\D/g, "").slice(0, 14)}${Math.floor(100 + Math.random() * 900)}`,
+      goodId: good.id, productName: good.name, productImage: good.image, specification: good.specification,
+      quantity: exchangeQuantity, points: total, pickupPoint: pickup.name, pickupAddress: pickup.address,
+      phone: exchangeForm.phone, pickupDate: exchangeForm.pickupDate, verifyCode: String(Math.floor(100000 + Math.random() * 900000)),
+      createdAt, validUntil: good.validUntil, status: "待领取",
+    };
+    const nextBalance = pointsBalance - total;
+    const nextStocks = { ...pointsStocks, [good.id]: stockFor(good) - exchangeQuantity };
+    const nextOrders = [order, ...pointsOrders];
+    const nextTransactions = [{ id: `exchange-${order.id}`, title: `兑换${good.name} ×${exchangeQuantity}`, points: -total, createdAt }, ...pointsTransactions];
+    setPointsBalance(nextBalance); setPointsStocks(nextStocks); setPointsOrders(nextOrders); setPointsTransactions(nextTransactions);
+    localStorage.setItem(POINTS_BALANCE_KEY, String(nextBalance));
+    localStorage.setItem(POINTS_STOCK_KEY, JSON.stringify(nextStocks));
+    localStorage.setItem(POINTS_ORDERS_KEY, JSON.stringify(nextOrders));
+    localStorage.setItem(POINTS_TRANSACTIONS_KEY, JSON.stringify(nextTransactions));
+    setExchangeConfirming(false);
+    setVillagerDetail({ type: "points-success", title: "兑换成功", orderId: order.id });
+  };
 
   const handlePublicationImages = (files: FileList | null) => {
     if (!files) return;
@@ -1014,6 +1158,37 @@ export default function Home() {
     const detailImage = getVillagerDetailImage(type, title);
     const close = () => setVillagerDetail(null);
     const detailHero = (eyebrow: string, description: string, showCover = true) => <><div className="villager-detail-hero"><small>{eyebrow}</small><h2>{title}</h2><p>{description}</p></div>{showCover && detailImage && <img className="villager-detail-cover" src={detailImage} alt={`${title}相关图片`} />}</>;
+    if (type === "points-good") {
+      const good = pointsGoods.find((item) => item.id === villagerDetail.id);
+      if (!good) return null;
+      const stock = stockFor(good);
+      const priorQuantity = pointsOrders.filter((order) => order.goodId === good.id).reduce((sum, order) => sum + order.quantity, 0);
+      const maxQuantity = Math.max(0, Math.min(stock, good.limit - priorQuantity));
+      const total = good.points * exchangeQuantity;
+      return <div className="points-detail-view"><img className="points-detail-image" src={good.image} alt={good.name} /><section className="points-detail-card"><span>{good.category}</span><h1>{good.name}</h1><p>{good.description}</p><strong>{good.points.toLocaleString()} <small>积分 / 件</small></strong><dl><div><dt>商品规格</dt><dd>{good.specification}</dd></div><div><dt>当前库存</dt><dd>{stock} 件</dd></div><div><dt>每人限兑</dt><dd>{good.limit} 件{priorQuantity ? `（已兑${priorQuantity}件）` : ""}</dd></div><div><dt>兑换有效期</dt><dd>{good.validUntil}</dd></div><div><dt>领取方式</dt><dd>仅限所选服务点自提</dd></div></dl><div className="points-quantity-row"><span>兑换数量</span><div><button type="button" disabled={exchangeQuantity <= 1} onClick={() => setExchangeQuantity((value) => Math.max(1, value - 1))}>−</button><b>{exchangeQuantity}</b><button type="button" disabled={exchangeQuantity >= maxQuantity} onClick={() => setExchangeQuantity((value) => Math.min(maxQuantity, value + 1))}>＋</button></div></div><div className={`points-total ${total > pointsBalance ? "is-insufficient" : ""}`}><span>合计</span><strong>{total.toLocaleString()} 积分</strong><small>{total > pointsBalance ? `积分不足，还差 ${(total - pointsBalance).toLocaleString()} 分` : `兑换后剩余 ${(pointsBalance - total).toLocaleString()} 分`}</small></div><button type="button" disabled={!maxQuantity || total > pointsBalance} onClick={() => beginPointsCheckout(good)}>{stock ? "立即兑换" : "已售罄"}</button><p className="points-pickup-note">自提说明：兑换后请按预约日期，携带手机核销码到所选服务点领取。商品不提供配送。</p></section></div>;
+    }
+    if (type === "points-checkout") {
+      const good = pointsGoods.find((item) => item.id === villagerDetail.id);
+      if (!good) return null;
+      const total = good.points * exchangeQuantity;
+      const minDate = new Date().toISOString().slice(0, 10);
+      return <div className="points-checkout-view"><section className="points-checkout-product"><img src={good.image} alt={good.name} /><div><small>{good.category}</small><h2>{good.name}</h2><p>{good.specification} · ×{exchangeQuantity}</p></div><strong>{total.toLocaleString()}积分</strong></section><section className="points-checkout-card"><h2>选择服务点自提</h2><div className="points-pickup-options">{pickupPoints.map((point) => <label key={point.name} className={exchangeForm.pickupPoint === point.name ? "is-active" : ""}><input type="radio" name="pickup" checked={exchangeForm.pickupPoint === point.name} onChange={() => setExchangeForm((form) => ({ ...form, pickupPoint: point.name }))} /><span><strong>{point.name}</strong><small>{point.address}</small></span></label>)}</div><label>领取日期<input type="date" min={minDate} max={good.validUntil} value={exchangeForm.pickupDate} onChange={(event) => setExchangeForm((form) => ({ ...form, pickupDate: event.target.value }))} /></label><label>联系电话<input type="tel" inputMode="numeric" maxLength={11} placeholder="用于领取提醒" value={exchangeForm.phone} onChange={(event) => setExchangeForm((form) => ({ ...form, phone: event.target.value.replace(/\D/g, "") }))} /></label><label className="points-rule-check"><input type="checkbox" checked={exchangeForm.agreed} onChange={(event) => setExchangeForm((form) => ({ ...form, agreed: event.target.checked }))} /><span>我已阅读并同意兑换规则：积分商品仅限本人到服务点核销领取，兑换成功后原则上不退换。</span></label>{exchangeErrors.length > 0 && <div className="points-errors">{exchangeErrors.map((error) => <p key={error}>{error}</p>)}</div>}<div className="points-checkout-summary"><span>可用积分 {pointsBalance.toLocaleString()}</span><strong>扣除 {total.toLocaleString()} 积分</strong></div>{exchangeConfirming ? <div className="points-second-confirm"><strong>请再次确认兑换</strong><p>将扣除 {total.toLocaleString()} 积分，并预约到 {exchangeForm.pickupPoint} 自提。</p><div><button type="button" onClick={() => setExchangeConfirming(false)}>再检查一下</button><button type="button" onClick={() => submitPointsExchange(good)}>确认扣分兑换</button></div></div> : <button type="button" onClick={() => { if (validatePointsExchange(good)) setExchangeConfirming(true); }}>提交兑换</button>}</section></div>;
+    }
+    if (type === "points-success") {
+      const order = pointsOrders.find((item) => item.id === villagerDetail.orderId);
+      if (!order) return null;
+      return <div className="points-success-view"><div className="points-success-icon"><CheckCircle2 /></div><small>兑换订单 {order.id}</small><h1>兑换成功，等待领取</h1><p>请在预约日期前往服务点，向工作人员出示以下核销码。</p><section className="points-code-card"><span>6位核销码</span><strong>{order.verifyCode}</strong><small>请勿提前向他人透露</small></section><section className="points-success-info"><dl><div><dt>自提点</dt><dd>{order.pickupPoint}</dd></div><div><dt>地址</dt><dd>{order.pickupAddress}</dd></div><div><dt>领取日期</dt><dd>{order.pickupDate}</dd></div><div><dt>兑换截止</dt><dd>{order.validUntil}</dd></div></dl><a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`铜陵义安区${order.pickupPoint}`)}&callnative=1`} target="_blank" rel="noreferrer"><Compass />地图导航</a></section><div className="points-success-actions"><button type="button" onClick={openPointsOrders}>查看兑换订单</button><button type="button" className="is-secondary" onClick={close}>返回积分超市</button></div></div>;
+    }
+    if (type === "points-orders") {
+      const displayOrders = pointsOrders.map((order) => ({ ...order, displayStatus: order.status === "待领取" && order.validUntil < new Date().toISOString().slice(0, 10) ? "已过期" as const : order.status })).filter((order) => pointsOrderFilter === "全部" || order.displayStatus === pointsOrderFilter);
+      return <div className="points-orders-view"><div className="villager-detail-hero"><small>积分超市</small><h2>我的兑换订单</h2><p>查看核销码、自提信息与兑换状态。本机订单已持久保存。</p></div><nav className="points-order-tabs">{(["全部", "待领取", "已领取", "已过期"] as const).map((status) => <button type="button" key={status} className={pointsOrderFilter === status ? "is-active" : ""} onClick={() => setPointsOrderFilter(status)}>{status}</button>)}</nav>{displayOrders.length ? <div className="points-order-list">{displayOrders.map((order) => <article key={order.id}><header><span className={`status-${order.displayStatus}`}>{order.displayStatus}</span><small>{new Date(order.createdAt).toLocaleString("zh-CN", { hour12: false })}</small></header><button type="button" onClick={() => setVillagerDetail({ type: "points-order-detail", title: "兑换订单详情", orderId: order.id })}><img src={order.productImage} alt={order.productName} /><div><h3>{order.productName}</h3><p>{order.pickupPoint}</p><small>截止 {order.validUntil} · ×{order.quantity}</small></div><strong>-{order.points}积分</strong></button></article>)}</div> : <div className="points-order-empty"><ShoppingBag /><strong>暂无{pointsOrderFilter === "全部" ? "兑换" : pointsOrderFilter}订单</strong><p>兑换成功的积分商品会显示在这里。</p></div>}</div>;
+    }
+    if (type === "points-order-detail") {
+      const order = pointsOrders.find((item) => item.id === villagerDetail.orderId);
+      if (!order) return null;
+      const status = order.status === "待领取" && order.validUntil < new Date().toISOString().slice(0, 10) ? "已过期" : order.status;
+      return <div className="points-order-detail"><div className="villager-detail-hero"><small>订单状态 · {status}</small><h2>{order.productName}</h2><p>订单号 {order.id}</p></div>{status === "待领取" && <section className="points-code-card"><span>到店核销码</span><strong>{order.verifyCode}</strong><small>请向服务点工作人员出示</small></section>}<section className="points-success-info"><dl><div><dt>商品规格</dt><dd>{order.specification} × {order.quantity}</dd></div><div><dt>扣除积分</dt><dd>{order.points.toLocaleString()} 积分</dd></div><div><dt>自提点</dt><dd>{order.pickupPoint}</dd></div><div><dt>自提地址</dt><dd>{order.pickupAddress}</dd></div><div><dt>联系电话</dt><dd>{order.phone}</dd></div><div><dt>领取日期</dt><dd>{order.pickupDate}</dd></div><div><dt>截止日期</dt><dd>{order.validUntil}</dd></div></dl>{status === "待领取" && <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`铜陵义安区${order.pickupPoint}`)}&callnative=1`} target="_blank" rel="noreferrer"><Compass />导航到自提点</a>}</section></div>;
+    }
     if (type === "article" || type === "case" || type === "story") return <>{detailHero(type === "case" ? "先锋案例" : type === "story" ? "乡亲动态" : "村务公开", type === "story" ? "民情有回应，办理有结果，共建成果由全体村民共同见证。" : "信息公开透明，邀请每一位村民共同监督、共同参与。")}<article className="villager-article-detail"><p>{data || "本事项已按照村务公开程序完成整理与公示。相关内容经村务监督委员会审核，现向全体村民公开。"}</p><h3>详细内容</h3><p>本次工作坚持村民知情、村民参与、村民监督原则，事项进度、资金使用和办理结果将持续更新。如有疑问，可通过民情诉求提交意见，也可在村务公开日到村服务中心现场咨询。</p><div><span>发布单位：顺安镇村民委员会</span><span>发布日期：2026-07-28</span></div></article></>;
     if (type === "vote") return <>{detailHero("议事投票 · 参与得30积分", "请选择您支持的改造方案，每位认证村民仅可提交一次。")}<form className="villager-choice-form" onSubmit={(event) => { event.preventDefault(); showVillagerNotice("投票提交成功，感谢参与家乡建设"); close(); }}><label><input type="radio" name="vote" required /><span><strong>A方案 · 乡村共享花园</strong><small>保留原有树木，增加休闲步道、儿童活动区和公共座椅。</small></span></label><label><input type="radio" name="vote" /><span><strong>B方案 · 农产品周末集市</strong><small>建设可移动摊位，为村民农产品销售和节庆活动提供空间。</small></span></label><label><input type="radio" name="vote" /><span><strong>C方案 · 停车与便民服务点</strong><small>增加停车位、充电设施和便民服务驿站。</small></span></label><button type="submit">确认提交投票</button></form></>;
     if (type === "course") return <>{detailHero("在线课程 · 学完得50积分", "课程支持手机在线观看视频，完成全部章节学习后自动发放积分。", false)}<div className="villager-online-course"><div className="villager-video-player"><img src={detailImage} alt={`${title}课程封面`} /><span><Play /></span><div><small>在线课程 · 共 6 节</small><strong>点击播放课程</strong></div></div><div className="villager-detail-info"><dl><div><dt>学习方式</dt><dd>手机在线观看，支持随时暂停</dd></div><div><dt>课程时长</dt><dd>共 95 分钟</dd></div><div><dt>授课老师</dt><dd>乡村电商讲师 王老师</dd></div><div><dt>学习奖励</dt><dd>完成课程获得 50 积分</dd></div></dl><h3>课程内容</h3><p>账号定位、短视频拍摄、直播间搭建、农产品讲解、订单与售后处理。</p><button type="button" onClick={() => showVillagerNotice("课程已开始播放")}>开始在线观看</button></div></div></>;
@@ -1032,7 +1207,16 @@ export default function Home() {
     if (activeVillagerService === "补贴申领") return <div className="village-policy-list">{villageSubsidies.map((item) => <article key={item.title}><span>{item.status}</span><div><h3>{item.title}</h3><p>{item.deadline} · {item.amount}</p></div><button type="button" onClick={() => openVillagerDetail("subsidy", item.title)}>查看申领</button></article>)}</div>;
     if (activeVillagerService === "就业岗位") return <div className="village-job-list">{villageJobs.map((item) => <article key={item.title}><small>{item.tag}</small><h3>{item.title}</h3><p>{item.company}</p><strong>{item.salary}</strong><button type="button" onClick={() => openVillagerDetail("job", item.title)}>岗位详情</button></article>)}</div>;
     if (activeVillagerService === "先锋案例") return <div className="village-content-list"><article className="has-image"><img src={getVillagerDetailImage("case", "党员志愿队助力水稻夏管")} alt="党员志愿队助力水稻夏管" /><div><small>党员风采 · 7月主题活动</small><h3>党员志愿队助力水稻夏管</h3><p>先锋党员联合农技人员走进田间，为种植户提供病虫害防治与水肥管理指导。</p><button type="button" onClick={() => openVillagerDetail("case", "党员志愿队助力水稻夏管")}>查看风采</button></div></article><article className="has-image"><img src={getVillagerDetailImage("case", "“板凳议事会”让村民意见有回音")} alt="板凳议事会" /><div><small>基层治理 · 先锋案例</small><h3>“板凳议事会”让村民意见有回音</h3><p>每月一次面对面议事，将村民建议转化为可跟踪、可评价的共建项目。</p><button type="button" onClick={() => openVillagerDetail("case", "“板凳议事会”让村民意见有回音")}>查看案例</button></div></article></div>;
-    if (activeVillagerService === "积分超市") return <><div className="village-points-balance"><div><small>可用积分</small><strong>1,280</strong></div><span>本月已获得 160 分</span></div><div className="points-goods-grid">{pointsGoods.map((item) => <article key={item.name}><img src={item.image} alt={item.name} /><h3>{item.name}</h3><p>库存 {item.stock} 件</p><strong>{item.points} 积分</strong><button type="button" onClick={() => openVillagerDetail("goods", item.name, item.icon)}>查看兑换</button></article>)}</div></>;
+    if (activeVillagerService === "积分超市") {
+      const normalized = pointsSearch.trim().toLocaleLowerCase("zh-CN");
+      const visibleGoods = pointsGoods.filter((good) => {
+        const matchesSearch = !normalized || [good.name, good.category, good.description].some((value) => value.toLocaleLowerCase("zh-CN").includes(normalized));
+        const matchesCategory = pointsCategory === "全部" || good.category === pointsCategory;
+        const matchesRange = pointsRange === "全部积分" || (pointsRange === "300以下" ? good.points < 300 : pointsRange === "300-599" ? good.points >= 300 && good.points <= 599 : good.points >= 600);
+        return matchesSearch && matchesCategory && matchesRange;
+      }).sort((a, b) => pointsSort === "积分从低到高" ? a.points - b.points : pointsSort === "最新上架" ? b.listedAt.localeCompare(a.listedAt) : (stockFor(b) > 0 ? 1 : 0) - (stockFor(a) > 0 ? 1 : 0));
+      return <div className="points-mall"><section className="points-mall-balance"><div><small>可用积分</small><strong>{pointsBalance.toLocaleString()}</strong><span>兑换后实时扣减</span></div><div><small>即将过期</small><strong>180</strong><span>2026-09-30 到期</span></div><button type="button" onClick={openPointsOrders}><ShoppingBag /><span>我的兑换</span><small>{pointsOrders.length} 笔订单</small></button></section><section className="points-mall-tools"><label className="points-search"><Search /><input value={pointsSearch} onChange={(event) => setPointsSearch(event.target.value)} placeholder="搜索积分商品" />{pointsSearch && <button type="button" onClick={() => setPointsSearch("")}><X /></button>}</label><label><span>分类</span><select value={pointsCategory} onChange={(event) => setPointsCategory(event.target.value as "全部" | PointsCategory)}><option>全部</option><option>生活用品</option><option>农资用品</option><option>地方好物</option><option>文创礼品</option></select></label><label><span>积分</span><select value={pointsRange} onChange={(event) => setPointsRange(event.target.value)}><option>全部积分</option><option>300以下</option><option>300-599</option><option>600以上</option></select></label><label><span>排序</span><select value={pointsSort} onChange={(event) => setPointsSort(event.target.value)}><option>综合</option><option>积分从低到高</option><option>最新上架</option></select></label></section><div className="points-result"><strong>{visibleGoods.length}</strong> 件可兑换商品</div>{visibleGoods.length ? <div className="points-goods-grid">{visibleGoods.map((item, index) => { const stock = stockFor(item); return <article key={item.id} className={stock === 0 ? "is-sold-out" : ""} onClick={() => stock && openPointsGood(item)}><div className="points-good-image"><img src={item.image} alt={item.name} loading={index > 5 ? "lazy" : "eager"} /><span>{item.category}</span>{stock === 0 && <b>已售罄</b>}</div><div className="points-good-body"><h3>{item.name}</h3><p>{item.description}</p><strong>{item.points.toLocaleString()} <small>积分</small></strong><div><span>库存 {stock}</span><span>限兑 {item.limit} 件</span></div><button type="button" disabled={stock === 0} onClick={(event) => { event.stopPropagation(); if (stock) openPointsGood(item); }}>{stock ? "查看兑换" : "已售罄"}</button></div></article>; })}</div> : <div className="points-order-empty"><Search /><strong>没有找到匹配商品</strong><p>请调整搜索词或筛选条件。</p></div>}</div>;
+    }
     if (activeVillagerService === "议事投票") return <div className="village-vote-list">{villageVotes.map((item) => <article key={item.title}><small>{item.deadline} · 参与得 {item.reward} 积分</small><h3>{item.title}</h3><p>{item.joined} / {item.total} 位村民已参与</p><i><b style={{ width: `${item.joined / item.total * 100}%` }} /></i><button type="button" onClick={() => openVillagerDetail("vote", item.title)}>查看并投票</button></article>)}</div>;
     if (activeVillagerService === "课程培训") return <div className="village-course-list">{villageCourses.map((item) => <article className="has-image" key={item.title}><img src={item.image} alt={item.title} /><div><small>在线课程 · 学完得 {item.reward} 积分</small><h3>{item.title}</h3><p>{item.teacher}</p><span>支持手机在线观看</span><button type="button" onClick={() => openVillagerDetail("course", item.title)}>在线观看</button></div></article>)}</div>;
     if (activeVillagerService === "我的货摊") return <div className="village-form-page"><div className="village-form-guide"><small>发布后将由政务端审核</small><h3>把家乡好物卖得更远</h3><p>审核通过后，商品将在游客端“义安好物”中展示，并标记“村民发布”。</p></div><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); saveVillagerPublication("农产品", String(form.get("title")), String(form.get("detail"))); event.currentTarget.reset(); }}><label>农产品名称<input name="title" required placeholder="如：自家种植富硒大米" /></label><label>产品介绍<textarea name="detail" required placeholder="介绍产地、种植方式、规格等" /></label><div><label>参考价格<input required placeholder="如：68元/袋" /></label><label>联系电话<input required placeholder="请输入联系电话" /></label></div>{publicationUploader()}<button type="submit">提交政务审核</button></form></div>;
@@ -1400,6 +1584,21 @@ export default function Home() {
     </>;
   };
 
+  const normalizedGoodsSearch = goodsSearch.trim().toLocaleLowerCase("zh-CN");
+  const filteredGoods = yianGoods.filter((good) => {
+    const matchesSource = goodsSourceFilter === "全部" || good.source === goodsSourceFilter;
+    const matchesCategory = goodsCategoryFilter === "全部" || good.type === goodsCategoryFilter;
+    const matchesSearch = !normalizedGoodsSearch || [good.name, good.type, good.detail, good.publisher]
+      .some((value) => value.toLocaleLowerCase("zh-CN").includes(normalizedGoodsSearch));
+    return matchesSource && matchesCategory && matchesSearch;
+  });
+  const hasGoodsFilters = Boolean(goodsSearch) || goodsSourceFilter !== "全部" || goodsCategoryFilter !== "全部";
+  const clearGoodsFilters = () => {
+    setGoodsSearch("");
+    setGoodsSourceFilter("全部");
+    setGoodsCategoryFilter("全部");
+  };
+
   return (
     <main className="panorama-shell">
       <div
@@ -1430,9 +1629,9 @@ export default function Home() {
             </header>
             {userRole === "村民" ? <>
               <section className="villager-profile-card"><div className="villager-profile-card__avatar">村</div><div><small>已认证村民 · 顺安镇</small><h2>王师傅，欢迎回家</h2><p>共建等级：银杏村民 3级</p></div></section>
-              <section className="villager-profile-stats"><div><strong>1,280</strong><small>可用积分</small></div><div><strong>8</strong><small>参与村务</small></div><button type="button" onClick={() => openVillagerDetail("publications", "我的发布")}><strong>{villagerPublications.length}</strong><small>我的发布</small></button><div><strong>2</strong><small>办理中</small></div></section>
+              <section className="villager-profile-stats"><div><strong>{pointsBalance.toLocaleString()}</strong><small>可用积分</small></div><div><strong>8</strong><small>参与村务</small></div><button type="button" onClick={() => openVillagerDetail("publications", "我的发布")}><strong>{villagerPublications.length}</strong><small>我的发布</small></button><button type="button" onClick={openPointsOrders}><strong>{pointsOrders.length}</strong><small>我的兑换</small></button></section>
               <section className="villager-profile-section"><header><small>我的事项</small><h3>办理进度</h3></header><div className="villager-record-list"><article><span className="is-review">审核中</span><div><h4>自家富硒大米上架申请</h4><p>我的货摊 · 2026-07-26提交</p></div><button type="button" onClick={() => openVillagerDetail("record", "自家富硒大米上架申请")}>查看</button></article><article><span className="is-progress">处理中</span><div><h4>村东路口增设反光标识建议</h4><p>民情诉求 · 预计08月02日前反馈</p></div><button type="button" onClick={() => openVillagerDetail("record", "村东路口增设反光标识建议")}>查看</button></article><article><span className="is-done">已通过</span><div><h4>农村电商创业扶持补贴</h4><p>补贴申领 · 等待资金拨付</p></div><button type="button" onClick={() => openVillagerDetail("record", "农村电商创业扶持补贴")}>查看</button></article></div></section>
-              <section className="villager-profile-section"><header><small>积分足迹</small><h3>最近获得</h3></header><div className="villager-points-history"><div><span>参与闲置地改造投票</span><strong>+30</strong><small>07月25日</small></div><div><span>完成电商基础课程</span><strong>+50</strong><small>07月20日</small></div><div><span>民情建议被采纳</span><strong>+100</strong><small>07月16日</small></div></div></section>
+              <section className="villager-profile-section"><header><small>积分足迹</small><h3>最近积分流水</h3></header><div className="villager-points-history">{pointsTransactions.slice(0, 6).map((item) => <div key={item.id} className={item.points < 0 ? "is-spent" : ""}><span>{item.title}</span><strong>{item.points > 0 ? "+" : ""}{item.points}</strong><small>{new Date(item.createdAt).toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" })}</small></div>)}</div></section>
               <section className="villager-profile-menu"><button type="button" onClick={() => openVillagerDetail("identity", "村民认证信息")}>村民认证信息<span>已认证 ›</span></button><button type="button" onClick={() => openVillagerDetail("address", "收货地址")}>收货地址<span>2个地址 ›</span></button><button type="button" onClick={() => openVillagerDetail("messages", "消息通知")}>消息通知<span>3条未读 ›</span></button><button type="button" onClick={() => openVillagerDetail("feedback", "帮助与反馈")}>帮助与反馈<span>›</span></button></section>
             </> : <>
               <article className="role-summary">
@@ -1500,7 +1699,7 @@ export default function Home() {
               />
             ))}
           </div>
-          {userRole === "游客" && <nav className="tourist-side-tools" aria-label="游客便民服务" onPointerDown={(event) => event.stopPropagation()}>{(["义安天气", "投资义安", "投诉建议"] as TouristSideService[]).map((item) => <button type="button" key={item} onClick={() => { if (item === "投资义安") { setTouristQuickService(null); setSelectedInvestmentProject(null); setInvestmentCategory("全部"); setInvestmentView("list"); } else setTouristQuickService(item); }}>{item === "义安天气" ? <><span>26℃</span><strong>{item}</strong></> : item === "投资义安" ? <><Briefcase /><strong>{item}</strong></> : <><Megaphone /><strong>{item}</strong></>}</button>)}</nav>}
+          {userRole === "游客" && <nav className="tourist-side-tools" aria-label="游客便民服务" onPointerDown={(event) => event.stopPropagation()}>{(["义安天气", "投资义安", "投诉建议"] as TouristSideService[]).map((item) => <button type="button" key={item} onClick={() => { if (item === "投资义安") { setTouristQuickService(null); setSelectedInvestmentProject(null); setInvestmentCategory("全部"); setInvestmentView("list"); } else setTouristQuickService(item); }}>{item === "义安天气" ? <><span>26℃</span><strong><i>义安</i><i>天气</i></strong></> : item === "投资义安" ? <><Briefcase /><strong><i>投资</i><i>义安</i></strong></> : <><Megaphone /><strong><i>投诉</i><i>建议</i></strong></>}</button>)}</nav>}
           </>
         )}
         {!isReady && (
@@ -1521,7 +1720,7 @@ export default function Home() {
             </header>
             {villagerSection === "村民首页" ? <>
               <section className="village-action-section">
-                <header><div><small>一起建设家乡</small><h2>本周共建任务</h2></div><button type="button" onClick={() => { setVillagerSection("积分服务"); setActiveSection("积分服务"); }}>全部任务</button></header>
+                <header><div><small>一起建设家乡</small><h2>本周共建任务</h2></div><button type="button" onClick={() => { setVillagerSection("村务服务"); setActiveVillagerService("议事投票"); setActiveSection("村务服务"); }}>全部任务</button></header>
                 <div className="village-task-list">
                   <article><span><UserRound /></span><div><small>议事投票 · 还剩2天</small><h3>村口闲置地改造方案，由你决定</h3><p>已有 186 位村民参与讨论</p></div><button type="button" onClick={() => openVillagerDetail("vote", "村口闲置地改造方案票选")}>去投票 <em>+30</em></button></article>
                   <article><span><Play /></span><div><small>线上课程 · 随时观看</small><h3>短视频助农直播实操课</h3><p>手机即可在线观看学习</p></div><button type="button" onClick={() => openVillagerDetail("course", "短视频助农直播实操课")}>在线观看 <em>+50</em></button></article>
@@ -1539,7 +1738,7 @@ export default function Home() {
                   {[
                     { title: "我要建议", detail: "村里事，一起商量", icon: UserRound, section: "我要发布" as VillagerSection },
                     { title: "分享好物", detail: "让家乡特产被看见", icon: Store, section: "我要发布" as VillagerSection },
-                    { title: "积分兑换", detail: "参与越多，收获越多", icon: ShoppingBag, section: "积分服务" as VillagerSection },
+                    { title: "积分兑换", detail: "参与越多，收获越多", icon: ShoppingBag, section: "积分超市" as VillagerSection },
                     { title: "惠农服务", detail: "政策岗位及时掌握", icon: HomeIcon, section: "村务服务" as VillagerSection },
                   ].map((item) => { const Icon = item.icon; return <button type="button" key={item.title} onClick={() => { setVillagerSection(item.section); setActiveVillagerService(item.title === "我要建议" ? "民情诉求" : item.title === "分享好物" ? "我的货摊" : item.title === "积分兑换" ? "积分超市" : "补贴申领"); setActiveSection(item.section); }}><span><Icon /></span><strong>{item.title}</strong><small>{item.detail}</small></button>; })}
                 </div>
@@ -1547,10 +1746,10 @@ export default function Home() {
 
               <section className="villager-notice"><span>村务速递</span><strong>顺安镇本月村务公开信息已更新</strong><button type="button" onClick={() => openVillagerDetail("article", "顺安镇本月村务公开信息", "本月村务公开包含村级财务收支、公益项目进展、惠农政策落实和村民议事结果等内容。")}>查看详情</button></section>
             </> : <>
-              <section className="villager-category-intro"><small>{villagerSection === "村务服务" ? "信息公开 · 惠农服务" : villagerSection === "积分服务" ? "参与有分 · 成长有礼" : "我的资源 · 我来建设"}</small><h2>{villagerSection}</h2><p>{villagerSection === "村务服务" ? "村务信息看得见，惠农政策找得到，就业服务送到家。" : villagerSection === "积分服务" ? "参与议事、学习培训、共建家乡，点滴行动都能积累成长。" : "发布好物、盘活农房、反映诉求，让每份家乡资源都产生价值。"}</p></section>
-              <nav className="villager-service-tabs" aria-label={`${villagerSection}功能`}>
+              {villagerSection !== "积分超市" && <section className="villager-category-intro"><small>{villagerSection === "村务服务" ? "信息公开 · 共建议事" : "我的资源 · 我来建设"}</small><h2>{villagerSection}</h2><p>{villagerSection === "村务服务" ? "村务信息看得见，议事投票可参与，培训课程随时学，惠农政策和就业服务送到家。" : "发布好物、盘活农房、反映诉求，让每份家乡资源都产生价值。"}</p></section>}
+              {villagerSection !== "积分超市" && <nav className="villager-service-tabs" aria-label={`${villagerSection}功能`}>
                 {villagerServices.filter((service) => service.group === villagerSection).map((service) => { const Icon = service.icon; return <button type="button" key={service.name} className={activeVillagerService === service.name ? "is-active" : ""} onClick={() => setActiveVillagerService(service.name)}><Icon /><span>{service.name}</span></button>; })}
-              </nav>
+              </nav>}
               <section className="villager-service-content">{renderVillagerService()}</section>
             </>}
           </section>
@@ -1601,14 +1800,23 @@ export default function Home() {
         {activeSection === "义安好物" && userRole === "游客" && (
           <section className="goods-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="goods-hero"><span>GIFTS FROM YI'AN</span><h1>义安好物</h1><p>把白姜的清脆、酥糖的香甜、凤丹的芬芳与千年铜韵带回家。</p></header>
-            <div className="goods-grid">
-              {yianGoods.map((item, index) => (
+            <section className="goods-filter-panel" aria-label="义安好物搜索与筛选">
+              <label className="goods-search">
+                <Search aria-hidden="true" />
+                <input value={goodsSearch} onChange={(event) => setGoodsSearch(event.target.value)} placeholder="搜索好物" aria-label="搜索义安好物" />
+                {goodsSearch && <button type="button" onClick={() => setGoodsSearch("")} aria-label="清除搜索内容"><X aria-hidden="true" /></button>}
+              </label>
+              <label className="goods-compact-filter"><span>来源</span><select aria-label="发布来源筛选" value={goodsSourceFilter} onChange={(event) => setGoodsSourceFilter(event.target.value as GoodsSourceFilter)}>{goodsSourceFilters.map((source) => <option key={source}>{source}</option>)}</select></label>
+              <label className="goods-compact-filter"><span>类别</span><select aria-label="商品类别筛选" value={goodsCategoryFilter} onChange={(event) => setGoodsCategoryFilter(event.target.value)}><option>全部</option>{goodsCategories.map((category) => <option key={category}>{category}</option>)}</select></label>
+            </section>
+            {filteredGoods.length > 0 ? <div className="goods-grid">
+              {filteredGoods.map((item, index) => (
                 <article className="goods-card" key={item.name} onClick={() => openGood(item)}>
-                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /></div>
-                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><p>{item.detail}</p><button type="button" onClick={(event) => { event.stopPropagation(); openGood(item); }}>去购买</button></div>
+                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /><span className={`goods-source-badge ${item.source === "官方发布" ? "is-official" : "is-villager"}`}><b aria-hidden="true">{item.source === "官方发布" ? "◆" : "●"}</b>{item.source}</span></div>
+                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><span className="goods-card__publisher">{item.publisher}</span><p>{item.detail}</p><button type="button" className={item.source === "村民发布" ? "is-contact" : ""} onClick={(event) => { event.stopPropagation(); openGood(item); }}>{item.source === "官方发布" ? "在线购买" : "电话联系"}</button></div>
                 </article>
               ))}
-            </div>
+            </div> : <div className="goods-empty" role="status"><Search aria-hidden="true" /><strong>暂未找到匹配的好物</strong><p>换个关键词或调整发布来源、商品类别试试。</p><button type="button" onClick={clearGoodsFilters}>清除全部筛选</button></div>}
             <small className="catalog-note">产品图片为主题视觉展示，实际包装、规格和售价以正规销售渠道为准。</small>
           </section>
         )}
@@ -1624,7 +1832,7 @@ export default function Home() {
             </> : userRole === "村民" ? <>
               <button type="button" className={villagerSection === "村民首页" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("村民首页"); setActiveSection("村民首页"); }}><HomeIcon aria-hidden="true" /><span>首页</span></button>
               <button type="button" className={villagerSection === "村务服务" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("村务服务"); setActiveVillagerService("村务公开"); setActiveSection("村务服务"); }}><MapIcon aria-hidden="true" /><span>村务服务</span></button>
-              <button type="button" className={villagerSection === "积分服务" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("积分服务"); setActiveVillagerService("积分超市"); setActiveSection("积分服务"); }}><Heart aria-hidden="true" /><span>积分服务</span></button>
+              <button type="button" className={villagerSection === "积分超市" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("积分超市"); setActiveVillagerService("积分超市"); setActiveSection("积分超市"); }}><ShoppingBag aria-hidden="true" /><span>积分超市</span></button>
               <button type="button" className={villagerSection === "我要发布" && activeSection !== "我的" ? "is-active" : ""} onClick={() => { setVillagerSection("我要发布"); setActiveVillagerService("我的货摊"); setActiveSection("我要发布"); }}><Store aria-hidden="true" /><span>我要发布</span></button>
               <button type="button" className={activeSection === "我的" ? "is-active" : ""} onClick={() => setActiveSection("我的")}><UserRound aria-hidden="true" /><span>我的</span></button>
             </> : <>
@@ -1657,7 +1865,7 @@ export default function Home() {
 
         {villagerDetail && (
           <section className="villager-detail-page" onPointerDown={(event) => event.stopPropagation()}>
-            <header className="villager-detail-page__header"><button type="button" onClick={() => setVillagerDetail(null)}>‹ 返回</button><span>义安村民服务</span></header>
+            <header className="villager-detail-page__header"><button type="button" onClick={() => { if (villagerDetail.type === "points-checkout") { const good = pointsGoods.find((item) => item.id === villagerDetail.id); if (good) openPointsGood(good); } else if (villagerDetail.type === "points-order-detail") openPointsOrders(); else setVillagerDetail(null); }} aria-label="返回村民服务"><ChevronLeft aria-hidden="true" /><span>返回</span></button><strong>义安村民服务</strong></header>
             <div className="villager-detail-page__body">{renderVillagerDetail()}</div>
           </section>
         )}
@@ -1671,7 +1879,7 @@ export default function Home() {
               <div className="role-selector-list">
                 {([
                   { role: "游客" as UserRole, title: "游客端", detail: "智慧导览、魅力义安、商旅食宿与义安好物", icon: Compass },
-                  { role: "村民" as UserRole, title: "村民端", detail: "村务服务、积分服务、资源发布与惠农服务", icon: HomeIcon },
+                  { role: "村民" as UserRole, title: "村民端", detail: "村务服务、积分超市、资源发布与惠农服务", icon: HomeIcon },
                   { role: "政务" as UserRole, title: "政务端", detail: "村务管理、内容审核、民情处理与运营数据", icon: UserRound },
                 ]).map((item) => {
                   const Icon = item.icon;
@@ -1695,11 +1903,11 @@ export default function Home() {
               <button className="goods-detail-modal__close" type="button" onClick={() => setSelectedGood(null)} aria-label="关闭好物详情">×</button>
               <img src={imageUrl(`${selectedGood.scene}, realistic, natural light, no text, no watermark`)} alt={selectedGood.name} />
               <div className="goods-detail-modal__body">
-                <small>{selectedGood.type} · 义安甄选</small>
+                <div className="goods-detail-modal__meta"><span className={`goods-source-badge ${selectedGood.source === "官方发布" ? "is-official" : "is-villager"}`}><b aria-hidden="true">{selectedGood.source === "官方发布" ? "◆" : "●"}</b>{selectedGood.source}</span><small>{selectedGood.type}</small></div>
                 <h2 id="goods-detail-title">{selectedGood.name}</h2>
                 <p>{selectedGood.detail}</p>
-                <dl><div><dt>可选规格</dt><dd>{selectedGood.specification}</dd></div><div><dt>购买说明</dt><dd>{selectedGood.service}</dd></div></dl>
-                <div className="goods-detail-modal__actions"><button type="button" className={favoriteGoods.includes(selectedGood.name) ? "is-favorite" : ""} onClick={() => toggleFavoriteGood(selectedGood)}><Heart aria-hidden="true" fill={favoriteGoods.includes(selectedGood.name) ? "currentColor" : "none"} />{favoriteGoods.includes(selectedGood.name) ? "已收藏" : "收藏好物"}</button><button type="button" className="goods-detail-modal__buy" onClick={() => startGoodsCheckout(selectedGood)}><ShoppingBag aria-hidden="true" />立即购买</button></div>
+                <dl><div><dt>发布主体</dt><dd>{selectedGood.publisher}</dd></div><div><dt>可选规格</dt><dd>{selectedGood.specification}</dd></div><div><dt>购买说明</dt><dd>{selectedGood.service}</dd></div></dl>
+                <div className="goods-detail-modal__actions"><button type="button" className={favoriteGoods.includes(selectedGood.name) ? "is-favorite" : ""} onClick={() => toggleFavoriteGood(selectedGood)}><Heart aria-hidden="true" fill={favoriteGoods.includes(selectedGood.name) ? "currentColor" : "none"} />{favoriteGoods.includes(selectedGood.name) ? "已收藏" : "收藏好物"}</button>{selectedGood.source === "官方发布" ? <button type="button" className="goods-detail-modal__buy" onClick={() => startGoodsCheckout(selectedGood)}><ShoppingBag aria-hidden="true" />立即购买</button> : <a className="goods-detail-modal__contact" href={`tel:${villagerGoodsPhones[selectedGood.name]}`}><Phone aria-hidden="true" />电话联系</a>}</div>
               </div>
             </section>
           </div>
