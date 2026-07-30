@@ -1000,6 +1000,37 @@ button {
 .villager-detail-form label, .villager-feedback-form label { display: grid; gap: 6px; color: #526b59; font-size: 9px; font-weight: 600; }
 .villager-detail-form input, .villager-detail-form textarea, .villager-feedback-form textarea, .villager-feedback-form select { width: 100%; padding: 11px 12px; font: inherit; font-weight: 400; border: 1px solid rgba(55,95,65,.13); border-radius: 11px; background: rgba(255,255,255,.7); }
 .villager-detail-form textarea, .villager-feedback-form textarea { min-height: 95px; resize: vertical; }
+.villager-policy-detail, .villager-job-detail { display: grid; gap: 12px; }
+.villager-detail-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.villager-detail-summary div { display: grid; min-height: 86px; padding: 14px 10px; align-content: center; gap: 7px; text-align: center; border: 1px solid rgba(55,95,65,.1); border-radius: 16px 5px 5px; background: rgba(255,255,245,.8); }
+.villager-detail-summary small { color: #879187; font-size: 9px; }
+.villager-detail-summary strong { color: #9b6c25; font-size: 13px; }
+.villager-detail-block { padding: 18px; border: 1px solid rgba(55,95,65,.1); border-radius: 20px 6px 6px; background: rgba(255,255,245,.78); }
+.villager-detail-block h3, .villager-detail-form h3 { margin: 0 0 12px; color: #34533e; font-size: 15px; }
+.villager-detail-block > p { margin: 0; color: #64766a; font-size: 11px; line-height: 1.85; }
+.villager-detail-block ol, .villager-detail-block ul { display: grid; margin: 0; padding: 0; gap: 9px; list-style: none; counter-reset: villager-detail-item; }
+.villager-detail-block li { position: relative; min-height: 24px; padding-left: 30px; color: #5e7164; font-size: 10px; line-height: 1.7; }
+.villager-detail-block ol li::before { counter-increment: villager-detail-item; content: counter(villager-detail-item); position: absolute; top: 0; left: 0; display: grid; width: 21px; height: 21px; place-items: center; color: #fff8dc; font-size: 8px; border-radius: 50%; background: #52745a; }
+.villager-detail-block ul li::before { content: ""; position: absolute; top: 8px; left: 7px; width: 7px; height: 7px; border-radius: 50%; background: #b48639; box-shadow: 0 0 0 4px rgba(180,134,57,.12); }
+.villager-detail-block dl { display: grid; margin: 15px 0 0; gap: 8px; }
+.villager-detail-block dl div { display: flex; padding-top: 8px; justify-content: space-between; gap: 14px; border-top: 1px solid rgba(55,95,65,.08); }
+.villager-detail-block dt { color: #849087; font-size: 9px; }
+.villager-detail-block dd { margin: 0; color: #3c5946; font-size: 10px; font-weight: 600; text-align: right; }
+.villager-detail-block a { color: #39724d; text-decoration: none; }
+.villager-process-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+.villager-process-list div { position: relative; display: grid; padding: 12px 7px; place-items: center; align-content: start; gap: 7px; text-align: center; border-radius: 12px 4px 4px; background: #f2f3df; }
+.villager-process-list span { display: grid; width: 24px; height: 24px; place-items: center; color: #fff8dc; font-size: 9px; border-radius: 50%; background: #4c7055; }
+.villager-process-list p { margin: 0; color: #566b5c; font-size: 9px; line-height: 1.55; }
+.villager-job-overview { margin-top: -4px; padding: 18px; border-radius: 20px 6px 6px; color: #fff8dc; background: linear-gradient(135deg, #3d6549, #66825f); }
+.villager-job-overview small { color: #e6ce87; font-size: 9px; }
+.villager-job-overview h2 { margin: 6px 0 12px; font-size: 22px; }
+.villager-job-overview div, .villager-benefit-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+.villager-job-overview span { padding: 5px 9px; color: rgba(255,255,235,.86); font-size: 9px; border-radius: 999px; background: rgba(255,255,255,.1); }
+.villager-benefit-tags { margin-bottom: 14px; }
+.villager-benefit-tags span { padding: 6px 10px; color: #8c6428; font-size: 9px; border-radius: 999px; background: #f4ead0; }
+.villager-form-agreement { grid-template-columns: auto 1fr !important; align-items: start; font-weight: 400 !important; line-height: 1.65; }
+.villager-form-agreement input { width: 15px !important; height: 15px; margin: 2px 0 0; padding: 0 !important; accent-color: #3c6548; }
+.villager-form-agreement span { color: #718077; font-size: 9px; }
 .villager-timeline { padding: 20px; border-radius: 20px 6px 6px; background: rgba(255,255,245,.78); }
 .villager-timeline article { display: grid; position: relative; grid-template-columns: 16px 1fr; padding-bottom: 22px; gap: 12px; }
 .villager-timeline article:last-child { padding-bottom: 0; }
