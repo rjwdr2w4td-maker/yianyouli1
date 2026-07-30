@@ -244,14 +244,14 @@ const travelCatalog = {
 } as const;
 
 const yianGoods = [
-  { name: "铜陵白姜", type: "全球农遗", source: "官方发布", publisher: "义安区文旅推荐", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", specification: "嫩姜礼盒 / 糖醋姜 / 姜膏", service: "支持产地直发，具体规格与配送范围以购买页为准。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
-  { name: "顺安酥糖", type: "传统风味", source: "官方发布", publisher: "顺安镇特色产业推荐", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", specification: "经典袋装 / 节庆礼盒", service: "建议密封避光保存，过敏原等信息请查看商品包装。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
-  { name: "凤丹系列", type: "农遗好物", source: "官方发布", publisher: "义安区文旅推荐", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", specification: "牡丹籽油 / 凤丹花茶 / 护肤礼盒", service: "不同品类适用方式不同，下单前请核对产品说明。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
-  { name: "铜拓本画", type: "非遗文创", source: "官方发布", publisher: "义安区非遗保护中心", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", specification: "装裱画 / 手作体验套装", service: "手工产品纹理略有差异，装裱尺寸以商品详情为准。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
-  { name: "铜艺文创", type: "铜都手作", source: "村民发布", publisher: "钟鸣镇村民手作坊", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", specification: "铜书签 / 桌面摆件 / 茶器", service: "铜器会随使用形成自然氧化色泽，请按说明进行养护。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
-  { name: "太平烧饼", type: "地方糕点", source: "村民发布", publisher: "顺安镇村民商户", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", specification: "现烤散装 / 便携礼袋", service: "糕点建议尽快食用，保质期和储存方式以包装为准。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
-  { name: "顺安山芋粉丝", type: "乡村物产", source: "村民发布", publisher: "顺安镇农家合作户", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", specification: "家庭装 / 农产礼盒", service: "干燥阴凉处保存，烹饪前可根据口感需求浸泡。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
-  { name: "西联故事礼盒", type: "水乡礼物", source: "村民发布", publisher: "西联镇犁桥村文创铺", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", specification: "文创组合 / 节庆定制礼盒", service: "礼盒内容会随季节调整，实际组合以购买页面为准。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
+  { name: "铜陵白姜", type: "全球农遗", source: "官方甄选", publisher: "义安区文旅推荐", detail: "块大皮薄、汁多渣少，可制成糖醋姜、姜片和姜膏。", specification: "嫩姜礼盒 / 糖醋姜 / 姜膏", service: "支持产地直发，具体规格与配送范围以购买页为准。", scene: "premium fresh white ginger and elegant preserved ginger gift box, Anhui specialty product photography" },
+  { name: "顺安酥糖", type: "传统风味", source: "官方甄选", publisher: "顺安镇特色产业推荐", detail: "芝麻、桂花与麦芽糖交织，入口松柔酥香，是顺安经典手信。", specification: "经典袋装 / 节庆礼盒", service: "建议密封避光保存，过敏原等信息请查看商品包装。", scene: "traditional Chinese sesame flaky candy in elegant paper gift packaging, food photography" },
+  { name: "凤丹系列", type: "农遗好物", source: "官方甄选", publisher: "义安区文旅推荐", detail: "源自凤凰山凤丹产业，可延伸为牡丹籽油、花茶和护肤产品。", specification: "牡丹籽油 / 凤丹花茶 / 护肤礼盒", service: "不同品类适用方式不同，下单前请核对产品说明。", scene: "white peony flowers, peony seed oil and refined botanical skincare gift set" },
+  { name: "铜拓本画", type: "非遗文创", source: "官方甄选", publisher: "义安区非遗保护中心", detail: "从青铜纹饰中提取文化符号，以拓印方式留下古铜都记忆。", specification: "装裱画 / 手作体验套装", service: "手工产品纹理略有差异，装裱尺寸以商品详情为准。", scene: "Chinese bronze rubbing artwork, ancient bronze patterns, refined cultural souvenir display" },
+  { name: "铜艺文创", type: "铜都手作", source: "农特商品", publisher: "钟鸣镇村民手作坊", detail: "铜制摆件、书签和生活器物，以现代设计讲述青铜文化。", specification: "铜书签 / 桌面摆件 / 茶器", service: "铜器会随使用形成自然氧化色泽，请按说明进行养护。", scene: "refined handcrafted copper ornaments bookmarks and cultural creative products" },
+  { name: "太平烧饼", type: "地方糕点", source: "农特商品", publisher: "顺安镇村民商户", detail: "层次丰富、现烤酥香，适合作为旅途小食和地方伴手礼。", specification: "现烤散装 / 便携礼袋", service: "糕点建议尽快食用，保质期和储存方式以包装为准。", scene: "freshly baked layered Chinese sesame flatbread, rustic bakery food photography" },
+  { name: "顺安山芋粉丝", type: "乡村物产", source: "农特商品", publisher: "顺安镇农家合作户", detail: "以山芋淀粉加工，口感柔韧，适合炖煮、火锅和家常烹饪。", specification: "家庭装 / 农产礼盒", service: "干燥阴凉处保存，烹饪前可根据口感需求浸泡。", scene: "traditional sweet potato glass noodles in natural woven basket, rural product photography" },
+  { name: "西联故事礼盒", type: "水乡礼物", source: "农特商品", publisher: "西联镇犁桥村文创铺", detail: "集合水镇文创与地方风物，把西联水乡印象装进一份礼盒。", specification: "文创组合 / 节庆定制礼盒", service: "礼盒内容会随季节调整，实际组合以购买页面为准。", scene: "elegant Jiangnan water town souvenir gift box with cultural creative products" },
 ] as const;
 
 const villagerGoodsPhones: Record<string, string> = {
@@ -264,7 +264,7 @@ const villagerGoodsPhones: Record<string, string> = {
 type YianGood = (typeof yianGoods)[number];
 type GoodsSource = YianGood["source"];
 type GoodsSourceFilter = "全部" | GoodsSource;
-const goodsSourceFilters: GoodsSourceFilter[] = ["全部", "官方发布", "村民发布"];
+const goodsSourceFilters: GoodsSourceFilter[] = ["全部", "官方甄选", "农特商品"];
 const goodsCategories = Array.from(new Set(yianGoods.map((good) => good.type)));
 
 type GoodsDelivery = "快递配送" | "到店自提";
@@ -1821,8 +1821,8 @@ export default function Home() {
             {filteredGoods.length > 0 ? <div className="goods-grid">
               {filteredGoods.map((item, index) => (
                 <article className="goods-card" key={item.name} onClick={() => openGood(item)}>
-                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /><span className={`goods-source-badge ${item.source === "官方发布" ? "is-official" : "is-villager"}`}><b aria-hidden="true">{item.source === "官方发布" ? "◆" : "●"}</b>{item.source}</span></div>
-                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><span className="goods-card__publisher">{item.publisher}</span><p>{item.detail}</p><button type="button" className={item.source === "村民发布" ? "is-contact" : ""} onClick={(event) => { event.stopPropagation(); openGood(item); }}>{item.source === "官方发布" ? "在线购买" : "电话联系"}</button></div>
+                  <div className="goods-card__image"><img src={imageUrl(`${item.scene}, realistic, natural light, no text, no watermark`)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" /><span className={`goods-source-badge ${item.source === "官方甄选" ? "is-official" : "is-villager"}`}><b aria-hidden="true">{item.source === "官方甄选" ? "◆" : "●"}</b>{item.source}</span></div>
+                  <div className="goods-card__body"><small>{item.type}</small><h2>{item.name}</h2><span className="goods-card__publisher">{item.publisher}</span><p>{item.detail}</p><button type="button" className={item.source === "农特商品" ? "is-contact" : ""} onClick={(event) => { event.stopPropagation(); openGood(item); }}>{item.source === "官方甄选" ? "在线购买" : "电话联系"}</button></div>
                 </article>
               ))}
             </div> : <div className="goods-empty" role="status"><Search aria-hidden="true" /><strong>暂未找到匹配的好物</strong><p>换个关键词或调整发布来源、商品类别试试。</p><button type="button" onClick={clearGoodsFilters}>清除全部筛选</button></div>}
@@ -1912,11 +1912,11 @@ export default function Home() {
               <button className="goods-detail-modal__close" type="button" onClick={() => setSelectedGood(null)} aria-label="关闭好物详情">×</button>
               <img src={imageUrl(`${selectedGood.scene}, realistic, natural light, no text, no watermark`)} alt={selectedGood.name} />
               <div className="goods-detail-modal__body">
-                <div className="goods-detail-modal__meta"><span className={`goods-source-badge ${selectedGood.source === "官方发布" ? "is-official" : "is-villager"}`}><b aria-hidden="true">{selectedGood.source === "官方发布" ? "◆" : "●"}</b>{selectedGood.source}</span><small>{selectedGood.type}</small></div>
+                <div className="goods-detail-modal__meta"><span className={`goods-source-badge ${selectedGood.source === "官方甄选" ? "is-official" : "is-villager"}`}><b aria-hidden="true">{selectedGood.source === "官方甄选" ? "◆" : "●"}</b>{selectedGood.source}</span><small>{selectedGood.type}</small></div>
                 <h2 id="goods-detail-title">{selectedGood.name}</h2>
                 <p>{selectedGood.detail}</p>
                 <dl><div><dt>发布主体</dt><dd>{selectedGood.publisher}</dd></div><div><dt>可选规格</dt><dd>{selectedGood.specification}</dd></div><div><dt>购买说明</dt><dd>{selectedGood.service}</dd></div></dl>
-                <div className="goods-detail-modal__actions"><button type="button" className={favoriteGoods.includes(selectedGood.name) ? "is-favorite" : ""} onClick={() => toggleFavoriteGood(selectedGood)}><Heart aria-hidden="true" fill={favoriteGoods.includes(selectedGood.name) ? "currentColor" : "none"} />{favoriteGoods.includes(selectedGood.name) ? "已收藏" : "收藏好物"}</button>{selectedGood.source === "官方发布" ? <button type="button" className="goods-detail-modal__buy" onClick={() => startGoodsCheckout(selectedGood)}><ShoppingBag aria-hidden="true" />立即购买</button> : <a className="goods-detail-modal__contact" href={`tel:${villagerGoodsPhones[selectedGood.name]}`}><Phone aria-hidden="true" />电话联系</a>}</div>
+                <div className="goods-detail-modal__actions"><button type="button" className={favoriteGoods.includes(selectedGood.name) ? "is-favorite" : ""} onClick={() => toggleFavoriteGood(selectedGood)}><Heart aria-hidden="true" fill={favoriteGoods.includes(selectedGood.name) ? "currentColor" : "none"} />{favoriteGoods.includes(selectedGood.name) ? "已收藏" : "收藏好物"}</button>{selectedGood.source === "官方甄选" ? <button type="button" className="goods-detail-modal__buy" onClick={() => startGoodsCheckout(selectedGood)}><ShoppingBag aria-hidden="true" />立即购买</button> : <a className="goods-detail-modal__contact" href={`tel:${villagerGoodsPhones[selectedGood.name]}`}><Phone aria-hidden="true" />电话联系</a>}</div>
               </div>
             </section>
           </div>
