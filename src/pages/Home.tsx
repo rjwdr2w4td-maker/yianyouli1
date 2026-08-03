@@ -215,6 +215,7 @@ type TravelCategory = "景点" | "美食" | "住宿" | "文创";
 type TravelCatalogItem = { name: string; area: string; detail: string; subtype: string; image: string; images?: readonly string[] };
 type SelectedTravelItem = { item: TravelCatalogItem; category: TravelCategory };
 const publicAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+const treasureThumbnailUrl = (path: string) => publicAssetUrl(path.replace(/^treasures\//, "treasures-thumbs/"));
 const travelCategories: TravelCategory[] = ["景点", "美食", "住宿", "文创"];
 const travelCatalog: Record<TravelCategory, readonly TravelCatalogItem[]> = {
   "景点": [
@@ -1854,9 +1855,9 @@ export default function Home() {
               {travelCategories.map((category) => <button type="button" key={category} className={activeTravelCategory === category ? "is-active" : ""} onClick={() => setActiveTravelCategory(category)}><strong>{category}</strong></button>)}
             </nav>
             <div className="catalog-grid">
-              {travelCatalog[activeTravelCategory].map((item, index) => (
+              {travelCatalog[activeTravelCategory].map((item) => (
                 <article className="catalog-card" key={item.name} role="button" tabIndex={0} onClick={() => setSelectedTravelItem({ item, category: activeTravelCategory })} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedTravelItem({ item, category: activeTravelCategory }); } }}>
-                  <img src={publicAssetUrl(item.image)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" />
+                  <img src={treasureThumbnailUrl(item.image)} alt={item.name} loading="lazy" decoding="async" width="640" height="420" />
                   <div><span>{item.area} · {item.subtype}</span><h2>{item.name}</h2><p>{item.detail}</p><strong className="catalog-card__more">查看详情 <span>›</span></strong></div>
                 </article>
               ))}
