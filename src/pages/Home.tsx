@@ -187,6 +187,17 @@ const townDetails: TownDetail[] = [
     guides: { 美食: [townItem("沿江鱼鲜", "品尝时令鱼鲜与家常烹制风味。"), townItem("农家土菜", "以稻米、蔬菜和乡村食材组成朴实餐桌。")], 游玩: [townItem("老洲太阳岛", "看洲滩、江面和开阔自然风光。"), townItem("湿地观鸟与江岸日落", "文明观鸟并与鸟群保持安全距离。")], 住宿: [townItem("乡村休闲住宿", "适合安静短住，提前确认接待条件。"), townItem("周边镇区酒店", "对配套要求较高可联动城区住宿。")], 特产: [townItem("生态稻米", "来自洲滩农田的代表性农产品。"), townItem("沿江水产与农副产品", "可按季节选购规范包装产品。")], 文化活动: [townItem("长江湿地观鸟季", "开展生态讲解、自然观察与文明观鸟活动。"), townItem("老洲渔歌民俗展演", "展示沿江生产生活记忆和乡土文艺。") ] },
     villages: [village("老洲乡", "太阳岛村", "洲滩湿地和江岸风光突出的生态村落。", "生态旅游、沿江水产", "太阳岛湿地与江鲜"), village("老洲乡", "中心村", "乡域公共服务与农业生产的重要节点。", "生态稻米、村级服务", "田园水网与优质稻米"), village("老洲乡", "成德村", "保留质朴沿江生活和农耕景观。", "粮食种植、传统农耕", "江岸日落与农家土菜")],
   },
+  {
+    id: "xinqiao", name: "新桥办事处", subtitle: "城乡枢纽 · 活力新桥", intro: "新桥办事处地处义安区城乡接合部，是连接城区与东部乡镇的重要节点，兼具城市服务配套与近郊田园风貌，适合作为中转补给和短途休闲的选择。", highlights: ["城乡接合", "交通便利", "近郊休闲"], scene: "Chinese suburban town at the edge of a small city, mix of modern community buildings and green farmland, roads connecting town and countryside, Anhui travel photography, realistic, no text", mapKeyword: "安徽铜陵义安区新桥办事处", representativeAttractions: ["城乡景观带", "近郊田园", "社区文化广场"], industries: ["现代商贸", "城郊农业", "社区服务"], bestSeason: "四季皆宜，春秋适合近郊漫步", duration: "建议半日，可与周边乡镇行程组合",
+    guides: {
+      美食: [townItem("城郊家常菜与早点", "融合城区与乡土风味的日常餐饮，方便快捷。"), townItem("社区小吃与便民餐饮", "街道两侧分布各类小吃店和便民餐饮。")],
+      游玩: [townItem("城乡景观带漫步", "沿道路感受从城区到田园的渐变风貌。"), townItem("社区文化广场", "适合短时休闲、散步和了解本地生活。")],
+      住宿: [townItem("城区周边商务住宿", "交通便利，适合作为全区游览的中转点。"), townItem("近郊便捷住宿", "靠近主要道路，方便前往东部各镇。")],
+      特产: [townItem("城郊农副产品", "来自近郊田园的新鲜蔬果和农副产品。"), townItem("便民商超与地方手信", "可就近购买日常用品和地方食品。")],
+      文化活动: [townItem("社区文化惠民活动", "面向居民开展文艺演出和群众文化。"), townItem("近郊农事体验", "结合季节开展采摘和农事体验活动。")],
+    },
+    villages: [village("新桥办事处", "新桥社区", "城乡接合部的核心社区，生活配套完善。", "社区服务、商贸", "社区文化广场与便民集市"), village("新桥办事处", "近郊村", "保留田园风貌的城郊村落。", "城郊农业、蔬菜种植", "近郊田园与时令蔬果"), village("新桥办事处", "沿路村", "依托交通干线发展的便民村落。", "商贸服务、餐饮", "道路沿线商铺与地方小吃")],
+  },
 ];
 
 const guideScene = (town: TownDetail, category: TownGuideCategory, item: string) => {
@@ -200,46 +211,77 @@ const guideScene = (town: TownDetail, category: TownGuideCategory, item: string)
   return `${categoryScenes[category]}, inspired by ${town.name} and ${item}, natural daylight, realistic, no text, no watermark`;
 };
 
-type TravelCategory = "景点" | "美食" | "住宿" | "购物";
-const travelCategories: TravelCategory[] = ["景点", "美食", "住宿", "购物"];
-const travelCatalog = {
+type TravelCategory = "景点" | "美食" | "住宿" | "文创";
+type TravelCatalogItem = { name: string; area: string; detail: string; subtype: string; image: string; images?: readonly string[] };
+type SelectedTravelItem = { item: TravelCatalogItem; category: TravelCategory };
+const publicAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+const travelCategories: TravelCategory[] = ["景点", "美食", "住宿", "文创"];
+const travelCatalog: Record<TravelCategory, readonly TravelCatalogItem[]> = {
   "景点": [
-    { name: "永泉旅游度假区", area: "钟鸣镇", detail: "忆江南十二景、九宝温泉、铜钱市集与山林度假体验。" },
-    { name: "犁桥水镇", area: "西联镇", detail: "徽派古建、水巷夜游、非遗展演与水乡民俗体验。" },
-    { name: "凤凰山景区", area: "顺安镇", detail: "凤丹牡丹花海、相思树、滴水崖及山野休闲空间。" },
-    { name: "金牛洞古采矿遗址", area: "顺安镇", detail: "探访古代铜矿遗址，了解义安三千年采冶文明。" },
-    { name: "梧桐花谷", area: "钟鸣镇", detail: "四季花海、生态漂流、彩虹滑道与亲子户外体验。" },
-    { name: "龙潭肖古村落", area: "钟鸣镇", detail: "古宅、石桥、溪流与山村生活交织的传统村落。" },
-    { name: "江南铜谷旅游风景道", area: "顺安—钟鸣", detail: "串联铜文化遗址、古村和山林景观的自驾风景廊道。" },
-    { name: "金山淘金小镇", area: "钟鸣镇", detail: "淘金互动、露营草坪与山野休闲相结合的新场景。" },
-    { name: "印象河边", area: "天门镇", detail: "森林露营、户外烧烤、咖啡与农事体验的森野空间。" },
-    { name: "东湖湿地公园", area: "顺安镇", detail: "环湖步道、荷塘、观鸟平台和开阔草坪组成的城市湿地。" },
+    { name: "永泉小镇", area: "义安区", subtype: "AAAA级景区", detail: "集生态旅游观光、休闲度假、娱乐美食和温泉康养于一身的“无忧度假”小镇，以江南园林为主要风格，有忆江南12景、江南味道、农家小院、九宝温泉等景点和乡愁巡演、打弹珠、儿童乐园等体验项目。", image: "/treasures/scenic/yongquan-town.webp" },
+    { name: "凤凰山景区", area: "义安区", subtype: "AAAA级景区", detail: "“在叶山东南，有泉一泓，相传有凤凰翔饮于上”，主要景点有相思树、牡丹园、滴水崖、凤仪湖、凤凰落脚石、金牛洞古采矿遗址、铜陵县首次党代会遗址等。", image: "/treasures/scenic/fenghuangshan-scenic-area.webp" },
+    { name: "梧桐花谷", area: "义安区", subtype: "AAAA级景区", detail: "“钟鸣天下，凤栖梧桐”，是一家以生态农业为基，以四季花海为主题，以休闲体验为发展方向，以学生劳动教育与研学旅游为特色的综合性旅游景区。", image: "/treasures/scenic/wutong-flower-valley.webp" },
+    { name: "犁桥水镇", area: "义安区", subtype: "AAAA级景区", detail: "江南水乡风貌的徽派建筑集群，含119栋古建民居、8条古建街道，以及临水错落分布的亭台楼榭，拥有灯会、非遗演艺和夜游、夜宴、夜宿等丰富业态。", image: "/treasures/scenic/liqiao-water-town.webp" },
+    { name: "天井湖公园", area: "义安区", subtype: "AAAA级景区", detail: "湖中有“上通天、下通海”的天井，园内拥有溢沁园、九曲桥、通天阁、山谷碑林、牡丹园等30多处游憩场所和风景点。", image: "/treasures/scenic/tianjing-lake-park.webp" },
+    { name: "梦思康百合庄园", area: "义安区", subtype: "AAA级景区", detail: "以“赏药景、品药膳、购农特”和百合花海为特色主题，打造研学旅游、休闲娱乐、劳动实践等特色板块。", image: "/treasures/scenic/mengsikang-lily-manor.webp" },
+    { name: "“江南铜谷”旅游风景道", area: "九凤路示范段", subtype: "省级旅游风景道", detail: "以路为引，将沿线旅游景区、特色田园风光及乡村景点串联成线，使山水资源、乡土文化、生态农耕有机结合。", image: "/treasures/scenic/jiangnan-copper-valley-scenic-road.webp" },
+    { name: "荆公书堂", area: "义安区", subtype: "历史文化场馆", detail: "为纪念北宋名相王安石在此讲学而建，现为义安历史文化博览馆，是集史学研究、文化传播、学生研学、文旅融合等功能于一体的城市会客厅。", image: "/treasures/scenic/jinggong-study-hall.webp" },
+    { name: "印象河边", area: "天门镇郎坑村", subtype: "休闲农业与露营基地", detail: "现为铜陵市休闲农业和乡村旅游示范点，包含烧烤咖啡、稻田写生、采摘抓鱼等休闲露营与农趣体验项目。", image: "/treasures/scenic/yinxiang-riverside.webp" },
+    { name: "太阳岛", area: "老洲乡最南端", subtype: "滨江自然景观", detail: "集小型草原、耕地、树林、蓝天、沙滩与江水于一体，3至5月到访游玩最佳。", image: "/treasures/scenic/sun-island.webp" },
+    { name: "金山景区", area: "义安区", subtype: "自然景区及主题体验区", detail: "夏秋晚晴时层层山崖映染得金碧辉煌，脚畔杉木墩被称为“铜陵的阿勒泰”，“淘金小镇”主题体验区有淘金、骑马、游船等活动。", image: "/treasures/scenic/jinshan-view.webp" },
+    { name: "金牛洞古采矿遗址", area: "义安区", subtype: "全国重点文物保护单位", detail: "因西部山腰被称为“金牛洞”的古洞而得名，经考古专家论证，是一处春秋到西汉时期的采矿遗址。", image: "/treasures/scenic/jinniudong-ancient-mine.webp" },
+    { name: "龙潭肖古村落", area: "龙潭肖村", subtype: "中国传统村落", detail: "中国第三批传统村落，始建于明宪宗年间，距今已有400余年历史，喀斯特地形错落有致、山水交融。", image: "/treasures/scenic/longtanxiao-ancient-village.webp" },
+    { name: "渡江第一船", area: "胥坝乡群心村", subtype: "渡江战役纪念地", detail: "雕塑耸立于胥坝乡群心村渡江文化广场，当年“百万雄师过大江”第一船登陆点即胥坝乡文兴洲。", image: "/treasures/scenic/first-river-crossing-boat.webp" },
+    { name: "笠帽山烈士陵园", area: "五松镇", subtype: "烈士纪念设施", detail: "位于五松镇笠帽山南侧区域市级自然保护区内，是铜陵市面积最大的、功能最齐全的烈士纪念园。", image: "/treasures/scenic/limaoshan-martyrs-cemetery.webp" },
+    { name: "中共铜陵特支展览馆", area: "西联镇钱湾村", subtype: "红色历史展览馆", detail: "1931年初正式成立的中共铜陵特支，是中国共产党在铜陵江南地区建立的第一个党支部。", image: "/treasures/scenic/tongling-special-branch-museum.webp" },
+    { name: "铜草花开研学旅游基地", area: "义安区", subtype: "省级研学旅游示范基地", detail: "集观光体验、农业技术研发、互联网推广、研学教育为一体，课程涵盖青铜文化、红色文化、农耕文化、中医药文化等。", image: "/treasures/scenic/tongcaohuakai-study-base.webp" },
+    { name: "乡野拾光研学旅游基地", area: "老洲乡成德示范园", subtype: "田园实践研学基地", detail: "科学规划阅读区、乡村记忆馆、24节气展示等室内功能区，以及垂钓、采摘、种植三大室外区域。", image: "/treasures/scenic/xiangye-shiguang-study-base.webp" },
+    { name: "金丰元农业发展基地", area: "中华白姜文化园", subtype: "白姜文化研学基地", detail: "课程主要围绕“白姜文化”，可了解白姜从田地到餐桌的制作全过程。", image: "/treasures/scenic/jinfengyuan-study-base.webp" },
   ],
   "美食": [
-    { name: "永泉江南味道小吃街", area: "钟鸣镇", detail: "铜钱消费场景中集中品尝柴火饼、鱼丸和地方小吃。" },
-    { name: "犁桥水镇圆楼", area: "西联镇", detail: "太白雕胡饭、水乡土菜与非遗风味的集中体验地。" },
-    { name: "月明土菜馆", area: "义安区", detail: "主打地方家常菜、时令食材和义安乡土风味。" },
-    { name: "山里任家", area: "义安区", detail: "适合品尝柴火土鸡、河鲜和山野农家菜。" },
-    { name: "听泉居", area: "义安区", detail: "山水环境中的本地土菜和休闲用餐体验。" },
-    { name: "汀州小院", area: "义安区", detail: "乡村小院氛围，提供家常土菜和多人聚餐。" },
-    { name: "顺安老街早点", area: "顺安镇", detail: "大肠小刀面、鸡汤米面、太平烧饼和豆腐脑。" },
-    { name: "钟鸣杀猪汤", area: "钟鸣镇", detail: "鲜香浓郁的地方民俗菜，适合搭配乡土小炒。" },
+    { name: "七里书童", area: "西联镇三义村", subtype: "农家乐·餐饮住宿", detail: "主要建设二十四节气民宿、主题包厢餐饮，配备公共休闲区、儿童游泳池、图书阅读点、观景露台、咖啡屋等设施。", image: "/treasures/food/qili-shutong.webp" },
+    { name: "兰婷小院", area: "西联镇犁桥村", subtype: "农家乐·土菜餐饮", detail: "坚持选用新鲜优质食材，招牌菜品有特色红烧肉、农家小炒鸡以及河鲜类菜品。", image: "/treasures/food/lanting-courtyard.webp" },
+    { name: "山里任家", area: "钟鸣镇金凤村", subtype: "农家乐·乡村休闲", detail: "内含乡村会客厅、民宿休闲、亲子游乐、山林景观、生态鱼趣、农耕体验等功能区。", image: "/treasures/food/shanli-renjia-farmstay.webp" },
+    { name: "明塘人家", area: "西联镇犁桥村", subtype: "农家乐·农家菜", detail: "犁桥村首家农家乐，周边有明塘文化艺术村、漫园等景点，以原汁原味的农家菜为主。", image: "/treasures/food/mingtang-renjia.webp" },
+    { name: "春风小院", area: "天门镇双龙洞旁", subtype: "农家乐·亲子农耕", detail: "打造徽派园林微缩景观，配套农耕体验田、生态垂钓池和亲子采摘等沉浸式活动。", image: "/treasures/food/chunfeng-courtyard.webp" },
+    { name: "汀洲小院", area: "西联镇汀洲村", subtype: "农家乐·非遗美食", detail: "致力于传承太平街烧饼、太平街臭干等非遗，配套民宿、书吧茶吧、中餐厅、书画创作区等。", image: "/treasures/food/tingzhou-courtyard.webp" },
+    { name: "江畔林樾", area: "老洲乡光辉村", subtype: "农家乐·江畔休闲", detail: "涵盖包厢餐饮、庭院露营、农事体验等田园风格场地，可静享江畔与林间景致。", image: "/treasures/food/jiangpan-linyue.webp" },
+    { name: "东联全蟹宴", area: "东联镇", subtype: "地方特色宴席", detail: "以螃蟹为主题的地方宴席，具体菜品与供应信息以现场为准。", image: "/treasures/food/donglian-crab-feast.webp" },
+    { name: "丹皮熏鱼", area: "义安区", subtype: "地方特色菜", detail: "结合本地丹皮与山泉小河鱼熏制，鲜香浓郁。", image: "/treasures/food/danpi-smoked-fish.webp" },
+    { name: "太平街烧饼", area: "太平街", subtype: "传统小吃", detail: "茶杯口大小，里外十八层，层层酥透。", image: "/treasures/food/taiping-street-shaobing.webp" },
+    { name: "太平街臭干", area: "太平街", subtype: "传统小吃", detail: "采用汀洲优质黄豆手工制作，闻臭吃香。", image: "/treasures/food/taiping-street-stinky-tofu.webp" },
+    { name: "小刀面", area: "义安区", subtype: "传统面食", detail: "纯手工擀制，面条爽滑有弹性。", image: "/treasures/food/xiaodao-noodles.webp" },
+    { name: "老洲成德卤鹅", area: "老洲乡", subtype: "传统卤味", detail: "严选散养大鹅，以沿用四十多年的秘方卤制。", image: "/treasures/food/chengde-su-braised-goose.webp" },
+    { name: "文星猪蹄", area: "义安区", subtype: "传统卤味", detail: "老卤文火慢炖，红润鲜香。", image: "/treasures/food/wenxing-pork-trotter.webp" },
+    { name: "梦思康百合宴", area: "梦思康百合庄园", subtype: "主题宴席", detail: "以自种百合入馔的特色宴席。", image: "/treasures/food/mengsikang-lily-feast.webp" },
+    { name: "永泉芝麻饼", area: "永泉", subtype: "传统糕点", detail: "以老品种小粒芝麻手工杵粉制作。", image: "/treasures/food/yongquan-sesame-cake.webp" },
+    { name: "金榔油没鸭", area: "义安区", subtype: "地方特色菜", detail: "以本鸭制作，外酥里嫩，正式名称为“油没鸭”。", image: "/treasures/food/jinlang-youmo-duck.webp" },
+    { name: "钟鸣杀猪汤", area: "钟鸣镇", subtype: "民俗汤菜", detail: "以猪里脊、猪肝、猪腰等制作的民俗汤菜。", image: "/treasures/food/zhongming-pork-soup.webp" },
+    { name: "铜陵凤丹（牡丹籽油）", area: "义安区", subtype: "地方特产", detail: "国家地理标志保护产品凤丹的衍生产品。", image: "/treasures/food/tongling-peony-seed-oil.webp" },
+    { name: "铜陵白姜", area: "义安区", subtype: "地方特产", detail: "国家地理标志保护产品，块大皮薄、汁多渣少。", image: "/treasures/food/tongling-white-ginger.webp" },
+    { name: "雕胡饭", area: "义安区", subtype: "传统米食", detail: "以菰米独煮或与稻米同煮，承载李白诗意。", image: "/treasures/food/diaohu-rice.webp" },
+    { name: "顺安酥糖", area: "顺安镇", subtype: "传统糕点", detail: "非遗传统糕点，松柔甜润。", image: "/treasures/food/shunan-crispy-candy.webp" },
   ],
   "住宿": [
-    { name: "永泉松云山居", area: "钟鸣镇", detail: "融入山林园景的度假住宿，适合康养与慢旅行。" },
-    { name: "永泉竹塰人家", area: "钟鸣镇", detail: "竹林环境中的主题住宿，可联动温泉与园林游览。" },
-    { name: "犁桥耕心堂", area: "西联镇", detail: "水镇古建氛围中的特色民宿，适合体验水乡夜色。" },
-    { name: "铜雀台金陵大酒店", area: "五松镇周边", detail: "综合服务设施较完整，适合商务和家庭出行。" },
-    { name: "临津悦豪国际大酒店", area: "顺安镇", detail: "靠近东部城区和主要交通节点的综合型住宿。" },
-    { name: "顺安镇区商务住宿", area: "顺安镇", detail: "餐饮交通便利，适合作为凤凰山及周边游览中转。" },
-    { name: "凤凰山乡村民宿", area: "顺安镇", detail: "靠近山野和村落，适合赏花季及自驾游客。" },
+    { name: "凤栖民宿", area: "凤凰山景区内", subtype: "景区民宿", detail: "位于凤凰山葱郁环抱之中，拥有得天独厚的地理位置和生态环境。", image: "/treasures/stay/fenghuangshan-fengqi-homestay.webp" },
+    { name: "德让堂", area: "犁桥水镇", subtype: "皖美银牌民宿", detail: "依水而建并具徽派建筑元素。", image: "/treasures/stay/derang-hall.webp" },
+    { name: "明水居", area: "钟鸣镇水村村", subtype: "皖美银牌民宿", detail: "兼具明清古韵与现代设施。", image: "/treasures/stay/mingshui-residence.webp" },
+    { name: "松云山居", area: "永泉小镇", subtype: "国家乙级民宿/皖美金牌民宿", detail: "完整保留江南建筑风貌。", image: "/treasures/stay/songyun-mountain-residence.webp" },
+    { name: "百合庄园民宿", area: "梦思康百合庄园", subtype: "皖美银牌民宿", detail: "坐拥花海并提供亲子体验。", image: "/treasures/stay/lily-manor-homestay.webp" },
+    { name: "竹海人家", area: "叶山羊形山水库", subtype: "皖美金牌民宿", detail: "门前千亩竹海。", image: "/treasures/stay/zhuhai-renjia.webp" },
+    { name: "耕心堂", area: "犁桥水镇", subtype: "皖美金牌民宿", detail: "融入徽派景区并配套活动空间。", image: "/treasures/stay/gengxin-hall.webp" },
+    { name: "铁山头民宿", area: "江南铜谷风景道", subtype: "风景道民宿", detail: "位于江南铜谷风景道，距凤凰山约2公里。", image: "/treasures/stay/tieshantou-homestay.webp" },
+    { name: "龙潭肖民宿", area: "龙潭肖村", subtype: "传统村落民宿", detail: "新老共生并有庭院泳池。", image: "/treasures/stay/longtanxiao-homestay.webp" },
   ],
-  "购物": [
-    { name: "犁桥水镇文创区", area: "西联镇", detail: "水镇冰箱贴、布包挂件、非遗手作和主题纪念品。" },
-    { name: "永泉小镇特产店", area: "钟鸣镇", detail: "白姜、凤丹、铜钱文创及义安地方风味产品。" },
-    { name: "义安特色农产品展销点", area: "义安区", detail: "集中选购白姜、凤丹、山芋粉丝和生态农产品。" },
-    { name: "顺安老街特产铺", area: "顺安镇", detail: "顺安酥糖、太平烧饼和传统糕点等地方手信。" },
-    { name: "凤凰山农特优市集", area: "顺安镇", detail: "花期及活动期间展售凤丹、白姜、非遗文创等好物。" },
+  "文创": [
+    { name: "东联文创", area: "东联镇", subtype: "乡镇文创", detail: "以东联镇为主题的地方文创。", image: "/treasures/culture/donglian-cultural-creative.webp" },
+    { name: "五松滨江书屋冰箱贴", area: "五松镇滨江书屋", subtype: "乡镇文创", detail: "以五松镇滨江书屋为主题的文创。", image: "/treasures/culture/wusong-riverside-bookstore-magnet.webp" },
+    { name: "凤凰山瀑布咖啡", area: "凤凰山景区", subtype: "景区文创", detail: "以凤凰山景区瀑布咖啡为主题的景区文创。", image: "/treasures/culture/fenghuangshan-waterfall-coffee-1.webp", images: ["/treasures/culture/fenghuangshan-waterfall-coffee-1.webp", "/treasures/culture/fenghuangshan-waterfall-coffee-2.webp", "/treasures/culture/fenghuangshan-waterfall-coffee-3.webp"] },
+    { name: "犁桥水镇文创", area: "犁桥水镇", subtype: "景区文创", detail: "以犁桥水镇为主题的景区文创。", image: "/treasures/culture/liqiao-water-town-creative-1.webp", images: ["/treasures/culture/liqiao-water-town-creative-1.webp", "/treasures/culture/liqiao-water-town-creative-2.webp"] },
+    { name: "老洲文创", area: "老洲乡", subtype: "乡镇文创", detail: "以老洲乡为主题的地方文创。", image: "/treasures/culture/laozhou-cultural-creative.webp" },
+    { name: "四喜铜娃冰箱贴", area: "义安区", subtype: "铜工艺文创", detail: "以四喜铜娃和铜文化为主题的文创。", image: "/treasures/culture/sixi-copper-doll-magnet.webp" },
+    { name: "永泉小镇铜艺坊", area: "永泉小镇", subtype: "铜工艺文创", detail: "以永泉小镇和铜文化为主题的文创。", image: "/treasures/culture/yongquan-copper-workshop.webp" },
+    { name: "铜拓版画", area: "义安区", subtype: "铜工艺文创", detail: "以铜文化为主题的文创。", image: "/treasures/culture/copper-rubbing-print.webp" },
   ],
 } as const;
 
@@ -297,8 +339,6 @@ const GOODS_FAVORITES_KEY = "yianyouli:tourist:favorite-goods";
 const BROWSING_HISTORY_KEY = "yianyouli:tourist:browsing-history";
 const goodsPrices: Record<string, number> = { "铜陵白姜": 58, "顺安酥糖": 36, "凤丹系列": 128, "铜拓本画": 168, "铜艺文创": 98, "太平烧饼": 29.9, "顺安山芋粉丝": 42, "西联故事礼盒": 138 };
 const pickupPoint = "义安好物游客服务站（义安区顺安镇东城大道）";
-
-const catalogScene = (category: TravelCategory, item: string) => `realistic premium travel photography for ${item} in Yian District Tongling Anhui China, ${category}, natural light, no text, no watermark`;
 
 const getSpotGuideContent = (spot: ScenicSpot) => {
   const isWaterTown = spot.id === "liqiao";
@@ -374,7 +414,7 @@ const getSpotGuideContent = (spot: ScenicSpot) => {
   };
 };
 
-type TouristSection = "智慧导览" | "魅力义安" | "商旅食宿" | "义安好物" | "我的";
+type TouristSection = "智慧导览" | "魅力义安" | "宝藏义安" | "义安好物" | "我的";
 type TouristQuickService = "义安天气" | "投诉建议";
 type TouristSideService = TouristQuickService | "投资义安";
 type InvestmentCategory = "文旅" | "乡村运营" | "现代农业" | "康养" | "商业配套";
@@ -384,15 +424,10 @@ type InvestmentProject = {
   name: string;
   town: string;
   category: InvestmentCategory;
-  scale: string;
-  cooperation: string;
-  summary: string;
-  highlights: string[];
   status: string;
-  overview: string;
-  location: string;
-  construction: string[];
-  advantages: string[];
+  scene: string;
+  suggestion: string;
+  sceneryImage: string;
   contact: string;
   phone: string;
 };
@@ -410,12 +445,12 @@ type InvestmentLead = {
 const investmentCategories: Array<"全部" | InvestmentCategory> = ["全部", "文旅", "乡村运营", "现代农业", "康养", "商业配套"];
 const INVESTMENT_LEADS_KEY = "yian-investment-leads";
 const investmentProjects: InvestmentProject[] = [
-  { id: "liqiao-night", name: "犁桥水镇夜游业态提升项目", town: "西联镇", category: "文旅", scale: "计划总投资约 1.8 亿元", cooperation: "联合开发 / 品牌运营", summary: "围绕犁桥水镇水岸空间导入沉浸演艺、夜间消费、精品住宿与数字文旅体验，打造长三角周末夜游目的地。", highlights: ["成熟景区客流", "水乡夜游场景", "可分期实施"], status: "重点招商", overview: "依托犁桥村水系、徽派街区和现有文旅客流，完善夜游内容与二次消费产品，提升游客停留时长和综合消费。", location: "项目位于西联镇犁桥村，距铜陵市区约 20 分钟车程，可便捷衔接高速、高铁及沿江旅游线路。", construction: ["水岸沉浸式光影与演艺节点", "主题餐饮、文创零售及夜间市集", "精品民宿和亲子研学配套", "智慧票务与夜游运营系统"], advantages: ["已有水镇品牌和基础运营场景", "水网、田园与徽派建筑辨识度高", "适合内容品牌与在地资源联合运营"], contact: "义安区文化和旅游局招商专员 汪女士", phone: "0562-881****" },
-  { id: "longtan-village", name: "龙潭肖古村整村运营项目", town: "钟鸣镇", category: "乡村运营", scale: "计划总投资约 8000 万元", cooperation: "整村运营 / 租赁合作", summary: "盘活古村院落、山林田园和非遗资源，建设集古村度假、乡野美学、研学体验于一体的示范型乡村运营项目。", highlights: ["传统村落资源", "闲置院落可盘活", "山谷度假联动"], status: "合作洽谈中", overview: "以保护性利用为前提，引入专业运营团队对古村公共空间、闲置农房和乡村业态进行系统策划与持续运营。", location: "位于钟鸣镇南部山谷，与永泉小镇、梧桐花谷等文旅节点可形成联程线路，自然环境幽静。", construction: ["古村公共空间修缮与导视系统", "闲置院落民宿及主理人业态", "非遗工坊、研学课堂和乡村餐厅", "村落品牌、活动及渠道运营"], advantages: ["古宅、溪流、山林资源组合完整", "周边度假客群具备导流基础", "村集体参与，可建立利益联结机制"], contact: "钟鸣镇乡村振兴办公室 陈先生", phone: "0562-829****" },
-  { id: "white-ginger", name: "铜陵白姜智慧农业产业园", town: "天门镇", category: "现代农业", scale: "计划总投资约 1.2 亿元", cooperation: "合资建设 / 产业导入", summary: "建设白姜数字种植示范、精深加工、冷链仓储和品牌营销中心，推动全球重要农业文化遗产产业化升级。", highlights: ["全球农遗品牌", "全产业链空间", "订单农业基础"], status: "可立即对接", overview: "围绕铜陵白姜种质保护、标准化种植和高附加值加工，形成从田间到消费端的现代农业产业链。", location: "项目布局于天门镇白姜核心种植区，农田连片、灌溉条件良好，至义安城区及高速出入口交通便利。", construction: ["智慧种植与种质资源示范基地", "姜制食品和功能产品加工中心", "预冷、分选、仓储及供应链设施", "品牌展示、电商直播和研学空间"], advantages: ["国家地理标志与农遗文化双重价值", "种植户和合作社基础稳定", "产品可延伸食品、饮品及日化方向"], contact: "义安区农业农村局产业科 方先生", phone: "0562-887****" },
-  { id: "phoenix-health", name: "凤凰山森林康养度假项目", town: "顺安镇", category: "康养", scale: "计划总投资约 2.5 亿元", cooperation: "合作开发 / 专业运营", summary: "利用凤凰山生态山林、凤丹文化和近郊区位，布局森林疗愈、康养度假、中医养生及适老旅居产品。", highlights: ["近郊山林生态", "凤丹文化特色", "四季康养产品"], status: "前期招商", overview: "面向长三角银发与家庭康养市场，打造兼具短住度假、健康管理和自然教育功能的山地康养综合体。", location: "位于顺安镇凤凰山片区，毗邻城区生活配套，生态环境良好，可连接东湖湿地及铜文化旅游线路。", construction: ["森林疗愈步道与康体活动空间", "康养酒店、旅居公寓及适老设施", "凤丹主题养生产品体验中心", "健康管理与中医理疗服务中心"], advantages: ["城区近郊，兼顾生态与可达性", "山林、凤丹和乡村资源特色鲜明", "适配银发、亲子及企业疗休养客群"], contact: "顺安镇招商服务中心 刘女士", phone: "0562-889****" },
-  { id: "donglian-farm", name: "东联智慧稻渔综合示范基地", town: "东联镇", category: "现代农业", scale: "计划总投资约 6500 万元", cooperation: "土地合作 / 订单联营", summary: "依托沿江圩区高标准农田发展智慧稻作、生态水产、农产品加工和农业观光，建设可复制的数字农业样板。", highlights: ["连片高标准农田", "稻渔综合收益", "数字农业示范"], status: "重点招商", overview: "通过物联网、水肥管理和生态种养技术提升亩均效益，同步拓展加工、品牌和农事体验价值。", location: "位于东联镇沿江圩区，地势平坦、农田集中，具备机械化作业、规模化经营及物流运输条件。", construction: ["智慧农田和生态稻渔示范区", "稻米、水产初加工及仓储中心", "农业物联网和质量追溯平台", "农事研学及田园体验节点"], advantages: ["规模化土地和农业基础设施较完善", "可形成种养加工一体化收益", "政府、村集体与经营主体协同基础好"], contact: "东联镇农业招商专员 周先生", phone: "0562-823****" },
-  { id: "shunan-commercial", name: "顺安城市会客厅商业配套项目", town: "顺安镇", category: "商业配套", scale: "计划总投资约 3 亿元", cooperation: "商业开发 / 招商运营", summary: "面向义安东部城区及文旅客群，引进品质餐饮、亲子娱乐、生活零售和城市公共客厅，补齐区域消费配套。", highlights: ["城区消费腹地", "文旅客流叠加", "复合商业场景"], status: "规划招商", overview: "建设服务本地居民、产业人才和旅游客群的复合型商业中心，强化顺安作为义安东部综合服务节点的功能。", location: "项目位于顺安镇核心发展片区，周边居住社区、产业园和旅游节点集中，城市道路通达性良好。", construction: ["特色餐饮与品质零售街区", "亲子成长和家庭娱乐中心", "城市展厅、共享办公及活动空间", "停车、充电和智慧商业配套"], advantages: ["常住人口与周边乡镇消费需求稳定", "可承接凤凰山、永泉等旅游外溢客流", "适合商业品牌组合及统一运营"], contact: "义安区商务局投资服务专员 许女士", phone: "0562-882****" },
+  { id: "liqiao-night", name: "犁桥水镇夜游业态提升项目", town: "西联镇", category: "文旅", status: "重点招商", scene: "犁桥水镇现有闲置水街商铺 28 间、沿河空置院落 6 处及可利用的水景舞台 1 座，水岸空间约 1200 米，徽派街区保存完好，具备沉浸演艺与夜间消费的场景基础。", suggestion: "建议导入沉浸式光影演艺、夜间市集和精品民宿业态，分期实施水岸亮化提升，引入内容品牌方联合运营，打造长三角周末夜游目的地。", sceneryImage: imageUrl("Beautiful Chinese water town Liqiao at night with illuminated Jiangnan architecture along the canal, traditional Hui-style white walls and dark tiles reflected in calm water, warm lanterns, atmospheric documentary photography, no text, no watermark"), contact: "义安区文化和旅游局招商专员 汪女士", phone: "0562-881****" },
+  { id: "longtan-village", name: "龙潭肖古村整村运营项目", town: "钟鸣镇", category: "乡村运营", status: "合作洽谈中", scene: "龙潭肖古村现有闲置院落 24 处、祠堂公共空间 2 座及山谷林地约 300 亩，传统徽派古宅保存较好，溪流穿村而过，具备整村保护性利用的资源基础。", suggestion: "建议引入专业运营团队，盘活闲置院落发展民宿和主理人业态，同步打造非遗工坊、研学课堂和乡村餐厅，建立村集体利益联结机制。", sceneryImage: imageUrl("Ancient Chinese village Longtan Xiao in Anhui with preserved Hui-style architecture, stone bridges over a mountain stream, lush green valley, misty morning light, documentary photography, no text, no watermark"), contact: "钟鸣镇乡村振兴办公室 陈先生", phone: "0562-829****" },
+  { id: "white-ginger", name: "铜陵白姜智慧农业产业园", town: "天门镇", category: "现代农业", status: "可立即对接", scene: "天门镇白姜核心种植区现有连片闲置农田约 500 亩、旧有加工厂房 2 栋及可利用仓储用地 30 亩，灌溉条件良好，至义安城区及高速出入口交通便利。", suggestion: "建议建设白姜数字种植示范基地、精深加工中心和冷链仓储设施，配套品牌展示与电商直播空间，推动全球重要农业文化遗产产业化升级。", sceneryImage: imageUrl("Lush green Tongling white ginger fields in Anhui countryside with traditional farming terraces, mountains in background, morning sunlight, agricultural documentary photography, no text, no watermark"), contact: "义安区农业农村局产业科 方先生", phone: "0562-887****" },
+  { id: "phoenix-health", name: "凤凰山森林康养度假项目", town: "顺安镇", category: "康养", status: "前期招商", scene: "凤凰山片区有可利用的山林步道 8 公里、闲置村集体用房 5 栋及凤丹种植区约 200 亩，生态环境良好，毗邻城区生活配套，具备康养度假资源条件。", suggestion: "建议布局森林疗愈步道、康养酒店和中医理疗中心，开发凤丹主题养生产品，面向长三角银发与家庭康养市场打造山地康养综合体。", sceneryImage: imageUrl("Phoenix Mountain forest scenery in Anhui with lush green trees, winding mountain trails, peony flowers blooming, soft morning mist, serene natural landscape photography, no text, no watermark"), contact: "顺安镇招商服务中心 刘女士", phone: "0562-889****" },
+  { id: "donglian-farm", name: "东联智慧稻渔综合示范基地", town: "东联镇", category: "现代农业", status: "重点招商", scene: "东联镇沿江圩区有连片高标准闲置农田约 800 亩、可用仓储用地 20 亩，地势平坦、灌溉渠道完善，具备机械化作业和智慧稻渔种养基础。", suggestion: "建议发展智慧稻作和生态水产综合种养，配套初加工仓储和农业物联网平台，拓展农事研学及田园体验，建设可复制的数字农业样板。", sceneryImage: imageUrl("Aerial view of rice and fish integrated farming fields in Anhui Yangtze River plain, green rice paddies with water channels, flat farmland under blue sky, agricultural documentary photography, no text, no watermark"), contact: "东联镇农业招商专员 周先生", phone: "0562-823****" },
+  { id: "shunan-commercial", name: "顺安城市会客厅商业配套项目", town: "顺安镇", category: "商业配套", status: "规划招商", scene: "顺安镇核心片区现有闲置商业用地约 45 亩、可改造沿街商铺 60 间，周边居住社区和产业园集中，城市道路通达性良好，具备复合商业开发条件。", suggestion: "建议引进品质餐饮、亲子娱乐和生活零售业态，建设城市展厅与共享办公空间，补齐区域消费配套，强化顺安东部综合服务节点功能。", sceneryImage: imageUrl("Modern Chinese town commercial street in Shunan Anhui with clean pedestrian walkway, shops, green trees, urban living room concept, warm afternoon light, architectural documentary photography, no text, no watermark"), contact: "义安区商务局投资服务专员 许女士", phone: "0562-882****" },
 ];
 type VillagerSection = "村民首页" | "村务服务" | "积分超市" | "我要发布" | "我的";
 type MainSection = TouristSection | VillagerSection;
@@ -509,7 +544,9 @@ type VillagerPublication = {
 
 const VILLAGER_PUBLICATIONS_KEY = "yian-villager-publications";
 
-const imageUrl = (prompt: string) => `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
+function imageUrl(prompt: string) {
+  return `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=landscape_4_3`;
+}
 
 const villagePublicArticles = [
   { type: "村务公开", title: "顺安镇六月村级财务收支公示", date: "2026-07-25", summary: "公开村集体经营收入、公益支出及重点项目资金使用情况。", image: imageUrl("Documentary photography of a clean Chinese village service center public information board, villagers reading financial disclosure notices, Anhui countryside, warm daylight, realistic, no text, no watermark") },
@@ -649,6 +686,7 @@ export default function Home() {
   const [selectedCharmTown, setSelectedCharmTown] = useState<TownDetail | null>(null);
   const [activeCharmCategory, setActiveCharmCategory] = useState<TownDetailTab>("镇情概览");
   const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("景点");
+  const [selectedTravelItem, setSelectedTravelItem] = useState<SelectedTravelItem | null>(null);
   const [selectedGood, setSelectedGood] = useState<YianGood | null>(null);
   const [goodsSearch, setGoodsSearch] = useState("");
   const [goodsSourceFilter, setGoodsSourceFilter] = useState<GoodsSourceFilter>("全部");
@@ -1548,11 +1586,13 @@ export default function Home() {
         <section className="investment-hero"><small>INVEST IN YI'AN</small><h1>山水人文汇义安<br />携手共创好未来</h1><p>聚焦文旅融合、乡村振兴和现代产业，为投资伙伴提供项目对接与全流程服务。</p><div><span><strong>{investmentProjects.length}</strong> 个精选项目</span><span><strong>5</strong> 大产业方向</span></div></section>
         <nav className="investment-tabs" aria-label="投资项目分类">{investmentCategories.map((category) => <button type="button" key={category} className={investmentCategory === category ? "is-active" : ""} onClick={() => setInvestmentCategory(category)}>{category}</button>)}</nav>
         <section className="investment-project-list" aria-live="polite">{visibleProjects.map((project) => <article className="investment-project-card" key={project.id}>
-          <header><div><span>{project.category}</span><small>{project.town}</small></div><em>{project.status}</em></header>
-          <h2>{project.name}</h2><p>{project.summary}</p>
-          <dl><div><dt>投资规模</dt><dd>{project.scale}</dd></div><div><dt>合作方式</dt><dd>{project.cooperation}</dd></div></dl>
-          <div className="investment-highlights">{project.highlights.map((item) => <span key={item}>{item}</span>)}</div>
-          <button type="button" onClick={() => openInvestmentProject(project)}>查看项目详情 <span>›</span></button>
+          <img src={project.sceneryImage} alt="" loading="lazy" />
+          <div className="investment-project-card__content">
+            <header><div><span>{project.category}</span><small>{project.town}</small></div><em>{project.status}</em></header>
+            <h2>{project.name}</h2>
+            <div className="investment-project-card__scene"><strong>闲置资源场景</strong><p>{project.scene}</p></div>
+            <button type="button" onClick={() => openInvestmentProject(project)}>查看项目详情 <span>›</span></button>
+          </div>
         </article>)}</section>
         <footer className="investment-service-note"><Briefcase /><div><strong>义安区投资促进服务</strong><p>项目情况以正式招商资料和实地洽谈为准，我们将为您提供专人对接服务。</p></div></footer>
       </div>
@@ -1561,13 +1601,11 @@ export default function Home() {
     if (investmentView === "detail") return <>
       <header className="investment-topbar"><button type="button" onClick={handleInvestmentBack} aria-label="返回项目列表"><ChevronLeft aria-hidden="true" /></button><div><small>{selectedInvestmentProject.category} · {selectedInvestmentProject.town}</small><strong>项目详情</strong></div><span>{selectedInvestmentProject.status}</span></header>
       <div className="investment-page-body investment-detail-page">
-        <section className="investment-detail-hero"><span>{selectedInvestmentProject.category}</span><h1>{selectedInvestmentProject.name}</h1><p>{selectedInvestmentProject.scale} · {selectedInvestmentProject.cooperation}</p><div>{selectedInvestmentProject.highlights.map((item) => <small key={item}>{item}</small>)}</div></section>
-        <section className="investment-detail-section"><h2><span>01</span>项目概况</h2><p>{selectedInvestmentProject.overview}</p></section>
-        <section className="investment-detail-section"><h2><span>02</span>区位条件</h2><p>{selectedInvestmentProject.location}</p></section>
-        <section className="investment-detail-section"><h2><span>03</span>建设内容</h2><ul>{selectedInvestmentProject.construction.map((item) => <li key={item}>{item}</li>)}</ul></section>
-        <section className="investment-detail-section"><h2><span>04</span>合作模式</h2><div className="investment-cooperation"><Briefcase /><div><strong>{selectedInvestmentProject.cooperation}</strong><p>具体可根据投资主体资源优势、建设时序与运营方案协商确定。</p></div></div></section>
-        <section className="investment-detail-section"><h2><span>05</span>投资优势</h2><ul className="investment-advantage-list">{selectedInvestmentProject.advantages.map((item) => <li key={item}><CheckCircle2 />{item}</li>)}</ul></section>
-        <section className="investment-contact-card"><small>项目联系人</small><strong>{selectedInvestmentProject.contact}</strong><span>{selectedInvestmentProject.phone}</span></section>
+        <section className="investment-detail-hero"><span>{selectedInvestmentProject.category}</span><h1>{selectedInvestmentProject.name}</h1><p>{selectedInvestmentProject.town} · {selectedInvestmentProject.status}</p></section>
+        <section className="investment-detail-section"><h2><span>01</span>闲置资源场景</h2><p>{selectedInvestmentProject.scene}</p></section>
+        <section className="investment-detail-section"><h2><span>02</span>投资建议</h2><p>{selectedInvestmentProject.suggestion}</p></section>
+        <section className="investment-detail-section"><h2><span>03</span>资源风貌</h2><img className="investment-scenery-image" src={selectedInvestmentProject.sceneryImage} alt="资源风貌" loading="lazy" /></section>
+        <section className="investment-contact-card"><small>联系我们</small><strong>{selectedInvestmentProject.contact}</strong><span>{selectedInvestmentProject.phone}</span></section>
       </div>
       <footer className="investment-fixed-action"><button type="button" onClick={() => setInvestmentView("form")}><Send />我有投资意向</button></footer>
     </>;
@@ -1777,28 +1815,49 @@ export default function Home() {
                 <button type="button" className="charm-card" key={town.id} onClick={() => openTown(town)} style={{ animationDelay: `${index * 55}ms` }}>
                   <img src={imageUrl(town.scene)} alt={`${town.name}风光`} loading={index > 2 ? "lazy" : "eager"} decoding="async" />
                   <span className="charm-card__shade" />
-                  <span className="charm-card__copy"><small>{town.subtitle}</small><strong>{town.name}</strong><em>走进乡镇</em></span>
+                  <span className="charm-card__copy"><strong>{town.name}</strong><em>走进乡镇</em></span>
                 </button>
               ))}
             </div>
           </section>
         )}
 
-        {activeSection === "商旅食宿" && userRole === "游客" && (
+        {activeSection === "宝藏义安" && userRole === "游客" && selectedTravelItem && (
+          <section className="catalog-detail-view" onPointerDown={(event) => event.stopPropagation()}>
+            <header className="catalog-detail-topbar">
+              <button type="button" onClick={() => setSelectedTravelItem(null)} aria-label="返回宝藏义安列表"><ChevronLeft aria-hidden="true" /></button>
+              <div><small>{selectedTravelItem.item.area} · {selectedTravelItem.item.subtype}</small><strong>宝藏义安详情</strong></div>
+            </header>
+            <div className="catalog-detail-body">
+              <section className="catalog-detail-hero">
+                <img src={publicAssetUrl(selectedTravelItem.item.image)} alt={selectedTravelItem.item.name} decoding="async" />
+                <span />
+                <div><small>{selectedTravelItem.item.area} · {selectedTravelItem.item.subtype}</small><h1>{selectedTravelItem.item.name}</h1></div>
+              </section>
+              <section className="catalog-detail-section"><h2>简介</h2><p>{selectedTravelItem.item.detail}</p></section>
+              {selectedTravelItem.item.images && selectedTravelItem.item.images.length > 1 && <section className="catalog-detail-section"><h2>更多风貌</h2><div className="catalog-detail-gallery">{selectedTravelItem.item.images.map((image, index) => <img key={image} src={publicAssetUrl(image)} alt={`${selectedTravelItem.item.name}风貌${index + 1}`} loading="lazy" decoding="async" />)}</div></section>}
+              <section className="catalog-detail-section"><h2>体验建议</h2><p>{selectedTravelItem.category === "景点" ? "建议提前了解开放时间和当日天气，合理安排游览路线，预留充足时间感受自然风光与在地文化。" : selectedTravelItem.category === "美食" ? "建议结合用餐人数提前联系商家，优先品尝当季食材和义安地方风味，高峰时段可提前预约。" : selectedTravelItem.category === "住宿" ? "建议根据出行人数、入住日期和行程安排提前预订，并确认房型、停车及周边配套信息。" : "建议到店了解文创的实际展示与供应信息，具体内容以现场为准。"}</p></section>
+              <section className="catalog-detail-section catalog-detail-info"><h2>出行信息</h2><dl><div><dt>所在区域</dt><dd>{selectedTravelItem.item.area}</dd></div><div><dt>内容类型</dt><dd>{selectedTravelItem.item.subtype}</dd></div><div><dt>温馨提示</dt><dd>营业、开放及服务信息可能调整，出行前建议再次确认。</dd></div></dl></section>
+            </div>
+            <footer className="catalog-detail-action"><a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`铜陵义安区${selectedTravelItem.item.name}`)}&callnative=1`} target="_blank" rel="noreferrer"><Compass aria-hidden="true" />地图导航</a></footer>
+          </section>
+        )}
+
+        {activeSection === "宝藏义安" && userRole === "游客" && !selectedTravelItem && (
           <section className="catalog-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="catalog-hero">
               <span>TRAVEL & STAY</span>
-              <h1>商旅食宿，一站尽览</h1>
-              <p>汇集义安代表性景区、地方餐饮、品质住宿与购物点位，点击导航即可前往。</p>
+              <h1>宝藏义安，一站尽览</h1>
+              <p>汇集义安代表性景区、地方餐饮、品质住宿与文创项目，点击查看详情了解更多。</p>
             </header>
-            <nav className="catalog-tabs" aria-label="商旅食宿分类">
-              {travelCategories.map((category) => <button type="button" key={category} className={activeTravelCategory === category ? "is-active" : ""} onClick={() => setActiveTravelCategory(category)}><strong>{category}</strong><small>{travelCatalog[category].length}处</small></button>)}
+            <nav className="catalog-tabs" aria-label="宝藏义安分类">
+              {travelCategories.map((category) => <button type="button" key={category} className={activeTravelCategory === category ? "is-active" : ""} onClick={() => setActiveTravelCategory(category)}><strong>{category}</strong></button>)}
             </nav>
             <div className="catalog-grid">
               {travelCatalog[activeTravelCategory].map((item, index) => (
-                <article className="catalog-card" key={item.name}>
-                  <img src={imageUrl(catalogScene(activeTravelCategory, item.name))} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" />
-                  <div><span>{item.area} · {activeTravelCategory}</span><h2>{item.name}</h2><p>{item.detail}</p><a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`铜陵义安区${item.name}`)}&callnative=1`} target="_blank" rel="noreferrer">地图导航</a></div>
+                <article className="catalog-card" key={item.name} role="button" tabIndex={0} onClick={() => setSelectedTravelItem({ item, category: activeTravelCategory })} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedTravelItem({ item, category: activeTravelCategory }); } }}>
+                  <img src={publicAssetUrl(item.image)} alt={item.name} loading={index > 3 ? "lazy" : "eager"} decoding="async" />
+                  <div><span>{item.area} · {item.subtype}</span><h2>{item.name}</h2><p>{item.detail}</p><strong className="catalog-card__more">查看详情 <span>›</span></strong></div>
                 </article>
               ))}
             </div>
@@ -1835,7 +1894,7 @@ export default function Home() {
             {userRole === "游客" ? <>
               <button type="button" className={activeSection === "智慧导览" ? "is-active" : ""} onClick={() => setActiveSection("智慧导览")}><MapIcon aria-hidden="true" /><span>导览</span></button>
               <button type="button" className={activeSection === "魅力义安" ? "is-active" : ""} onClick={() => setActiveSection("魅力义安")}><Compass aria-hidden="true" /><span>魅力义安</span></button>
-              <button type="button" className={activeSection === "商旅食宿" ? "is-active" : ""} onClick={() => setActiveSection("商旅食宿")}><Store aria-hidden="true" /><span>商旅食宿</span></button>
+              <button type="button" className={activeSection === "宝藏义安" ? "is-active" : ""} onClick={() => setActiveSection("宝藏义安")}><Store aria-hidden="true" /><span>宝藏义安</span></button>
               <button type="button" className={activeSection === "义安好物" ? "is-active" : ""} onClick={() => setActiveSection("义安好物")}><ShoppingBag aria-hidden="true" /><span>义安好物</span></button>
               <button type="button" className={activeSection === "我的" ? "is-active" : ""} onClick={() => setActiveSection("我的")}><UserRound aria-hidden="true" /><span>我的</span></button>
             </> : userRole === "村民" ? <>
@@ -1887,7 +1946,7 @@ export default function Home() {
               <header><div><small>角色切换</small><h2 id="role-selector-title">请选择服务端</h2><p>切换后将刷新首页内容与底部导航。</p></div><button type="button" onClick={() => setIsRoleSelectorOpen(false)} aria-label="关闭角色选择">×</button></header>
               <div className="role-selector-list">
                 {([
-                  { role: "游客" as UserRole, title: "游客端", detail: "智慧导览、魅力义安、商旅食宿与义安好物", icon: Compass },
+                  { role: "游客" as UserRole, title: "游客端", detail: "智慧导览、魅力义安、宝藏义安与义安好物", icon: Compass },
                   { role: "村民" as UserRole, title: "村民端", detail: "村务服务、积分超市、资源发布与惠农服务", icon: HomeIcon },
                   { role: "政务" as UserRole, title: "政务端", detail: "村务管理、内容审核、民情处理与运营数据", icon: UserRound },
                 ]).map((item) => {
@@ -2002,23 +2061,17 @@ export default function Home() {
 
         {selectedSpot && (
           <div className="spot-modal-backdrop" role="presentation" onPointerDown={(event) => event.stopPropagation()} onClick={() => setSelectedSpot(null)}>
-            <section className="spot-modal" role="dialog" aria-modal="true" aria-labelledby="spot-title" onClick={(event) => event.stopPropagation()}>
-              <header>
-                <div className="spot-heading">
-                  <span>义安智慧导览</span>
-                  <div className="title-row">
-                    <h2 id="spot-title">{selectedSpot.name}</h2>
-                    <div className="title-actions">
-                      <a className="is-vr" href={selectedSpot.vrUrl} target="_blank" rel="noreferrer" aria-label={`打开${selectedSpot.name}VR导览`}>VR导览</a>
-                      <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(selectedSpot.mapKeyword)}&callnative=1`} target="_blank" rel="noreferrer" aria-label={`导航到${selectedSpot.name}`}>导航</a>
-                      <a href={MEITUAN_MINI_PROGRAM} aria-label={`购买${selectedSpot.name}门票`}>购票</a>
-                    </div>
-                  </div>
+            <section className="spot-modal home-spot-modal" role="dialog" aria-modal="true" aria-labelledby="spot-title" onClick={(event) => event.stopPropagation()}>
+              <div className="home-spot-modal__image">
+                <img src={imageUrl(selectedSpot.scene)} alt={`${selectedSpot.name}景区风光`} decoding="async" />
+                <span />
+                <div className="home-spot-modal__actions">
+                  <a className="is-vr" href={selectedSpot.vrUrl} target="_blank" rel="noreferrer" aria-label={`打开${selectedSpot.name}VR导览`}>VR导览</a>
+                  <a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(selectedSpot.mapKeyword)}&callnative=1`} target="_blank" rel="noreferrer" aria-label={`导航到${selectedSpot.name}`}>导航</a>
+                  <a href={MEITUAN_MINI_PROGRAM} aria-label={`购买${selectedSpot.name}门票`}>购票</a>
                 </div>
                 <button type="button" onClick={() => setSelectedSpot(null)} aria-label="关闭景区详情">×</button>
-              </header>
-              <div className="spot-modal__image">
-                <img src={imageUrl(selectedSpot.scene)} alt={`${selectedSpot.name}景区风光`} decoding="async" />
+                <div className="home-spot-modal__heading"><small>义安智慧导览</small><h2 id="spot-title">{selectedSpot.name}</h2></div>
               </div>
               <nav className="detail-tabs" aria-label="景区详情栏目">
                 {detailTabs.map((tab) => (
