@@ -211,14 +211,14 @@ const guideScene = (town: TownDetail, category: TownGuideCategory, item: string)
   return `${categoryScenes[category]}, inspired by ${town.name} and ${item}, natural daylight, realistic, no text, no watermark`;
 };
 
-type TravelCategory = "景点" | "美食" | "住宿" | "文创";
+type TravelCategory = "无忧玩" | "无忧吃" | "无忧住" | "无忧购";
 type TravelCatalogItem = { name: string; area: string; detail: string; subtype: string; image: string; images?: readonly string[] };
 type SelectedTravelItem = { item: TravelCatalogItem; category: TravelCategory };
 const publicAssetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
 const treasureThumbnailUrl = (path: string) => publicAssetUrl(path.replace(/^treasures\//, "treasures-thumbs/"));
-const travelCategories: TravelCategory[] = ["景点", "美食", "住宿", "文创"];
+const travelCategories: TravelCategory[] = ["无忧玩", "无忧吃", "无忧住", "无忧购"];
 const travelCatalog: Record<TravelCategory, readonly TravelCatalogItem[]> = {
-  "景点": [
+  "无忧玩": [
     { name: "永泉小镇", area: "义安区", subtype: "AAAA级景区", detail: "集生态旅游观光、休闲度假、娱乐美食和温泉康养于一身的“无忧度假”小镇，以江南园林为主要风格，有忆江南12景、江南味道、农家小院、九宝温泉等景点和乡愁巡演、打弹珠、儿童乐园等体验项目。", image: "/treasures/scenic/yongquan-town.webp" },
     { name: "凤凰山景区", area: "义安区", subtype: "AAAA级景区", detail: "“在叶山东南，有泉一泓，相传有凤凰翔饮于上”，主要景点有相思树、牡丹园、滴水崖、凤仪湖、凤凰落脚石、金牛洞古采矿遗址、铜陵县首次党代会遗址等。", image: "/treasures/scenic/fenghuangshan-scenic-area.webp" },
     { name: "梧桐花谷", area: "义安区", subtype: "AAAA级景区", detail: "“钟鸣天下，凤栖梧桐”，是一家以生态农业为基，以四季花海为主题，以休闲体验为发展方向，以学生劳动教育与研学旅游为特色的综合性旅游景区。", image: "/treasures/scenic/wutong-flower-valley.webp" },
@@ -239,7 +239,7 @@ const travelCatalog: Record<TravelCategory, readonly TravelCatalogItem[]> = {
     { name: "乡野拾光研学旅游基地", area: "老洲乡成德示范园", subtype: "田园实践研学基地", detail: "科学规划阅读区、乡村记忆馆、24节气展示等室内功能区，以及垂钓、采摘、种植三大室外区域。", image: "/treasures/scenic/xiangye-shiguang-study-base.webp" },
     { name: "金丰元农业发展基地", area: "中华白姜文化园", subtype: "白姜文化研学基地", detail: "课程主要围绕“白姜文化”，可了解白姜从田地到餐桌的制作全过程。", image: "/treasures/scenic/jinfengyuan-study-base.webp" },
   ],
-  "美食": [
+  "无忧吃": [
     { name: "七里书童", area: "西联镇三义村", subtype: "农家乐·餐饮住宿", detail: "主要建设二十四节气民宿、主题包厢餐饮，配备公共休闲区、儿童游泳池、图书阅读点、观景露台、咖啡屋等设施。", image: "/treasures/food/qili-shutong.webp" },
     { name: "兰婷小院", area: "西联镇犁桥村", subtype: "农家乐·土菜餐饮", detail: "坚持选用新鲜优质食材，招牌菜品有特色红烧肉、农家小炒鸡以及河鲜类菜品。", image: "/treasures/food/lanting-courtyard.webp" },
     { name: "山里任家", area: "钟鸣镇金凤村", subtype: "农家乐·乡村休闲", detail: "内含乡村会客厅、民宿休闲、亲子游乐、山林景观、生态鱼趣、农耕体验等功能区。", image: "/treasures/food/shanli-renjia-farmstay.webp" },
@@ -263,7 +263,7 @@ const travelCatalog: Record<TravelCategory, readonly TravelCatalogItem[]> = {
     { name: "雕胡饭", area: "义安区", subtype: "传统米食", detail: "以菰米独煮或与稻米同煮，承载李白诗意。", image: "/treasures/food/diaohu-rice.webp" },
     { name: "顺安酥糖", area: "顺安镇", subtype: "传统糕点", detail: "非遗传统糕点，松柔甜润。", image: "/treasures/food/shunan-crispy-candy.webp" },
   ],
-  "住宿": [
+  "无忧住": [
     { name: "凤栖民宿", area: "凤凰山景区内", subtype: "景区民宿", detail: "位于凤凰山葱郁环抱之中，拥有得天独厚的地理位置和生态环境。", image: "/treasures/stay/fenghuangshan-fengqi-homestay.webp" },
     { name: "德让堂", area: "犁桥水镇", subtype: "皖美银牌民宿", detail: "依水而建并具徽派建筑元素。", image: "/treasures/stay/derang-hall.webp" },
     { name: "明水居", area: "钟鸣镇水村村", subtype: "皖美银牌民宿", detail: "兼具明清古韵与现代设施。", image: "/treasures/stay/mingshui-residence.webp" },
@@ -274,7 +274,7 @@ const travelCatalog: Record<TravelCategory, readonly TravelCatalogItem[]> = {
     { name: "铁山头民宿", area: "江南铜谷风景道", subtype: "风景道民宿", detail: "位于江南铜谷风景道，距凤凰山约2公里。", image: "/treasures/stay/tieshantou-homestay.webp" },
     { name: "龙潭肖民宿", area: "龙潭肖村", subtype: "传统村落民宿", detail: "新老共生并有庭院泳池。", image: "/treasures/stay/longtanxiao-homestay.webp" },
   ],
-  "文创": [
+  "无忧购": [
     { name: "东联文创", area: "东联镇", subtype: "乡镇文创", detail: "以东联镇为主题的地方文创。", image: "/treasures/culture/donglian-cultural-creative.webp" },
     { name: "五松滨江书屋冰箱贴", area: "五松镇滨江书屋", subtype: "乡镇文创", detail: "以五松镇滨江书屋为主题的文创。", image: "/treasures/culture/wusong-riverside-bookstore-magnet.webp" },
     { name: "凤凰山瀑布咖啡", area: "凤凰山景区", subtype: "景区文创", detail: "以凤凰山景区瀑布咖啡为主题的景区文创。", image: "/treasures/culture/fenghuangshan-waterfall-coffee-1.webp", images: ["/treasures/culture/fenghuangshan-waterfall-coffee-1.webp", "/treasures/culture/fenghuangshan-waterfall-coffee-2.webp", "/treasures/culture/fenghuangshan-waterfall-coffee-3.webp"] },
@@ -415,7 +415,7 @@ const getSpotGuideContent = (spot: ScenicSpot) => {
   };
 };
 
-type TouristSection = "智慧导览" | "魅力义安" | "宝藏义安" | "义安好物" | "我的";
+type TouristSection = "智慧导览" | "宝藏义安" | "无忧度假" | "义安好物" | "我的";
 type TouristQuickService = "义安天气" | "投诉建议";
 type TouristSideService = TouristQuickService | "投资义安";
 type InvestmentCategory = "文旅" | "乡村运营" | "现代农业" | "康养" | "商业配套";
@@ -686,7 +686,7 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState<MainSection>("智慧导览");
   const [selectedCharmTown, setSelectedCharmTown] = useState<TownDetail | null>(null);
   const [activeCharmCategory, setActiveCharmCategory] = useState<TownDetailTab>("镇情概览");
-  const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("景点");
+  const [activeTravelCategory, setActiveTravelCategory] = useState<TravelCategory>("无忧玩");
   const [selectedTravelItem, setSelectedTravelItem] = useState<SelectedTravelItem | null>(null);
   const [selectedGood, setSelectedGood] = useState<YianGood | null>(null);
   const [goodsSearch, setGoodsSearch] = useState("");
@@ -1803,7 +1803,7 @@ export default function Home() {
           </section>
         )}
 
-        {activeSection === "魅力义安" && userRole === "游客" && (
+        {activeSection === "宝藏义安" && userRole === "游客" && (
           <section className="charm-view" onPointerDown={(event) => event.stopPropagation()}>
             <div className="charm-view__wash" aria-hidden="true" />
             <header className="charm-hero">
@@ -1823,11 +1823,11 @@ export default function Home() {
           </section>
         )}
 
-        {activeSection === "宝藏义安" && userRole === "游客" && selectedTravelItem && (
+        {activeSection === "无忧度假" && userRole === "游客" && selectedTravelItem && (
           <section className="catalog-detail-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="catalog-detail-topbar">
-              <button type="button" onClick={() => setSelectedTravelItem(null)} aria-label="返回宝藏义安列表"><ChevronLeft aria-hidden="true" /></button>
-              <div><small>{selectedTravelItem.item.area} · {selectedTravelItem.item.subtype}</small><strong>宝藏义安详情</strong></div>
+              <button type="button" onClick={() => setSelectedTravelItem(null)} aria-label="返回无忧度假列表"><ChevronLeft aria-hidden="true" /></button>
+              <div><small>{selectedTravelItem.item.area} · {selectedTravelItem.item.subtype}</small><strong>无忧度假详情</strong></div>
             </header>
             <div className="catalog-detail-body">
               <section className="catalog-detail-hero">
@@ -1837,21 +1837,21 @@ export default function Home() {
               </section>
               <section className="catalog-detail-section"><h2>简介</h2><p>{selectedTravelItem.item.detail}</p></section>
               {selectedTravelItem.item.images && selectedTravelItem.item.images.length > 1 && <section className="catalog-detail-section"><h2>更多风貌</h2><div className="catalog-detail-gallery">{selectedTravelItem.item.images.map((image, index) => <img key={image} src={publicAssetUrl(image)} alt={`${selectedTravelItem.item.name}风貌${index + 1}`} loading="lazy" decoding="async" />)}</div></section>}
-              <section className="catalog-detail-section"><h2>体验建议</h2><p>{selectedTravelItem.category === "景点" ? "建议提前了解开放时间和当日天气，合理安排游览路线，预留充足时间感受自然风光与在地文化。" : selectedTravelItem.category === "美食" ? "建议结合用餐人数提前联系商家，优先品尝当季食材和义安地方风味，高峰时段可提前预约。" : selectedTravelItem.category === "住宿" ? "建议根据出行人数、入住日期和行程安排提前预订，并确认房型、停车及周边配套信息。" : "建议到店了解文创的实际展示与供应信息，具体内容以现场为准。"}</p></section>
+              <section className="catalog-detail-section"><h2>体验建议</h2><p>{selectedTravelItem.category === "无忧玩" ? "建议提前了解开放时间和当日天气，合理安排游览路线，预留充足时间感受自然风光与在地文化。" : selectedTravelItem.category === "无忧吃" ? "建议结合用餐人数提前联系商家，优先品尝当季食材和义安地方风味，高峰时段可提前预约。" : selectedTravelItem.category === "无忧住" ? "建议根据出行人数、入住日期和行程安排提前预订，并确认房型、停车及周边配套信息。" : "建议到店了解文创的实际展示与供应信息，具体内容以现场为准。"}</p></section>
               <section className="catalog-detail-section catalog-detail-info"><h2>出行信息</h2><dl><div><dt>所在区域</dt><dd>{selectedTravelItem.item.area}</dd></div><div><dt>内容类型</dt><dd>{selectedTravelItem.item.subtype}</dd></div><div><dt>温馨提示</dt><dd>营业、开放及服务信息可能调整，出行前建议再次确认。</dd></div></dl></section>
             </div>
             <footer className="catalog-detail-action"><a href={`https://uri.amap.com/search?keyword=${encodeURIComponent(`铜陵义安区${selectedTravelItem.item.name}`)}&callnative=1`} target="_blank" rel="noreferrer"><Compass aria-hidden="true" />地图导航</a></footer>
           </section>
         )}
 
-        {activeSection === "宝藏义安" && userRole === "游客" && !selectedTravelItem && (
+        {activeSection === "无忧度假" && userRole === "游客" && !selectedTravelItem && (
           <section className="catalog-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="catalog-hero">
               <span>TRAVEL & STAY</span>
-              <h1>宝藏义安，一站尽览</h1>
+              <h1>无忧度假，一站尽览</h1>
               <p>汇集义安代表性景区、地方餐饮、品质住宿与文创项目，点击查看详情了解更多。</p>
             </header>
-            <nav className="catalog-tabs" aria-label="宝藏义安分类">
+            <nav className="catalog-tabs" aria-label="无忧度假分类">
               {travelCategories.map((category) => <button type="button" key={category} className={activeTravelCategory === category ? "is-active" : ""} onClick={() => setActiveTravelCategory(category)}><strong>{category}</strong></button>)}
             </nav>
             <div className="catalog-grid">
@@ -1894,8 +1894,8 @@ export default function Home() {
           <nav className="map-menu" aria-label={userRole === "游客" ? "义安旅游服务" : "义安村民服务"} onPointerDown={(event) => event.stopPropagation()}>
             {userRole === "游客" ? <>
               <button type="button" className={activeSection === "智慧导览" ? "is-active" : ""} onClick={() => setActiveSection("智慧导览")}><MapIcon aria-hidden="true" /><span>导览</span></button>
-              <button type="button" className={activeSection === "魅力义安" ? "is-active" : ""} onClick={() => setActiveSection("魅力义安")}><Compass aria-hidden="true" /><span>魅力义安</span></button>
-              <button type="button" className={activeSection === "宝藏义安" ? "is-active" : ""} onClick={() => setActiveSection("宝藏义安")}><Store aria-hidden="true" /><span>宝藏义安</span></button>
+              <button type="button" className={activeSection === "宝藏义安" ? "is-active" : ""} onClick={() => setActiveSection("宝藏义安")}><Compass aria-hidden="true" /><span>宝藏义安</span></button>
+              <button type="button" className={activeSection === "无忧度假" ? "is-active" : ""} onClick={() => setActiveSection("无忧度假")}><Store aria-hidden="true" /><span>无忧度假</span></button>
               <button type="button" className={activeSection === "义安好物" ? "is-active" : ""} onClick={() => setActiveSection("义安好物")}><ShoppingBag aria-hidden="true" /><span>义安好物</span></button>
               <button type="button" className={activeSection === "我的" ? "is-active" : ""} onClick={() => setActiveSection("我的")}><UserRound aria-hidden="true" /><span>我的</span></button>
             </> : userRole === "村民" ? <>
@@ -1947,7 +1947,7 @@ export default function Home() {
               <header><div><small>角色切换</small><h2 id="role-selector-title">请选择服务端</h2><p>切换后将刷新首页内容与底部导航。</p></div><button type="button" onClick={() => setIsRoleSelectorOpen(false)} aria-label="关闭角色选择">×</button></header>
               <div className="role-selector-list">
                 {([
-                  { role: "游客" as UserRole, title: "游客端", detail: "智慧导览、魅力义安、宝藏义安与义安好物", icon: Compass },
+                  { role: "游客" as UserRole, title: "游客端", detail: "智慧导览、宝藏义安、无忧度假与义安好物", icon: Compass },
                   { role: "村民" as UserRole, title: "村民端", detail: "村务服务、积分超市、资源发布与惠农服务", icon: HomeIcon },
                   { role: "政务" as UserRole, title: "政务端", detail: "村务管理、内容审核、民情处理与运营数据", icon: UserRound },
                 ]).map((item) => {
@@ -1999,7 +1999,7 @@ export default function Home() {
                 <span />
                 <a className="charm-modal__navigate" href={`https://uri.amap.com/search?keyword=${encodeURIComponent(selectedCharmTown.mapKeyword)}&callnative=1`} target="_blank" rel="noreferrer" aria-label={`导航到${selectedCharmTown.name}`}><Compass aria-hidden="true" />导航</a>
                 <button type="button" onClick={() => setSelectedCharmTown(null)} aria-label="关闭乡镇介绍">×</button>
-                <div><small>{selectedCharmTown.subtitle}</small><h2 id="charm-town-title">{selectedCharmTown.name}</h2></div>
+                <div><h2 id="charm-town-title">{selectedCharmTown.name}</h2></div>
               </div>
               <nav className="charm-guide-tabs town-unified-tabs" aria-label={`${selectedCharmTown.name}详情栏目`}>
                 {townDetailTabs.map((category) => (
@@ -2009,7 +2009,7 @@ export default function Home() {
               <div className="charm-modal__body town-unified-body">
                 {activeCharmCategory === "镇情概览" ? (
                   <div className="town-overview">
-                    <span className="charm-modal__eyebrow">魅力义安 · 乡镇印象</span>
+                    <span className="charm-modal__eyebrow">宝藏义安 · 乡镇印象</span>
                     <p>{selectedCharmTown.intro}</p>
                     <div className="charm-highlights">{selectedCharmTown.highlights.map((item) => <span key={item}>{item}</span>)}</div>
                     <dl className="town-overview-facts">
