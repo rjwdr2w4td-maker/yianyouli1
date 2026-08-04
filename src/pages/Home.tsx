@@ -1848,7 +1848,7 @@ export default function Home() {
           <section className="catalog-view" onPointerDown={(event) => event.stopPropagation()}>
             <header className="catalog-hero">
               <span>TRAVEL & STAY</span>
-              <h1>无忧度假，一站尽览</h1>
+              <h1>宝藏义安，万事宜安</h1>
               <p>汇集义安代表性景区、地方餐饮、品质住宿与文创项目，点击查看详情了解更多。</p>
             </header>
             <nav className="catalog-tabs" aria-label="无忧度假分类">
